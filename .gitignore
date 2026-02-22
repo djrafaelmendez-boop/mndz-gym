@@ -1,0 +1,8 @@
+node_modules/
+dist/
+server/mndz.db
+.env
+.DS_Store
+android/
+ios/
+**/.DS_Store

@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<resources>
-    <string name="app_name">MNDZ</string>
-    <string name="title_activity_main">MNDZ</string>
-    <string name="package_name">com.mndz.gym</string>
-    <string name="custom_url_scheme">com.mndz.gym</string>
-</resources>
