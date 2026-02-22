@@ -1,0 +1,12 @@
+{
+  "appId": "com.mndz.gym",
+  "appName": "MNDZ",
+  "webDir": "dist",
+  "ios": {
+    "preferredContentMode": "mobile"
+  },
+  "server": {
+    "iosScheme": "capacitor",
+    "cleartext": true
+  }
+}

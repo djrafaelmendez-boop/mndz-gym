@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Set Editor - Antigravity</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#DFFF00", // Neon Lime
+                        "primary-dim": "#b2cc00",
+                        "background-light": "#F3F4F6",
+                        "background-dark": "#0D0D0D", // Deep Charcoal/Black
+                        "surface-dark": "#161616", // Slightly lighter for cards
+                        "surface-light": "#FFFFFF",
+                        "text-secondary-dark": "#A1A1A1",
+                        "text-secondary-light": "#6B7280",
+                    },
+                    fontFamily: {
+                        display: ["Inter", "sans-serif"],
+                        sans: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                    },
+                },
+            },
+        };
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 3px;
+        }
+        .neon-glow {
+            box-shadow: 0 0 15px rgba(223, 255, 0, 0.3);
+        }
+        .neon-text {
+            text-shadow: 0 0 10px rgba(223, 255, 0, 0.5);
+        }
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-gray-900 dark:text-white h-screen flex flex-col overflow-hidden selection:bg-primary selection:text-black transition-colors duration-200 relative bg-gradient-to-b from-[#1C1C1C] via-[#111111] to-background-dark dark:from-[#1C1C1C] dark:via-[#111111] dark:to-background-dark">
+<header class="flex-none px-6 pt-12 pb-2 flex justify-between items-start bg-transparent z-10">
+<button class="p-2 -ml-2 rounded-full hover:bg-gray-800 transition-colors text-text-secondary-dark">
+<span class="material-symbols-outlined text-2xl">arrow_back</span>
+</button>
+<div class="flex flex-col items-end">
+<button class="text-primary text-sm font-bold tracking-wide uppercase">Save</button>
+</div>
+</header>
+<div class="px-6 pb-6">
+<h1 class="text-3xl font-black italic tracking-tighter uppercase text-white neon-text">Weighted Dips</h1>
+<p class="text-xs text-primary mt-1 tracking-wide font-medium uppercase">Target: Triceps, Chest</p>
+</div>
+<main class="flex-1 overflow-y-auto px-6 pb-28 space-y-4">
+<div class="grid grid-cols-12 gap-2 text-[10px] font-bold tracking-wider text-text-secondary-dark uppercase px-2 mb-2">
+<div class="col-span-1 text-center">Set</div>
+<div class="col-span-4 text-center">Previous</div>
+<div class="col-span-3 text-center">lbs</div>
+<div class="col-span-3 text-center">Reps</div>
+<div class="col-span-1 text-center"></div>
+</div>
+<div class="bg-surface-dark rounded-xl p-3 border border-gray-800 flex items-center shadow-lg relative overflow-hidden group">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-primary neon-glow"></div>
+<div class="grid grid-cols-12 gap-2 w-full items-center">
+<div class="col-span-1 flex justify-center">
+<span class="text-sm font-bold text-white">1</span>
+</div>
+<div class="col-span-4 text-center">
+<span class="text-xs text-text-secondary-dark">45 lb x 10</span>
+</div>
+<div class="col-span-3 flex items-center justify-center space-x-1">
+<button class="w-6 h-6 rounded bg-gray-800 text-gray-400 flex items-center justify-center hover:bg-gray-700 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-xs">remove</span>
+</button>
+<div class="bg-gray-900 border border-gray-700 rounded px-2 py-1 min-w-[3rem] text-center text-white font-bold text-sm">
+                        45
+                    </div>
+<button class="w-6 h-6 rounded bg-gray-800 text-gray-400 flex items-center justify-center hover:bg-gray-700 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-xs">add</span>
+</button>
+</div>
+<div class="col-span-3 flex items-center justify-center space-x-1">
+<button class="w-6 h-6 rounded bg-gray-800 text-gray-400 flex items-center justify-center hover:bg-gray-700 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-xs">remove</span>
+</button>
+<div class="bg-gray-900 border border-gray-700 rounded px-2 py-1 min-w-[2.5rem] text-center text-white font-bold text-sm">
+                        10
+                    </div>
+<button class="w-6 h-6 rounded bg-gray-800 text-gray-400 flex items-center justify-center hover:bg-gray-700 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-xs">add</span>
+</button>
+</div>
+<div class="col-span-1 flex justify-center">
+<button class="w-6 h-6 rounded bg-primary text-black flex items-center justify-center shadow-[0_0_10px_rgba(223,255,0,0.4)]">
+<span class="material-symbols-outlined text-sm font-bold">check</span>
+</button>
+</div>
+</div>
+</div>
+<div class="bg-surface-dark rounded-xl p-3 border border-primary/30 flex items-center shadow-lg relative overflow-hidden">
+<div class="grid grid-cols-12 gap-2 w-full items-center">
+<div class="col-span-1 flex justify-center">
+<span class="text-sm font-bold text-white">2</span>
+</div>
+<div class="col-span-4 text-center">
+<span class="text-xs text-text-secondary-dark">45 lb x 10</span>
+</div>
+<div class="col-span-3 flex items-center justify-center space-x-1">
+<button class="w-6 h-6 rounded bg-gray-800 text-gray-400 flex items-center justify-center hover:bg-gray-700 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-xs">remove</span>
+</button>
+<div class="bg-gray-900 border border-primary/50 text-primary rounded px-2 py-1 min-w-[3rem] text-center font-bold text-sm shadow-[0_0_8px_rgba(223,255,0,0.1)]">
+                        45
+                    </div>
+<button class="w-6 h-6 rounded bg-gray-800 text-gray-400 flex items-center justify-center hover:bg-gray-700 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-xs">add</span>
+</button>
+</div>
+<div class="col-span-3 flex items-center justify-center space-x-1">
+<button class="w-6 h-6 rounded bg-gray-800 text-gray-400 flex items-center justify-center hover:bg-gray-700 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-xs">remove</span>
+</button>
+<div class="bg-gray-900 border border-gray-700 focus-within:border-primary/50 rounded px-2 py-1 min-w-[2.5rem] text-center text-white font-bold text-sm">
+                        10
+                    </div>
+<button class="w-6 h-6 rounded bg-gray-800 text-gray-400 flex items-center justify-center hover:bg-gray-700 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-xs">add</span>
+</button>
+</div>
+<div class="col-span-1 flex justify-center">
+<button class="w-6 h-6 rounded bg-gray-800 border border-gray-600 hover:border-primary text-transparent hover:text-primary flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-sm font-bold">check</span>
+</button>
+</div>
+</div>
+</div>
+<div class="bg-surface-dark/50 rounded-xl p-3 border border-gray-800/50 flex items-center">
+<div class="grid grid-cols-12 gap-2 w-full items-center opacity-70">
+<div class="col-span-1 flex justify-center">
+<span class="text-sm font-bold text-text-secondary-dark">3</span>
+</div>
+<div class="col-span-4 text-center">
+<span class="text-xs text-text-secondary-dark">45 lb x 9</span>
+</div>
+<div class="col-span-3 flex items-center justify-center space-x-1">
+<button class="w-6 h-6 rounded bg-gray-800/50 text-gray-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-xs">remove</span>
+</button>
+<div class="bg-transparent border border-gray-800 rounded px-2 py-1 min-w-[3rem] text-center text-text-secondary-dark font-bold text-sm">
+                        45
+                    </div>
+<button class="w-6 h-6 rounded bg-gray-800/50 text-gray-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-xs">add</span>
+</button>
+</div>
+<div class="col-span-3 flex items-center justify-center space-x-1">
+<button class="w-6 h-6 rounded bg-gray-800/50 text-gray-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-xs">remove</span>
+</button>
+<div class="bg-transparent border border-gray-800 rounded px-2 py-1 min-w-[2.5rem] text-center text-text-secondary-dark font-bold text-sm">
+                        -
+                    </div>
+<button class="w-6 h-6 rounded bg-gray-800/50 text-gray-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-xs">add</span>
+</button>
+</div>
+<div class="col-span-1 flex justify-center">
+<button class="w-6 h-6 rounded bg-gray-800 border border-gray-700 text-transparent flex items-center justify-center">
+<span class="material-symbols-outlined text-sm font-bold">check</span>
+</button>
+</div>
+</div>
+</div>
+<button class="w-full py-3 rounded-xl border border-dashed border-gray-700 text-text-secondary-dark font-bold text-xs tracking-wider uppercase hover:border-primary hover:text-primary transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-base">add</span>
+            Add Set
+        </button>
+<div class="mt-8 pt-8 border-t border-gray-800">
+<h3 class="text-text-secondary-dark text-xs font-bold uppercase tracking-wider mb-4">History</h3>
+<div class="space-y-2">
+<div class="flex justify-between items-center text-sm py-2">
+<span class="text-gray-400">Oct 24</span>
+<span class="text-white font-medium">45 lb x 10, 10, 9</span>
+</div>
+<div class="flex justify-between items-center text-sm py-2 border-t border-gray-800">
+<span class="text-gray-400">Oct 20</span>
+<span class="text-white font-medium">40 lb x 12, 10, 10</span>
+</div>
+</div>
+</div>
+</main>
+<nav class="flex-none bg-surface-dark border-t border-gray-800 pb-safe z-40 opacity-50 hover:opacity-100 transition-opacity">
+<div class="flex justify-around items-center h-16 px-2">
+<a class="flex flex-col items-center justify-center w-full h-full text-text-secondary-light dark:text-text-secondary-dark hover:text-gray-900 dark:hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined text-2xl mb-1 group-hover:-translate-y-0.5 transition-transform">calendar_today</span>
+<span class="text-[10px] font-bold tracking-wide">SCHEDULE</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-text-secondary-light dark:text-text-secondary-dark hover:text-gray-900 dark:hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined text-2xl mb-1 group-hover:-translate-y-0.5 transition-transform">assignment</span>
+<span class="text-[10px] font-bold tracking-wide">ROUTINES</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-text-secondary-light dark:text-text-secondary-dark hover:text-gray-900 dark:hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined text-2xl mb-1 group-hover:-translate-y-0.5 transition-transform">fitness_center</span>
+<span class="text-[10px] font-bold tracking-wide">EXERCISES</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-text-secondary-light dark:text-text-secondary-dark hover:text-gray-900 dark:hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined text-2xl mb-1 group-hover:-translate-y-0.5 transition-transform">show_chart</span>
+<span class="text-[10px] font-bold tracking-wide">PROGRESS</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-text-secondary-light dark:text-text-secondary-dark hover:text-gray-900 dark:hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined text-2xl mb-1 group-hover:-translate-y-0.5 transition-transform">person</span>
+<span class="text-[10px] font-bold tracking-wide">PROFILE</span>
+</a>
+</div>
+</nav>
+<script>
+        // Ensure Dark Mode is Active
+        document.documentElement.classList.add('dark');
+    </script>
+
+</body></html>

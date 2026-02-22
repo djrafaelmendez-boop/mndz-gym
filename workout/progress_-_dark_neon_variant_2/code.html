@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Workout - Antigravity</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#DFFF00", // Neon Lime
+                        "neon-red": "#FF003C", // Neon Red/Crimson
+                        "background-light": "#F3F4F6",
+                        "background-dark": "#0D0D0D",
+                        "surface-dark": "#161616",
+                        "surface-light": "#FFFFFF",
+                        "text-secondary-dark": "#A1A1A1",
+                        "text-secondary-light": "#6B7280",
+                    },
+                    fontFamily: {
+                        sans: ["Inter", "sans-serif"],
+                    },
+                },
+            },
+        };
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 2px;
+        }
+        .neon-glow {
+            box-shadow: 0 0 10px rgba(223, 255, 0, 0.4);
+        }
+        .neon-glow-red {
+            box-shadow: 0 0 15px rgba(255, 0, 60, 0.4);
+        }
+        .neon-text {
+             text-shadow: 0 0 10px rgba(223, 255, 0, 0.4);
+        }
+        .neon-text-red {
+             text-shadow: 0 0 10px rgba(255, 0, 60, 0.5);
+        }
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        .bg-gradient-header {
+            background: linear-gradient(to bottom, #262626 0%, #0D0D0D 100px); 
+        }
+        .bg-gradient-crimson {
+            background: linear-gradient(135deg, rgba(255,0,60,0.1) 0%, rgba(20,20,20,0) 100%);
+        }
+    </style>
+<style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-gray-900 dark:text-white h-screen flex flex-col overflow-hidden selection:bg-primary selection:text-black transition-colors duration-200 bg-gradient-header">
+<header class="flex-none px-6 pt-12 pb-2 flex justify-between items-center z-10 sticky top-0 bg-transparent backdrop-blur-sm">
+<button class="p-2 -ml-2 rounded-full hover:bg-gray-800 transition-colors text-white">
+<span class="material-icons-outlined">arrow_back</span>
+</button>
+<h1 class="text-lg font-black italic tracking-tighter uppercase text-white">Current Workout</h1>
+<button class="p-2 rounded-full hover:bg-gray-800 transition-colors text-white">
+<span class="material-icons-outlined">more_vert</span>
+</button>
+</header>
+<main class="flex-1 overflow-y-auto pb-24 space-y-6">
+<div class="px-6">
+<div class="flex items-start justify-between mb-2">
+<div>
+<span class="text-xs font-bold text-primary tracking-widest uppercase mb-1 block neon-text">Exercise 1 of 6</span>
+<h2 class="text-3xl font-black italic uppercase tracking-tighter leading-none text-white">Barbell Squat</h2>
+</div>
+<button class="w-10 h-10 rounded-full bg-surface-dark border border-gray-700 flex items-center justify-center text-primary">
+<span class="material-icons-outlined">videocam</span>
+</button>
+</div>
+</div>
+<div class="px-4 space-y-4">
+<div class="relative bg-surface-dark border border-neon-red/60 rounded-xl p-4 overflow-hidden neon-glow-red bg-gradient-crimson transition-all duration-300">
+<div class="flex items-center justify-between relative z-10">
+<div class="flex items-center gap-4">
+<div class="flex flex-col items-center justify-center w-10">
+<span class="text-[10px] font-black italic text-neon-red tracking-wider">SET</span>
+<span class="text-xl font-black italic text-neon-red">1</span>
+</div>
+<div class="h-8 w-[1px] bg-neon-red/30"></div>
+<div class="flex flex-col">
+<div class="flex items-baseline gap-1">
+<span class="text-2xl font-black italic text-white/90 drop-shadow-[0_0_5px_rgba(255,0,60,0.5)]">185</span>
+<span class="text-xs font-bold text-neon-red uppercase">lbs</span>
+</div>
+</div>
+<div class="flex flex-col ml-2">
+<div class="flex items-baseline gap-1">
+<span class="text-2xl font-black italic text-white/90 drop-shadow-[0_0_5px_rgba(255,0,60,0.5)]">8</span>
+<span class="text-xs font-bold text-neon-red uppercase">reps</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<button aria-label="Undo" class="text-gray-500 hover:text-white transition-colors flex items-center justify-center p-1">
+<span class="material-icons-outlined text-sm">undo</span>
+</button>
+<div class="flex items-center justify-center bg-neon-red/20 border border-neon-red text-neon-red px-3 py-1.5 rounded-lg">
+<span class="material-icons-outlined text-lg mr-1">check</span>
+<span class="text-xs font-black italic tracking-wider">DONE</span>
+</div>
+</div>
+</div>
+<div class="absolute inset-0 bg-neon-red/5 pointer-events-none"></div>
+</div>
+<div class="bg-surface-dark border border-primary rounded-xl p-4 relative neon-glow">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="flex flex-col items-center justify-center w-10">
+<span class="text-[10px] font-black italic text-primary tracking-wider">SET</span>
+<span class="text-xl font-black italic text-white">2</span>
+</div>
+<div class="h-8 w-[1px] bg-gray-700"></div>
+<div class="flex gap-4">
+<div class="flex items-baseline gap-1">
+<span class="text-2xl font-black italic text-white">185</span>
+<span class="text-xs font-bold text-primary uppercase">lbs</span>
+</div>
+<div class="flex items-baseline gap-1">
+<span class="text-2xl font-black italic text-white">8</span>
+<span class="text-xs font-bold text-primary uppercase">reps</span>
+</div>
+</div>
+</div>
+<div class="flex items-center">
+<button class="w-10 h-10 rounded-lg border-2 border-primary/30 hover:bg-primary hover:border-primary group transition-all flex items-center justify-center">
+<span class="material-icons-outlined text-primary group-hover:text-black font-bold">check</span>
+</button>
+</div>
+</div>
+<div class="absolute -left-1 top-1/2 -translate-y-1/2 w-1 h-8 bg-primary rounded-r-full shadow-[0_0_10px_rgba(223,255,0,0.6)]"></div>
+</div>
+<div class="bg-surface-dark border border-gray-800 rounded-xl p-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="flex flex-col items-center justify-center w-10">
+<span class="text-[10px] font-black italic text-gray-500 tracking-wider">SET</span>
+<span class="text-xl font-black italic text-gray-400">3</span>
+</div>
+<div class="h-8 w-[1px] bg-gray-800"></div>
+<div class="flex gap-4 opacity-50">
+<div class="flex items-baseline gap-1">
+<span class="text-2xl font-black italic text-gray-400">185</span>
+<span class="text-xs font-bold text-gray-600 uppercase">lbs</span>
+</div>
+<div class="flex items-baseline gap-1">
+<span class="text-2xl font-black italic text-gray-400">8</span>
+<span class="text-xs font-bold text-gray-600 uppercase">reps</span>
+</div>
+</div>
+</div>
+<div class="w-10 h-10 rounded-lg border-2 border-gray-800 flex items-center justify-center opacity-50">
+<span class="material-icons-outlined text-gray-700">check</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-dark border border-gray-800 rounded-xl p-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="flex flex-col items-center justify-center w-10">
+<span class="text-[10px] font-black italic text-gray-500 tracking-wider">SET</span>
+<span class="text-xl font-black italic text-gray-400">4</span>
+</div>
+<div class="h-8 w-[1px] bg-gray-800"></div>
+<div class="flex gap-4 opacity-50">
+<div class="flex items-baseline gap-1">
+<span class="text-2xl font-black italic text-gray-400">185</span>
+<span class="text-xs font-bold text-gray-600 uppercase">lbs</span>
+</div>
+<div class="flex items-baseline gap-1">
+<span class="text-2xl font-black italic text-gray-400">8</span>
+<span class="text-xs font-bold text-gray-600 uppercase">reps</span>
+</div>
+</div>
+</div>
+<div class="w-10 h-10 rounded-lg border-2 border-gray-800 flex items-center justify-center opacity-50">
+<span class="material-icons-outlined text-gray-700">check</span>
+</div>
+</div>
+</div>
+<div class="flex justify-center pt-4 pb-8">
+<button class="flex items-center gap-2 text-xs font-bold tracking-widest text-gray-500 hover:text-white uppercase transition-colors">
+<span class="material-icons-outlined text-base">add</span>
+                    Add Set
+                </button>
+</div>
+</div>
+</main>
+<div class="flex-none bg-surface-dark border-t border-gray-800 pb-safe z-50 px-6 py-6">
+<button class="w-full bg-primary text-black py-4 rounded-full text-sm font-black italic uppercase hover:bg-white transition-all flex items-center justify-center shadow-[0_0_20px_rgba(223,255,0,0.3)] tracking-widest">
+            Complete Exercise
+        </button>
+</div>
+<script>
+        document.documentElement.classList.add('dark');
+    </script>
+
+</body></html>

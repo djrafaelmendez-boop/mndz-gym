@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Routines - Antigravity</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#DFFF00", // Neon Lime
+                        "primary-dim": "#b2cc00",
+                        "background-light": "#F3F4F6",
+                        "background-dark": "#0D0D0D", // Deep Charcoal/Black
+                        "surface-dark": "#161616", // Slightly lighter for cards
+                        "surface-light": "#FFFFFF",
+                        "text-secondary-dark": "#A1A1A1",
+                        "text-secondary-light": "#6B7280",
+                    },
+                    fontFamily: {
+                        display: ["Inter", "sans-serif"],
+                        sans: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                    },
+                    boxShadow: {
+                        'neon': '0 0 5px rgba(223, 255, 0, 0.5), 0 0 20px rgba(223, 255, 0, 0.3)',
+                        'card-glow': '0 0 15px rgba(223, 255, 0, 0.05)',
+                    }
+                },
+            },
+        };
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 3px;
+        }
+        .neon-glow {
+            box-shadow: 0 0 15px rgba(223, 255, 0, 0.4);
+        }
+        .text-glow {
+            text-shadow: 0 0 10px rgba(223, 255, 0, 0.3);
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #ffffff, #DFFF00);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .card-border-gradient {
+            background: linear-gradient(135deg, rgba(223, 255, 0, 0.5) 0%, rgba(223, 255, 0, 0.1) 30%, rgba(223, 255, 0, 0) 100%);
+            padding: 1px;
+            border-radius: 1rem;
+        }
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-gray-900 dark:text-white h-screen flex flex-col overflow-hidden selection:bg-primary selection:text-black transition-colors duration-200 relative bg-gradient-to-b from-[#1C1C1C] via-[#111111] to-background-dark dark:from-[#1C1C1C] dark:via-[#111111] dark:to-background-dark">
+<header class="flex-none px-6 pt-12 pb-4 flex justify-between items-end bg-transparent z-10 border-b border-transparent dark:border-gray-900/50">
+<div>
+<h1 class="text-3xl font-black italic tracking-tighter uppercase text-gray-900 dark:text-white">Routines</h1>
+<p class="text-xs text-text-secondary-light dark:text-text-secondary-dark mt-1 tracking-wide font-medium">YOUR BLUEPRINT</p>
+</div>
+<button class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors">
+<span class="material-symbols-outlined text-gray-600 dark:text-gray-400">search</span>
+</button>
+</header>
+<main class="flex-1 overflow-y-auto px-6 pb-28 space-y-6">
+<div class="flex space-x-3 overflow-x-auto pb-2 no-scrollbar -mx-6 px-6 pt-2">
+<button class="flex-none px-4 py-1.5 rounded-full bg-primary text-black text-xs font-bold uppercase tracking-wide shadow-md shadow-primary/20">All</button>
+<button class="flex-none px-4 py-1.5 rounded-full bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-gray-800 text-text-secondary-light dark:text-text-secondary-dark text-xs font-bold uppercase tracking-wide hover:border-primary hover:text-primary transition-colors">Chest</button>
+<button class="flex-none px-4 py-1.5 rounded-full bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-gray-800 text-text-secondary-light dark:text-text-secondary-dark text-xs font-bold uppercase tracking-wide hover:border-primary hover:text-primary transition-colors">Shoulders</button>
+<button class="flex-none px-4 py-1.5 rounded-full bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-gray-800 text-text-secondary-light dark:text-text-secondary-dark text-xs font-bold uppercase tracking-wide hover:border-primary hover:text-primary transition-colors">Abs</button>
+<button class="flex-none px-4 py-1.5 rounded-full bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-gray-800 text-text-secondary-light dark:text-text-secondary-dark text-xs font-bold uppercase tracking-wide hover:border-primary hover:text-primary transition-colors">Legs</button>
+<button class="flex-none px-4 py-1.5 rounded-full bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-gray-800 text-text-secondary-light dark:text-text-secondary-dark text-xs font-bold uppercase tracking-wide hover:border-primary hover:text-primary transition-colors">Back</button>
+<button class="flex-none px-4 py-1.5 rounded-full bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-gray-800 text-text-secondary-light dark:text-text-secondary-dark text-xs font-bold uppercase tracking-wide hover:border-primary hover:text-primary transition-colors">Triceps</button>
+<button class="flex-none px-4 py-1.5 rounded-full bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-gray-800 text-text-secondary-light dark:text-text-secondary-dark text-xs font-bold uppercase tracking-wide hover:border-primary hover:text-primary transition-colors">Biceps</button>
+</div>
+<div class="card-border-gradient relative group">
+<div class="bg-surface-light dark:bg-surface-dark rounded-2xl p-5 h-full relative overflow-hidden">
+<div class="absolute -right-10 -top-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+<div class="flex justify-between items-start mb-3">
+<div>
+<h3 class="text-xl font-black italic uppercase gradient-text text-glow tracking-tighter">Push: Heavy</h3>
+<p class="text-xs font-medium text-text-secondary-light dark:text-text-secondary-dark mt-1">Chest, Shoulders, Triceps</p>
+</div>
+<button class="text-gray-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+<div class="flex items-center gap-2 mb-5">
+<span class="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-black bg-primary px-3 py-1 rounded-full shadow-sm shadow-primary/20">
+                    Advanced
+                </span>
+</div>
+<div class="space-y-3 mb-1">
+<div class="flex justify-between items-center text-sm border-b border-gray-100 dark:border-gray-800/50 pb-2 last:border-0 last:pb-0">
+<span class="font-semibold dark:text-gray-300">Bench Press</span>
+<span class="text-[10px] font-bold text-black bg-white/90 px-2 py-0.5 rounded shadow-sm whitespace-nowrap">5 x 5</span>
+</div>
+<div class="flex justify-between items-center text-sm border-b border-gray-100 dark:border-gray-800/50 pb-2 last:border-0 last:pb-0">
+<span class="font-semibold dark:text-gray-300">OH Press</span>
+<span class="text-[10px] font-bold text-black bg-white/90 px-2 py-0.5 rounded shadow-sm whitespace-nowrap">4 x 8</span>
+</div>
+<div class="flex justify-between items-center text-sm border-b border-gray-100 dark:border-gray-800/50 pb-2 last:border-0 last:pb-0">
+<span class="font-semibold dark:text-gray-300">Weighted Dips</span>
+<span class="text-[10px] font-bold text-black bg-white/90 px-2 py-0.5 rounded shadow-sm whitespace-nowrap">3 x 10</span>
+</div>
+</div>
+</div>
+</div>
+<div class="card-border-gradient relative group">
+<div class="bg-surface-light dark:bg-surface-dark rounded-2xl p-5 h-full relative overflow-hidden">
+<div class="absolute -right-10 -top-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+<div class="flex justify-between items-start mb-3">
+<div>
+<h3 class="text-xl font-black italic uppercase gradient-text text-glow tracking-tighter">Pull: Vol</h3>
+<p class="text-xs font-medium text-text-secondary-light dark:text-text-secondary-dark mt-1">Back, Biceps, Rear Delts</p>
+</div>
+<button class="text-gray-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+<div class="flex items-center gap-2 mb-5">
+<span class="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full border border-gray-700/50">
+                    Intermediate
+                </span>
+</div>
+<div class="space-y-3 mb-1">
+<div class="flex justify-between items-center text-sm border-b border-gray-100 dark:border-gray-800/50 pb-2 last:border-0 last:pb-0">
+<span class="font-semibold dark:text-gray-300">Deadlift</span>
+<span class="text-[10px] font-bold text-black bg-white/90 px-2 py-0.5 rounded shadow-sm whitespace-nowrap">3 x 5</span>
+</div>
+<div class="flex justify-between items-center text-sm border-b border-gray-100 dark:border-gray-800/50 pb-2 last:border-0 last:pb-0">
+<span class="font-semibold dark:text-gray-300">Pull Ups</span>
+<span class="text-[10px] font-bold text-black bg-white/90 px-2 py-0.5 rounded shadow-sm whitespace-nowrap">4 x FAIL</span>
+</div>
+<div class="flex justify-between items-center text-sm border-b border-gray-100 dark:border-gray-800/50 pb-2 last:border-0 last:pb-0">
+<span class="font-semibold dark:text-gray-300">Barbell Rows</span>
+<span class="text-[10px] font-bold text-black bg-white/90 px-2 py-0.5 rounded shadow-sm whitespace-nowrap">4 x 10</span>
+</div>
+</div>
+</div>
+</div>
+<div class="card-border-gradient relative group">
+<div class="bg-surface-light dark:bg-surface-dark rounded-2xl p-5 h-full relative overflow-hidden">
+<div class="absolute -right-10 -top-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+<div class="flex justify-between items-start mb-3">
+<div>
+<h3 class="text-xl font-black italic uppercase gradient-text text-glow tracking-tighter">Legs: Power</h3>
+<p class="text-xs font-medium text-text-secondary-light dark:text-text-secondary-dark mt-1">Quads, Hams, Calves</p>
+</div>
+<button class="text-gray-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+<div class="flex items-center gap-2 mb-5">
+<span class="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-black bg-primary px-3 py-1 rounded-full shadow-sm shadow-primary/20">
+                    Advanced
+                </span>
+</div>
+<div class="space-y-3 mb-1">
+<div class="flex justify-between items-center text-sm border-b border-gray-100 dark:border-gray-800/50 pb-2 last:border-0 last:pb-0">
+<span class="font-semibold dark:text-gray-300">Squat</span>
+<span class="text-[10px] font-bold text-black bg-white/90 px-2 py-0.5 rounded shadow-sm whitespace-nowrap">5 x 5</span>
+</div>
+<div class="flex justify-between items-center text-sm border-b border-gray-100 dark:border-gray-800/50 pb-2 last:border-0 last:pb-0">
+<span class="font-semibold dark:text-gray-300">RDL</span>
+<span class="text-[10px] font-bold text-black bg-white/90 px-2 py-0.5 rounded shadow-sm whitespace-nowrap">3 x 8</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<div class="fixed bottom-24 right-6 z-30">
+<button class="flex items-center justify-center bg-primary hover:bg-primary-dim text-black font-bold rounded-full h-14 w-14 shadow-[0_0_20px_rgba(223,255,0,0.6)] transition-transform hover:scale-105 active:scale-95 group border border-white/20">
+<span class="material-symbols-outlined text-3xl group-hover:rotate-90 transition-transform">add</span>
+</button>
+</div>
+<nav class="flex-none bg-surface-light dark:bg-surface-dark border-t border-gray-200 dark:border-gray-800 pb-safe z-40">
+<div class="flex justify-around items-center h-16 px-2">
+<a class="flex flex-col items-center justify-center w-full h-full text-text-secondary-light dark:text-text-secondary-dark hover:text-gray-900 dark:hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined text-2xl mb-1 group-hover:-translate-y-0.5 transition-transform">calendar_today</span>
+<span class="text-[10px] font-bold tracking-wide">SCHEDULE</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl mb-1 neon-text">assignment</span>
+<span class="text-[10px] font-bold tracking-wide text-primary">ROUTINES</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-text-secondary-light dark:text-text-secondary-dark hover:text-gray-900 dark:hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined text-2xl mb-1 group-hover:-translate-y-0.5 transition-transform">fitness_center</span>
+<span class="text-[10px] font-bold tracking-wide">EXERCISES</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-text-secondary-light dark:text-text-secondary-dark hover:text-gray-900 dark:hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined text-2xl mb-1 group-hover:-translate-y-0.5 transition-transform">show_chart</span>
+<span class="text-[10px] font-bold tracking-wide">PROGRESS</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-text-secondary-light dark:text-text-secondary-dark hover:text-gray-900 dark:hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined text-2xl mb-1 group-hover:-translate-y-0.5 transition-transform">person</span>
+<span class="text-[10px] font-bold tracking-wide">PROFILE</span>
+</a>
+</div>
+</nav>
+<script>
+    // Ensure Dark Mode is Active
+    document.documentElement.classList.add('dark');
+</script>
+
+</body></html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Create Routine - Antigravity</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#DFFF00", // Neon Lime
+                        "primary-dim": "#b2cc00",
+                        "background-light": "#F3F4F6",
+                        "background-dark": "#0D0D0D", // Deep Charcoal/Black
+                        "surface-dark": "#161616", // Slightly lighter for cards
+                        "surface-light": "#FFFFFF",
+                        "text-secondary-dark": "#A1A1A1",
+                        "text-secondary-light": "#6B7280",
+                    },
+                    fontFamily: {
+                        display: ["Inter", "sans-serif"],
+                        sans: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                    },
+                },
+            },
+        };
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 3px;
+        }
+        .neon-glow {
+            box-shadow: 0 0 15px rgba(223, 255, 0, 0.3);
+        }
+        .neon-text {
+            text-shadow: 0 0 10px rgba(223, 255, 0, 0.5);
+        }
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        input:focus {
+            box-shadow: 0 0 0 2px rgba(223, 255, 0, 0.2);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-gray-900 dark:text-white h-screen flex flex-col overflow-hidden selection:bg-primary selection:text-black transition-colors duration-200 relative bg-gradient-to-b from-[#1C1C1C] via-[#111111] to-background-dark dark:from-[#1C1C1C] dark:via-[#111111] dark:to-background-dark">
+<header class="flex-none px-6 pt-12 pb-4 flex justify-between items-center bg-transparent z-10">
+<div class="flex items-center gap-4">
+<button class="p-2 -ml-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors">
+<span class="material-symbols-outlined text-gray-600 dark:text-gray-400">arrow_back</span>
+</button>
+<div>
+<h1 class="text-2xl font-black italic tracking-tighter uppercase text-gray-900 dark:text-white">New Routine</h1>
+<p class="text-xs text-text-secondary-light dark:text-text-secondary-dark tracking-wide font-medium">DESIGN YOUR BLUEPRINT</p>
+</div>
+</div>
+<button class="text-sm font-bold text-text-secondary-dark hover:text-white uppercase tracking-wider">Cancel</button>
+</header>
+<main class="flex-1 overflow-y-auto px-6 pb-32 space-y-8">
+<div class="space-y-2">
+<label class="block text-xs font-bold uppercase text-text-secondary-light dark:text-text-secondary-dark tracking-wider ml-1" for="routine-name">Routine Name</label>
+<input class="w-full bg-surface-light dark:bg-surface-dark border-transparent focus:border-primary focus:ring-0 rounded-xl px-4 py-4 text-lg font-bold text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-600 shadow-sm transition-all" id="routine-name" placeholder="e.g. Heavy Push Day" type="text"/>
+</div>
+<div class="space-y-3">
+<label class="block text-xs font-bold uppercase text-text-secondary-light dark:text-text-secondary-dark tracking-wider ml-1">Primary Muscles</label>
+<div class="flex space-x-3 overflow-x-auto pb-2 no-scrollbar -mx-6 px-6">
+<button class="flex-none px-5 py-2.5 rounded-full bg-primary text-black text-sm font-black uppercase italic tracking-wide shadow-lg shadow-primary/20 border border-primary">
+                    CHEST
+                </button>
+<button class="flex-none px-5 py-2.5 rounded-full bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-gray-800 text-text-secondary-light dark:text-gray-400 text-sm font-bold uppercase tracking-wide hover:border-primary hover:text-primary transition-colors">
+                    BACK
+                </button>
+<button class="flex-none px-5 py-2.5 rounded-full bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-gray-800 text-text-secondary-light dark:text-gray-400 text-sm font-bold uppercase tracking-wide hover:border-primary hover:text-primary transition-colors">
+                    LEGS
+                </button>
+<button class="flex-none px-5 py-2.5 rounded-full bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-gray-800 text-text-secondary-light dark:text-gray-400 text-sm font-bold uppercase tracking-wide hover:border-primary hover:text-primary transition-colors">
+                    SHOULDERS
+                </button>
+<button class="flex-none px-5 py-2.5 rounded-full bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-gray-800 text-text-secondary-light dark:text-gray-400 text-sm font-bold uppercase tracking-wide hover:border-primary hover:text-primary transition-colors">
+                    ARMS
+                </button>
+<button class="flex-none px-5 py-2.5 rounded-full bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-gray-800 text-text-secondary-light dark:text-gray-400 text-sm font-bold uppercase tracking-wide hover:border-primary hover:text-primary transition-colors">
+                    ABS
+                </button>
+</div>
+</div>
+<div class="pt-2">
+<button class="w-full py-5 rounded-2xl border-2 border-dashed border-gray-700 hover:border-primary group flex flex-col items-center justify-center transition-all bg-surface-dark/30 hover:bg-surface-dark/50">
+<div class="flex items-center space-x-2 text-gray-400 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-2xl">add_circle</span>
+<span class="text-sm font-black italic uppercase tracking-wider">Add Exercises From Catalogue</span>
+</div>
+</button>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-end px-1">
+<label class="block text-xs font-bold uppercase text-text-secondary-light dark:text-text-secondary-dark tracking-wider">Routine Preview</label>
+<span class="text-[10px] text-gray-500 font-mono">2 EXERCISES</span>
+</div>
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-800 relative group">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-bold text-gray-900 dark:text-white text-base">Bench Press (Barbell)</h3>
+<button class="text-gray-500 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-lg">close</span>
+</button>
+</div>
+<div class="flex items-center gap-3 text-xs text-gray-400 mb-3">
+<span class="bg-gray-800 px-1.5 py-0.5 rounded text-[10px] font-bold tracking-wide uppercase text-gray-300">Chest</span>
+<span class="bg-gray-800 px-1.5 py-0.5 rounded text-[10px] font-bold tracking-wide uppercase text-gray-300">Compound</span>
+</div>
+<div class="flex items-center justify-between bg-background-dark rounded-lg p-3 border border-gray-800">
+<div class="flex items-center gap-6">
+<div class="text-center">
+<div class="text-[10px] text-gray-500 font-bold uppercase mb-0.5">Sets</div>
+<div class="text-sm font-mono text-primary font-bold">4</div>
+</div>
+<div class="w-px h-6 bg-gray-800"></div>
+<div class="text-center">
+<div class="text-[10px] text-gray-500 font-bold uppercase mb-0.5">Weight</div>
+<div class="text-sm font-mono text-white font-bold text-opacity-50">-</div>
+</div>
+<div class="w-px h-6 bg-gray-800"></div>
+<div class="text-center">
+<div class="text-[10px] text-gray-500 font-bold uppercase mb-0.5">Reps</div>
+<div class="text-sm font-mono text-white font-bold">10</div>
+</div>
+</div>
+<button class="text-primary hover:text-white transition-colors">
+<span class="material-symbols-outlined text-lg">edit</span>
+</button>
+</div>
+</div>
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-800 relative group">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-bold text-gray-900 dark:text-white text-base">Incline Dumbbell Press</h3>
+<button class="text-gray-500 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-lg">close</span>
+</button>
+</div>
+<div class="flex items-center gap-3 text-xs text-gray-400 mb-3">
+<span class="bg-gray-800 px-1.5 py-0.5 rounded text-[10px] font-bold tracking-wide uppercase text-gray-300">Upper Chest</span>
+</div>
+<div class="flex items-center justify-between bg-background-dark rounded-lg p-3 border border-gray-800">
+<div class="flex items-center gap-6">
+<div class="text-center">
+<div class="text-[10px] text-gray-500 font-bold uppercase mb-0.5">Sets</div>
+<div class="text-sm font-mono text-primary font-bold">3</div>
+</div>
+<div class="w-px h-6 bg-gray-800"></div>
+<div class="text-center">
+<div class="text-[10px] text-gray-500 font-bold uppercase mb-0.5">Weight</div>
+<div class="text-sm font-mono text-white font-bold text-opacity-50">-</div>
+</div>
+<div class="w-px h-6 bg-gray-800"></div>
+<div class="text-center">
+<div class="text-[10px] text-gray-500 font-bold uppercase mb-0.5">Reps</div>
+<div class="text-sm font-mono text-white font-bold">12</div>
+</div>
+</div>
+<button class="text-primary hover:text-white transition-colors">
+<span class="material-symbols-outlined text-lg">edit</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<div class="fixed bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-background-dark via-background-dark to-transparent z-40 pb-safe">
+<button class="w-full bg-primary hover:bg-primary-dim text-black font-black italic uppercase tracking-wider text-lg py-4 rounded-full shadow-xl shadow-primary/20 transition-transform active:scale-[0.98] flex items-center justify-center gap-2 neon-glow">
+<span class="material-symbols-outlined">check_circle</span>
+            Create Routine
+        </button>
+</div>
+<script>
+        // Ensure Dark Mode is Active
+        document.documentElement.classList.add('dark');
+    </script>
+</body></html>

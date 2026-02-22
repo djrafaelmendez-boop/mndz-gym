@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Add Exercise - Antigravity</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#DFFF00", // Neon Lime
+                        "primary-dim": "#b3cc00",
+                        "background-light": "#F3F4F6",
+                        "background-dark": "#0D0D0D", // Deep Charcoal/Black
+                        "surface-dark": "#161616", // Slightly lighter for cards
+                        "surface-light": "#FFFFFF",
+                        "text-secondary-dark": "#A1A1A1",
+                        "text-secondary-light": "#6B7280",
+                        // Neon Colors for Muscle Groups
+                        "neon-orange": "#FF5F1F",
+                        "neon-blue": "#00F0FF",
+                        "neon-pink": "#FF0055",
+                        "neon-purple": "#BC13FE",
+                        "neon-green": "#39FF14",
+                        "neon-teal": "#00FFC8",
+                    },
+                    fontFamily: {
+                        display: ["Inter", "sans-serif"],
+                        sans: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                    },
+                },
+            },
+        };
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .neon-glow {
+            box-shadow: 0 0 10px rgba(223, 255, 0, 0.15);
+        }
+        .neon-pink-glow {
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.5), inset 0 0 5px rgba(255, 0, 85, 0.2);
+            border-color: #FF0055;
+        }
+        .glow-chest:hover { box-shadow: 0 0 12px rgba(0, 240, 255, 0.6); border-color: #00F0FF; color: #00F0FF; }
+        .glow-shoulders:hover { box-shadow: 0 0 12px rgba(255, 0, 85, 0.6); border-color: #FF0055; color: #FF0055; }
+        .glow-legs:hover { box-shadow: 0 0 12px rgba(255, 95, 31, 0.6); border-color: #FF5F1F; color: #FF5F1F; }
+        .glow-back:hover { box-shadow: 0 0 12px rgba(188, 19, 254, 0.6); border-color: #BC13FE; color: #BC13FE; }
+        .glow-triceps:hover { box-shadow: 0 0 12px rgba(57, 255, 20, 0.6); border-color: #39FF14; color: #39FF14; }
+        .glow-biceps:hover { box-shadow: 0 0 12px rgba(0, 255, 200, 0.6); border-color: #00FFC8; color: #00FFC8; }
+        .selected-shoulders {
+             background-color: #FF0055 !important;
+             color: black !important;
+             box-shadow: 0 0 15px rgba(255, 0, 85, 0.6) !important;
+             border-color: #FF0055 !important;
+        }
+        .neon-text {
+            text-shadow: 0 0 8px rgba(223, 255, 0, 0.4);
+        }
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-gray-900 dark:text-white h-screen flex flex-col overflow-hidden selection:bg-primary selection:text-black transition-colors duration-200">
+<div class="absolute inset-x-0 top-0 h-96 bg-gradient-to-b from-[#252525] via-[#1a1a1a] to-background-dark dark:to-background-dark opacity-80 pointer-events-none z-0"></div>
+<header class="flex-none px-6 pt-12 pb-4 flex items-center gap-4 bg-transparent z-20 relative">
+<button class="p-2 rounded-full hover:bg-surface-dark transition-colors -ml-2 text-white">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<div>
+<h1 class="text-2xl font-black italic tracking-tighter uppercase">New Exercise</h1>
+<p class="text-xs text-text-secondary-light dark:text-text-secondary-dark mt-0.5 tracking-wide font-medium">ADD TO DATABASE</p>
+</div>
+</header>
+<main class="flex-1 overflow-y-auto pb-24 relative z-10 px-6 space-y-8">
+<div class="space-y-2">
+<label class="text-xs font-bold text-text-secondary-dark uppercase tracking-wider block">Exercise Name</label>
+<input class="w-full bg-surface-dark border-b-2 border-gray-800 focus:border-primary text-xl font-bold text-white placeholder-gray-600 py-3 px-0 outline-none transition-colors bg-transparent" placeholder="e.g. Bench Press" type="text" value="Military Press"/>
+</div>
+<div class="space-y-3 p-5 rounded-2xl bg-surface-dark border neon-pink-glow transition-all duration-300 relative overflow-hidden group">
+<div class="absolute inset-0 bg-neon-pink/5 pointer-events-none"></div>
+<div class="flex justify-between items-center mb-4 relative z-10">
+<label class="text-xs font-bold text-neon-pink uppercase tracking-wider block flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">check_circle</span>
+                    Muscle Group Selected
+                </label>
+<span class="text-xs font-bold text-neon-pink bg-neon-pink/10 px-2 py-1 rounded">SHOULDERS</span>
+</div>
+<div class="grid grid-cols-3 sm:grid-cols-6 gap-4 relative z-10">
+<button class="flex flex-col items-center gap-2 p-1 rounded-xl opacity-40 hover:opacity-100 transition-opacity group/btn">
+<div class="w-12 h-12 rounded-full bg-surface-light/5 flex items-center justify-center border border-white/10 group-hover/btn:border-neon-blue group-hover/btn:shadow-[0_0_10px_rgba(0,240,255,0.4)] transition-all">
+<span class="material-symbols-outlined text-white text-xl group-hover/btn:text-neon-blue">monitor_heart</span>
+</div>
+<span class="text-[10px] font-bold text-text-secondary-dark group-hover/btn:text-neon-blue">CHEST</span>
+</button>
+<button class="flex flex-col items-center gap-2 p-1 rounded-xl scale-110 transform transition-transform">
+<div class="w-12 h-12 rounded-full bg-neon-pink text-black flex items-center justify-center shadow-[0_0_15px_rgba(255,0,85,0.6)] ring-2 ring-neon-pink ring-offset-2 ring-offset-surface-dark">
+<span class="material-symbols-outlined text-xl">accessibility_new</span>
+</div>
+<span class="text-[10px] font-bold text-neon-pink">SHOULDERS</span>
+</button>
+<button class="flex flex-col items-center gap-2 p-1 rounded-xl opacity-40 hover:opacity-100 transition-opacity group/btn">
+<div class="w-12 h-12 rounded-full bg-surface-light/5 flex items-center justify-center border border-white/10 group-hover/btn:border-neon-orange group-hover/btn:shadow-[0_0_10px_rgba(255,95,31,0.4)] transition-all">
+<span class="material-symbols-outlined text-white text-xl group-hover/btn:text-neon-orange">directions_run</span>
+</div>
+<span class="text-[10px] font-bold text-text-secondary-dark group-hover/btn:text-neon-orange">LEGS</span>
+</button>
+<button class="flex flex-col items-center gap-2 p-1 rounded-xl opacity-40 hover:opacity-100 transition-opacity group/btn">
+<div class="w-12 h-12 rounded-full bg-surface-light/5 flex items-center justify-center border border-white/10 group-hover/btn:border-neon-purple group-hover/btn:shadow-[0_0_10px_rgba(188,19,254,0.4)] transition-all">
+<span class="material-symbols-outlined text-white text-xl group-hover/btn:text-neon-purple">fitness_center</span>
+</div>
+<span class="text-[10px] font-bold text-text-secondary-dark group-hover/btn:text-neon-purple">BACK</span>
+</button>
+<button class="flex flex-col items-center gap-2 p-1 rounded-xl opacity-40 hover:opacity-100 transition-opacity group/btn">
+<div class="w-12 h-12 rounded-full bg-surface-light/5 flex items-center justify-center border border-white/10 group-hover/btn:border-neon-green group-hover/btn:shadow-[0_0_10px_rgba(57,255,20,0.4)] transition-all">
+<span class="material-symbols-outlined text-white text-xl group-hover/btn:text-neon-green">bolt</span>
+</div>
+<span class="text-[10px] font-bold text-text-secondary-dark group-hover/btn:text-neon-green">TRICEPS</span>
+</button>
+<button class="flex flex-col items-center gap-2 p-1 rounded-xl opacity-40 hover:opacity-100 transition-opacity group/btn">
+<div class="w-12 h-12 rounded-full bg-surface-light/5 flex items-center justify-center border border-white/10 group-hover/btn:border-neon-teal group-hover/btn:shadow-[0_0_10px_rgba(0,255,200,0.4)] transition-all">
+<span class="material-symbols-outlined text-white text-xl group-hover/btn:text-neon-teal">sports_gymnastics</span>
+</div>
+<span class="text-[10px] font-bold text-text-secondary-dark group-hover/btn:text-neon-teal">BICEPS</span>
+</button>
+</div>
+<div class="h-0.5 w-full bg-gradient-to-r from-transparent via-neon-pink/50 to-transparent absolute bottom-0 left-0"></div>
+</div>
+<div class="space-y-3 opacity-50 hover:opacity-100 transition-opacity">
+<label class="text-xs font-bold text-text-secondary-dark uppercase tracking-wider block">Equipment</label>
+<div class="flex gap-3 overflow-x-auto no-scrollbar pb-2">
+<button class="flex-none px-4 py-2 rounded-lg bg-surface-dark border border-gray-800 text-text-secondary-dark font-medium text-xs whitespace-nowrap hover:border-gray-600 transition-colors">Barbell</button>
+<button class="flex-none px-4 py-2 rounded-lg bg-surface-dark border border-gray-800 text-text-secondary-dark font-medium text-xs whitespace-nowrap hover:border-gray-600 transition-colors">Dumbbell</button>
+<button class="flex-none px-4 py-2 rounded-lg bg-surface-dark border border-gray-800 text-text-secondary-dark font-medium text-xs whitespace-nowrap hover:border-gray-600 transition-colors">Machine</button>
+<button class="flex-none px-4 py-2 rounded-lg bg-surface-dark border border-gray-800 text-text-secondary-dark font-medium text-xs whitespace-nowrap hover:border-gray-600 transition-colors">Bodyweight</button>
+</div>
+</div>
+<div class="space-y-2 opacity-50 hover:opacity-100 transition-opacity">
+<label class="text-xs font-bold text-text-secondary-dark uppercase tracking-wider block">Notes</label>
+<textarea class="w-full bg-surface-dark border border-gray-800 rounded-xl p-4 text-sm text-white placeholder-gray-600 outline-none focus:border-gray-600 transition-colors resize-none h-24" placeholder="Add any instructions or cues..."></textarea>
+</div>
+</main>
+<div class="flex-none p-6 bg-gradient-to-t from-background-dark via-background-dark to-transparent z-30 fixed bottom-0 left-0 right-0">
+<button class="w-full py-4 rounded-xl bg-primary text-black font-black uppercase tracking-wide shadow-[0_0_20px_rgba(223,255,0,0.3)] hover:shadow-[0_0_30px_rgba(223,255,0,0.5)] transition-all transform active:scale-[0.98] flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">add</span>
+            Create Exercise
+        </button>
+</div>
+<script>
+        document.documentElement.classList.add('dark');
+    </script>
+</body></html>

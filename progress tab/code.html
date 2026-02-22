@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Progress - Antigravity</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#DFFF00", // Neon Lime
+                        "primary-dim": "rgba(223, 255, 0, 0.1)",
+                        "background-dark": "#0D0D0D", // Deep Charcoal
+                        "surface-dark": "#161616", // Card bg
+                        "surface-highlight": "#1F1F1F",
+                        "text-secondary": "#A1A1A1",
+                    },
+                    fontFamily: {
+                        sans: ["Inter", "sans-serif"],
+                    },
+                    boxShadow: {
+                        'neon': '0 0 10px rgba(223, 255, 0, 0.3)',
+                        'neon-sm': '0 0 5px rgba(223, 255, 0, 0.4)',
+                    }
+                },
+            },
+        };
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0D0D0D; 
+        }::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+        .neon-text {
+            text-shadow: 0 0 8px rgba(223, 255, 0, 0.5);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-dark text-white h-screen flex flex-col overflow-hidden selection:bg-primary selection:text-black relative">
+<div class="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-[#252525] via-[#151515] to-background-dark pointer-events-none z-0"></div>
+<header class="flex-none px-6 pt-12 pb-6 flex justify-between items-center z-10 relative">
+<div>
+<h1 class="text-4xl font-black italic tracking-tighter uppercase leading-none text-white">Progress</h1>
+<p class="text-[10px] text-primary font-bold tracking-[0.2em] mt-1.5 uppercase pl-0.5">Your Evolution</p>
+</div>
+<button class="h-10 w-10 rounded-full bg-surface-highlight flex items-center justify-center hover:bg-white/10 transition-colors border border-white/5 group">
+<span class="material-symbols-outlined text-gray-400 group-hover:text-white transition-colors" style="font-size: 20px;">calendar_month</span>
+</button>
+</header>
+<main class="flex-1 overflow-y-auto px-6 pb-24 space-y-6 relative z-10">
+<div class="bg-surface-dark rounded-[20px] p-5 border border-white/5 shadow-lg relative overflow-hidden">
+<div class="absolute -top-10 -right-10 w-32 h-32 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+<div class="grid grid-cols-2 gap-x-4 gap-y-8 relative z-10">
+<div class="flex flex-col space-y-2">
+<div class="flex justify-between items-start">
+<div class="p-2 rounded-xl bg-white/5 w-fit border border-white/5">
+<span class="material-symbols-outlined text-primary text-xl">monitor_weight</span>
+</div>
+<div class="text-[10px] font-bold text-primary bg-primary/10 border border-primary/20 px-1.5 py-0.5 rounded flex items-center">
+<span class="material-symbols-outlined text-[10px] mr-0.5 font-bold">trending_down</span>
+                        1.2%
+                    </div>
+</div>
+<div>
+<div class="text-xs text-text-secondary font-semibold uppercase tracking-wide mb-0.5">Weight</div>
+<div class="text-2xl font-bold text-white tracking-tight">185.4 <span class="text-xs text-text-secondary font-medium">lbs</span></div>
+</div>
+</div>
+<div class="flex flex-col space-y-2">
+<div class="flex justify-between items-start">
+<div class="p-2 rounded-xl bg-white/5 w-fit border border-white/5">
+<span class="material-symbols-outlined text-orange-400 text-xl">local_fire_department</span>
+</div>
+</div>
+<div>
+<div class="text-xs text-text-secondary font-semibold uppercase tracking-wide mb-0.5">Calories</div>
+<div class="text-2xl font-bold text-white tracking-tight">2,450 <span class="text-xs text-text-secondary font-medium">avg</span></div>
+</div>
+</div>
+<div class="flex flex-col space-y-2">
+<div class="flex justify-between items-start">
+<div class="p-2 rounded-xl bg-white/5 w-fit border border-white/5">
+<span class="material-symbols-outlined text-blue-400 text-xl">directions_walk</span>
+</div>
+</div>
+<div>
+<div class="text-xs text-text-secondary font-semibold uppercase tracking-wide mb-0.5">Steps</div>
+<div class="text-2xl font-bold text-white tracking-tight">10,240 <span class="text-xs text-text-secondary font-medium">avg</span></div>
+</div>
+</div>
+<div class="flex flex-col space-y-2">
+<div class="flex justify-between items-start">
+<div class="p-2 rounded-xl bg-white/5 w-fit border border-white/5">
+<span class="material-symbols-outlined text-purple-400 text-xl">accessibility_new</span>
+</div>
+</div>
+<div>
+<div class="text-xs text-text-secondary font-semibold uppercase tracking-wide mb-0.5">Body Fat</div>
+<div class="text-2xl font-bold text-white tracking-tight">14.5%</div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-surface-dark rounded-[20px] p-6 border border-white/5 shadow-lg relative overflow-hidden">
+<div class="flex justify-between items-center mb-6 relative z-10">
+<h2 class="text-lg font-bold text-white italic tracking-tight uppercase">Weight Over Time</h2>
+<div class="flex bg-black/40 p-1 rounded-lg border border-white/5">
+<button class="px-4 py-1.5 text-xs font-bold text-black bg-primary rounded shadow-neon-sm transition-all hover:opacity-90">Year</button>
+<button class="px-4 py-1.5 text-xs font-bold text-text-secondary hover:text-white transition-all">Month</button>
+</div>
+</div>
+<div class="h-56 w-full relative z-10 mb-8">
+<canvas id="mainChart"></canvas>
+</div>
+<div class="border-t border-white/5 pt-5 relative z-10">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-xs font-bold text-text-secondary uppercase tracking-wider flex items-center gap-1">
+<span class="material-symbols-outlined text-base">calendar_today</span>
+                    February History
+                </h3>
+<button class="text-text-secondary hover:text-white">
+<span class="material-symbols-outlined text-lg">chevron_right</span>
+</button>
+</div>
+<div class="grid grid-cols-7 text-center mb-3 border-b border-white/5 pb-2">
+<div class="text-[10px] font-bold text-text-secondary">M</div>
+<div class="text-[10px] font-bold text-text-secondary">T</div>
+<div class="text-[10px] font-bold text-text-secondary">W</div>
+<div class="text-[10px] font-bold text-text-secondary">T</div>
+<div class="text-[10px] font-bold text-text-secondary">F</div>
+<div class="text-[10px] font-bold text-text-secondary">S</div>
+<div class="text-[10px] font-bold text-text-secondary">S</div>
+</div>
+<div class="grid grid-cols-7 gap-y-4 justify-items-center" id="calendarGrid">
+<div class="text-xs text-white/20">29</div>
+<div class="text-xs text-white/20">30</div>
+<div class="text-xs text-white/20">31</div>
+<div class="text-xs font-medium text-white flex flex-col items-center gap-1">1</div>
+<div class="text-xs font-medium text-white flex flex-col items-center gap-1">2 <span class="w-1 h-1 bg-primary rounded-full shadow-neon-sm"></span></div>
+<div class="text-xs font-medium text-white flex flex-col items-center gap-1">3</div>
+<div class="text-xs font-medium text-white flex flex-col items-center gap-1">4 <span class="w-1 h-1 bg-primary rounded-full shadow-neon-sm"></span></div>
+<div class="text-xs font-medium text-white flex flex-col items-center gap-1">5 <span class="w-1 h-1 bg-primary rounded-full shadow-neon-sm"></span></div>
+<div class="text-xs font-medium text-white flex flex-col items-center gap-1">6</div>
+<div class="text-xs font-medium text-white flex flex-col items-center gap-1">7 <span class="w-1 h-1 bg-primary rounded-full shadow-neon-sm"></span></div>
+<div class="text-xs font-medium text-white flex flex-col items-center gap-1">8</div>
+<div class="text-xs font-medium text-white flex flex-col items-center gap-1">9 <span class="w-1 h-1 bg-primary rounded-full shadow-neon-sm"></span></div>
+<div class="text-xs font-medium text-white flex flex-col items-center gap-1">10</div>
+<div class="text-xs font-medium text-white flex flex-col items-center gap-1">11</div>
+<div class="text-xs font-medium text-white flex flex-col items-center gap-1">12 <span class="w-1 h-1 bg-primary rounded-full shadow-neon-sm"></span></div>
+<div class="text-xs font-medium text-white flex flex-col items-center gap-1">13</div>
+<div class="text-xs font-medium text-white flex flex-col items-center gap-1">14</div>
+<div class="text-xs font-medium text-white flex flex-col items-center gap-1">15</div>
+<div class="text-xs font-medium text-white flex flex-col items-center gap-1">16 <span class="w-1 h-1 bg-primary rounded-full shadow-neon-sm"></span></div>
+<div class="text-xs font-medium text-white flex flex-col items-center gap-1">17</div>
+<div class="text-xs font-medium text-white flex flex-col items-center gap-1">18</div>
+</div>
+</div>
+</div>
+</main>
+<nav class="flex-none bg-surface-dark border-t border-white/5 pb-8 relative z-20">
+<div class="flex justify-around items-center h-20 px-2">
+<a class="flex flex-col items-center justify-center w-full h-full text-text-secondary hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined text-2xl mb-1 group-hover:-translate-y-0.5 transition-transform">calendar_today</span>
+<span class="text-[10px] font-bold tracking-wide">SCHEDULE</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-text-secondary hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined text-2xl mb-1 group-hover:-translate-y-0.5 transition-transform">assignment</span>
+<span class="text-[10px] font-bold tracking-wide">ROUTINES</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-text-secondary hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined text-2xl mb-1 group-hover:-translate-y-0.5 transition-transform">fitness_center</span>
+<span class="text-[10px] font-bold tracking-wide">EXERCISES</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl mb-1 neon-text">show_chart</span>
+<span class="text-[10px] font-bold tracking-wide text-primary">PROGRESS</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-text-secondary hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined text-2xl mb-1 group-hover:-translate-y-0.5 transition-transform">person</span>
+<span class="text-[10px] font-bold tracking-wide">PROFILE</span>
+</a>
+</div>
+</nav>
+<script>
+    const ctx = document.getElementById('mainChart').getContext('2d');
+    // Create gradient
+    let gradient = ctx.createLinearGradient(0, 0, 0, 300);
+    gradient.addColorStop(0, 'rgba(223, 255, 0, 0.4)');
+    gradient.addColorStop(1, 'rgba(223, 255, 0, 0)');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            datasets: [{
+                label: 'Weight',
+                data: [195, 192, 190, 188, 189, 187, 186, 185.4, null, null, null, null],
+                borderColor: '#DFFF00',
+                backgroundColor: gradient,
+                borderWidth: 3,
+                pointBackgroundColor: '#0D0D0D',
+                pointBorderColor: '#DFFF00',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#1F1F1F',
+                    titleColor: '#fff',
+                    bodyColor: '#DFFF00',
+                    titleFont: { family: 'Inter', size: 12 },
+                    bodyFont: { family: 'Inter', size: 14, weight: 'bold' },
+                    padding: 12,
+                    cornerRadius: 8,
+                    displayColors: false,
+                    callbacks: {
+                        label: function(context) {
+                            return context.parsed.y + ' lbs';
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: { display: false, drawBorder: false },
+                    ticks: { 
+                        color: '#555', 
+                        font: { family: 'Inter', size: 10 },
+                        maxTicksLimit: 6
+                    }
+                },
+                y: {
+                    grid: { 
+                        color: 'rgba(255,255,255,0.05)', 
+                        borderDash: [4, 4],
+                        drawBorder: false 
+                    },
+                    ticks: { 
+                        color: '#555', 
+                        font: { family: 'Inter', size: 10 },
+                        stepSize: 5
+                    },
+                    min: 175,
+                    max: 200
+                }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index',
+            },
+        }
+    });
+</script>
+</body></html>
