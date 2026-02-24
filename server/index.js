@@ -598,8 +598,10 @@ app.get('/api/profile', authenticateToken, async (req, res) => {
             }
         }
 
+        const user = await dbGet('SELECT username FROM users WHERE id = ?', [req.userId]);
+
         res.json({
-            username: 'MNDZ',
+            username: user?.username || 'User',
             workouts: workoutCount?.c || 0,
             streak,
             currentWeight: latestWeight?.weight || null,
@@ -615,13 +617,6 @@ app.get('/api/profile', authenticateToken, async (req, res) => {
 
 async function start() {
     await initDatabase();
-
-    // Ensure default user exists (userId = 1)
-    const existingUser = await dbGet('SELECT id FROM users WHERE id = 1');
-    if (!existingUser) {
-        await dbRun("INSERT INTO users (username, email, passwordHash) VALUES ('MNDZ', 'local@mndz.app', 'no-auth')");
-        saveDatabase();
-    }
 
     app.listen(PORT, '0.0.0.0', () => {
         console.log(`MNDZ API running on http://0.0.0.0:${PORT}`);
