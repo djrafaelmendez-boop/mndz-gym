@@ -28,8 +28,8 @@ export function AuthProvider({ children }) {
         return res;
     };
 
-    const register = async (username, email, password) => {
-        const res = await api.register({ username, email, password });
+    const register = async (username, email, password, firstName, lastName) => {
+        const res = await api.register({ username, email, password, firstName, lastName });
         localStorage.setItem('mndz_token', res.token);
         setUser(res.user);
         return res;

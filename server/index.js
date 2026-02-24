@@ -35,8 +35,8 @@ function authenticateToken(req, res, next) {
 
 app.post('/api/register', async (req, res) => {
     try {
-        const { username, email, password } = req.body;
-        if (!username || !email || !password) {
+        const { username, email, password, firstName, lastName } = req.body;
+        if (!username || !email || !password || !firstName || !lastName) {
             return res.status(400).json({ error: 'All fields are required.' });
         }
 
@@ -48,24 +48,16 @@ app.post('/api/register', async (req, res) => {
 
         const passwordHash = await bcrypt.hash(password, 10);
         const result = await dbRun(
-            'INSERT INTO users (username, email, passwordHash) VALUES (?, ?, ?)',
-            [username, email, passwordHash]
+            'INSERT INTO users (username, email, passwordHash, firstName, lastName) VALUES (?, ?, ?, ?, ?)',
+            [username, email, passwordHash, firstName, lastName]
         );
 
         const newUserId = result.lastInsertRowid;
 
-        // Automatically migrate old "User 1" data if this is the very first registered user.
-        // This is a convenience for the user's existing data since previously everything was under userId 1.
-        const userCount = await dbGet('SELECT COUNT(*) as count FROM users');
-        if (userCount.count === 1 && newUserId === 1) {
-            // First user ever created gets all the existing orphan data (since it was previously mocked as user 1)
-            console.log("First user registered! Existing routines/exercises will be owned by User 1.");
-        }
-
         const token = jwt.sign({ id: newUserId, email }, JWT_SECRET, { expiresIn: '30d' });
 
         saveDatabase();
-        res.status(201).json({ token, user: { id: newUserId, username, email } });
+        res.status(201).json({ token, user: { id: newUserId, username, email, firstName, lastName } });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -86,7 +78,7 @@ app.post('/api/login', async (req, res) => {
         }
 
         const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '30d' });
-        res.json({ token, user: { id: user.id, username: user.username, email: user.email, profilePicture: user.profilePicture } });
+        res.json({ token, user: { id: user.id, username: user.username, email: user.email, profilePicture: user.profilePicture, firstName: user.firstName, lastName: user.lastName, notificationsEnabled: user.notificationsEnabled === 1 } });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -94,7 +86,7 @@ app.post('/api/login', async (req, res) => {
 
 app.get('/api/me', authenticateToken, async (req, res) => {
     try {
-        const user = await dbGet('SELECT id, username, email, profilePicture, createdAt FROM users WHERE id = ?', [req.userId]);
+        const user = await dbGet('SELECT id, username, email, profilePicture, firstName, lastName, notificationsEnabled, createdAt FROM users WHERE id = ?', [req.userId]);
         if (!user) return res.status(404).json({ error: 'User not found.' });
         res.json(user);
     } catch (err) {
@@ -598,14 +590,61 @@ app.get('/api/profile', authenticateToken, async (req, res) => {
             }
         }
 
-        const user = await dbGet('SELECT username FROM users WHERE id = ?', [req.userId]);
+        const user = await dbGet('SELECT username, firstName, lastName, profilePicture, notificationsEnabled FROM users WHERE id = ?', [req.userId]);
 
         res.json({
             username: user?.username || 'User',
+            firstName: user?.firstName,
+            lastName: user?.lastName,
+            profilePicture: user?.profilePicture,
+            notificationsEnabled: user?.notificationsEnabled === 1,
             workouts: workoutCount?.c || 0,
             streak,
             currentWeight: latestWeight?.weight || null,
         });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// ═══════════════════════════════════════════════
+// PROFILE SETTINGS ROUTES
+// ═══════════════════════════════════════════════
+
+app.put('/api/profile/password', authenticateToken, async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        const user = await dbGet('SELECT passwordHash FROM users WHERE id = ?', [req.userId]);
+
+        const valid = await bcrypt.compare(currentPassword, user.passwordHash);
+        if (!valid) return res.status(400).json({ error: 'Current password is incorrect.' });
+
+        const newHash = await bcrypt.hash(newPassword, 10);
+        await dbRun('UPDATE users SET passwordHash = ? WHERE id = ?', [newHash, req.userId]);
+        saveDatabase();
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.put('/api/profile/avatar', authenticateToken, async (req, res) => {
+    try {
+        const { image } = req.body;
+        await dbRun('UPDATE users SET profilePicture = ? WHERE id = ?', [image, req.userId]);
+        saveDatabase();
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.put('/api/profile/notifications', authenticateToken, async (req, res) => {
+    try {
+        const { enabled } = req.body;
+        await dbRun('UPDATE users SET notificationsEnabled = ? WHERE id = ?', [enabled ? 1 : 0, req.userId]);
+        saveDatabase();
+        res.json({ success: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

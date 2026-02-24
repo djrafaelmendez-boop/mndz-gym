@@ -77,4 +77,7 @@ export const api = {
 
     // Profile
     getProfile: () => apiFetch('/profile'),
+    updateAvatar: (image) => apiFetch('/profile/avatar', { method: 'PUT', body: JSON.stringify({ image }) }),
+    updateNotifications: (enabled) => apiFetch('/profile/notifications', { method: 'PUT', body: JSON.stringify({ enabled }) }),
+    updatePassword: (currentPassword, newPassword) => apiFetch('/profile/password', { method: 'PUT', body: JSON.stringify({ currentPassword, newPassword }) }),
 };

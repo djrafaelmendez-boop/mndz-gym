@@ -16,13 +16,66 @@ export default function Profile() {
         api.getProfile().then(setProfile).catch(console.error);
     }, []);
 
-    const username = user?.username || profile?.username || 'MNDZ';
-    const initials = username
+    const [showPasswordForm, setShowPasswordForm] = useState(false);
+    const [currentPassword, setCurrentPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [passwordError, setPasswordError] = useState('');
+    const [passwordLoading, setPasswordLoading] = useState(false);
+
+    const displayName = (profile?.firstName && profile?.lastName)
+        ? `${profile.firstName} ${profile.lastName}`
+        : (profile?.username || user?.username || 'MNDZ');
+
+    const initials = displayName
         .split(' ')
         .map(w => w[0])
         .join('')
         .toUpperCase()
         .slice(0, 2);
+
+    const handleAvatarUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+            const base64 = reader.result;
+            try {
+                await api.updateAvatar(base64);
+                setProfile(prev => ({ ...prev, profilePicture: base64 }));
+            } catch (err) {
+                console.error('Failed to update avatar:', err);
+            }
+        };
+        reader.readAsDataURL(file);
+    };
+
+    const handleToggleNotifications = async () => {
+        const newVal = !profile?.notificationsEnabled;
+        setProfile(prev => ({ ...prev, notificationsEnabled: newVal }));
+        try {
+            await api.updateNotifications(newVal);
+        } catch (err) {
+            console.error('Failed to update notifications:', err);
+            setProfile(prev => ({ ...prev, notificationsEnabled: !newVal }));
+        }
+    };
+
+    const handleChangePassword = async (e) => {
+        e.preventDefault();
+        setPasswordError('');
+        setPasswordLoading(true);
+        try {
+            await api.updatePassword(currentPassword, newPassword);
+            setShowPasswordForm(false);
+            setCurrentPassword('');
+            setNewPassword('');
+            alert('Password updated successfully!');
+        } catch (err) {
+            setPasswordError(err.message);
+        } finally {
+            setPasswordLoading(false);
+        }
+    };
 
     const stats = [
         { label: 'WORKOUTS', value: profile?.workouts || 0 },
@@ -102,23 +155,25 @@ export default function Profile() {
                             height: '112px',
                             borderRadius: '50%',
                             border: `2px solid ${neonLime}`,
-                            background: surfaceDark,
+                            background: profile?.profilePicture ? `url(${profile.profilePicture}) center/cover` : surfaceDark,
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                         }}>
-                            <span style={{
-                                fontSize: '36px',
-                                fontWeight: 900,
-                                color: '#fff',
-                                letterSpacing: '-0.05em',
-                                fontStyle: 'italic',
-                            }}>
-                                {initials}
-                            </span>
+                            {!profile?.profilePicture && (
+                                <span style={{
+                                    fontSize: '36px',
+                                    fontWeight: 900,
+                                    color: '#fff',
+                                    letterSpacing: '-0.05em',
+                                    fontStyle: 'italic',
+                                }}>
+                                    {initials}
+                                </span>
+                            )}
                         </div>
                         {/* Edit button */}
-                        <button style={{
+                        <div style={{
                             position: 'absolute',
                             bottom: '0',
                             right: '0',
@@ -132,9 +187,17 @@ export default function Profile() {
                             justifyContent: 'center',
                             cursor: 'pointer',
                             color: '#000',
+                            padding: 0,
+                            overflow: 'hidden'
                         }}>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleAvatarUpload}
+                                style={{ position: 'absolute', opacity: 0, width: '100%', height: '100%', cursor: 'pointer' }}
+                            />
                             <span className="material-icons-outlined" style={{ fontSize: '14px', fontWeight: 'bold' }}>edit</span>
-                        </button>
+                        </div>
                     </div>
 
                     {/* Name */}
@@ -146,7 +209,7 @@ export default function Profile() {
                         letterSpacing: '-0.02em',
                         marginTop: '16px',
                     }}>
-                        {username}
+                        {displayName}
                     </h2>
 
                     {/* Badge row */}
@@ -221,42 +284,37 @@ export default function Profile() {
                         border: `1px solid ${borderColor}`,
                         overflow: 'hidden',
                     }}>
-                        {/* Personal Details */}
-                        <div style={menuRowStyle(true)}>
+                        <div style={menuRowStyle(false)} onClick={() => setShowPasswordForm(!showPasswordForm)}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                                <span className="material-icons-outlined" style={{ fontSize: '22px', color: neonLime }}>person</span>
-                                <span style={{ fontSize: '14px', fontWeight: 700, color: '#E5E7EB' }}>Personal Details</span>
+                                <span className="material-icons-outlined" style={{ fontSize: '22px', color: neonLime }}>lock</span>
+                                <span style={{ fontSize: '14px', fontWeight: 700, color: '#E5E7EB' }}>Change Password</span>
                             </div>
-                            <span className="material-icons-outlined" style={{ fontSize: '18px', color: '#4B5563' }}>chevron_right</span>
+                            <span className="material-icons-outlined" style={{ fontSize: '18px', color: '#4B5563', transition: 'transform 0.2s', transform: showPasswordForm ? 'rotate(90deg)' : 'none' }}>chevron_right</span>
                         </div>
-                        {/* Email & Password */}
-                        <div style={menuRowStyle(true)}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                                <span className="material-icons-outlined" style={{ fontSize: '22px', color: neonLime }}>email</span>
-                                <span style={{ fontSize: '14px', fontWeight: 700, color: '#E5E7EB' }}>Email & Password</span>
-                            </div>
-                            <span className="material-icons-outlined" style={{ fontSize: '18px', color: '#4B5563' }}>chevron_right</span>
-                        </div>
-                        {/* Subscription */}
-                        <div style={menuRowStyle(false)}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                                <span className="material-icons-outlined" style={{ fontSize: '22px', color: neonLime }}>credit_card</span>
-                                <span style={{ fontSize: '14px', fontWeight: 700, color: '#E5E7EB' }}>Subscription</span>
-                            </div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <span style={{
-                                    fontSize: '10px',
-                                    fontWeight: 700,
-                                    background: neonLime,
-                                    color: '#000',
-                                    padding: '2px 8px',
-                                    borderRadius: '4px',
-                                }}>
-                                    ACTIVE
-                                </span>
-                                <span className="material-icons-outlined" style={{ fontSize: '18px', color: '#4B5563' }}>chevron_right</span>
-                            </div>
-                        </div>
+                        {showPasswordForm && (
+                            <form onSubmit={handleChangePassword} style={{ padding: '16px', borderTop: `1px solid ${borderColor}`, background: '#111' }}>
+                                <input
+                                    type="password"
+                                    placeholder="Current Password"
+                                    required
+                                    value={currentPassword}
+                                    onChange={e => setCurrentPassword(e.target.value)}
+                                    style={{ width: '100%', padding: '12px', marginBottom: '12px', borderRadius: '8px', background: surfaceDark, border: `1px solid ${borderColor}`, color: '#fff', outline: 'none' }}
+                                />
+                                <input
+                                    type="password"
+                                    placeholder="New Password"
+                                    required
+                                    value={newPassword}
+                                    onChange={e => setNewPassword(e.target.value)}
+                                    style={{ width: '100%', padding: '12px', marginBottom: '12px', borderRadius: '8px', background: surfaceDark, border: `1px solid ${borderColor}`, color: '#fff', outline: 'none' }}
+                                />
+                                {passwordError && <p style={{ color: colors.completedRed, fontSize: '12px', marginBottom: '12px' }}>{passwordError}</p>}
+                                <button type="submit" disabled={passwordLoading} style={{ width: '100%', padding: '12px', background: neonLime, color: '#000', fontWeight: 'bold', borderRadius: '8px', border: 'none', cursor: 'pointer' }}>
+                                    {passwordLoading ? 'UPDATING...' : 'UPDATE PASSWORD'}
+                                </button>
+                            </form>
+                        )}
                     </div>
                 </div>
 
@@ -280,7 +338,7 @@ export default function Profile() {
                         overflow: 'hidden',
                     }}>
                         {/* Notifications */}
-                        <div style={menuRowStyle(true)}>
+                        <div style={menuRowStyle(true)} onClick={handleToggleNotifications}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                                 <span className="material-icons-outlined" style={{ fontSize: '22px', color: neonLime }}>notifications</span>
                                 <span style={{ fontSize: '14px', fontWeight: 700, color: '#E5E7EB' }}>Notifications</span>
@@ -289,24 +347,26 @@ export default function Profile() {
                             <div style={{
                                 width: '40px',
                                 height: '24px',
-                                background: neonLime,
+                                background: profile?.notificationsEnabled ? neonLime : '#374151',
                                 borderRadius: '999px',
                                 position: 'relative',
                                 cursor: 'pointer',
+                                transition: 'background 0.2s',
                             }}>
                                 <div style={{
                                     position: 'absolute',
-                                    right: '4px',
+                                    right: profile?.notificationsEnabled ? '4px' : 'calc(100% - 20px)',
                                     top: '4px',
                                     width: '16px',
                                     height: '16px',
-                                    background: '#000',
+                                    background: profile?.notificationsEnabled ? '#000' : '#E5E7EB',
                                     borderRadius: '50%',
+                                    transition: 'all 0.2s',
                                 }} />
                             </div>
                         </div>
                         {/* Units */}
-                        <div style={menuRowStyle(true)}>
+                        <div style={menuRowStyle(false)}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                                 <span className="material-icons-outlined" style={{ fontSize: '22px', color: neonLime }}>fitness_center</span>
                                 <span style={{ fontSize: '14px', fontWeight: 700, color: '#E5E7EB' }}>Units</span>
@@ -322,14 +382,6 @@ export default function Profile() {
                             }}>
                                 LBS / MILES
                             </span>
-                        </div>
-                        {/* Devices & Integrations */}
-                        <div style={menuRowStyle(false)}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                                <span className="material-icons-outlined" style={{ fontSize: '22px', color: neonLime }}>devices</span>
-                                <span style={{ fontSize: '14px', fontWeight: 700, color: '#E5E7EB' }}>Devices & Integrations</span>
-                            </div>
-                            <span className="material-icons-outlined" style={{ fontSize: '18px', color: '#4B5563' }}>chevron_right</span>
                         </div>
                     </div>
                 </div>

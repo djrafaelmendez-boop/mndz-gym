@@ -6,6 +6,8 @@ import logo from '../assets/logo_transparent.png';
 export default function Auth() {
     const [isLogin, setIsLogin] = useState(true);
     const [email, setEmail] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -19,10 +21,16 @@ export default function Auth() {
         try {
             const trimmedEmail = email.trim();
             const trimmedUsername = username.trim();
+            const trimmedFirstName = firstName.trim();
+            const trimmedLastName = lastName.trim();
+
             if (isLogin) {
                 await login(trimmedEmail, password);
             } else {
-                await register(trimmedUsername, trimmedEmail, password);
+                if (!trimmedFirstName || !trimmedLastName) {
+                    throw new Error('First Name and Last Name are required');
+                }
+                await register(trimmedUsername, trimmedEmail, password, trimmedFirstName, trimmedLastName);
             }
         } catch (err) {
             setError(err.message);
@@ -78,7 +86,6 @@ export default function Auth() {
                             maxWidth: '320px',
                             height: 'auto',
                             marginBottom: '24px',
-                            filter: `drop-shadow(0 0 25px ${colors.primaryGlow})`,
                         }}
                     />
                     <p style={{
@@ -101,13 +108,31 @@ export default function Auth() {
                     gap: '16px',
                 }}>
                     {!isLogin && (
-                        <input
-                            type="text"
-                            placeholder="Username"
-                            value={username}
-                            onChange={e => setUsername(e.target.value)}
-                            style={inputStyle}
-                        />
+                        <>
+                            <div style={{ display: 'flex', gap: '12px' }}>
+                                <input
+                                    type="text"
+                                    placeholder="First Name"
+                                    value={firstName}
+                                    onChange={e => setFirstName(e.target.value)}
+                                    style={inputStyle}
+                                />
+                                <input
+                                    type="text"
+                                    placeholder="Last Name"
+                                    value={lastName}
+                                    onChange={e => setLastName(e.target.value)}
+                                    style={inputStyle}
+                                />
+                            </div>
+                            <input
+                                type="text"
+                                placeholder="Username"
+                                value={username}
+                                onChange={e => setUsername(e.target.value)}
+                                style={inputStyle}
+                            />
+                        </>
                     )}
                     <input
                         type="email"

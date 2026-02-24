@@ -46,6 +46,17 @@ export async function initDatabase() {
       sqliteDb = new SQL.Database();
     }
     await initTablesSqlite();
+
+    // Migrations for existing DB
+    try {
+      sqliteDb.exec('ALTER TABLE users ADD COLUMN firstName TEXT DEFAULT NULL');
+      sqliteDb.exec('ALTER TABLE users ADD COLUMN lastName TEXT DEFAULT NULL');
+      sqliteDb.exec('ALTER TABLE users ADD COLUMN notificationsEnabled INTEGER DEFAULT 1');
+      console.log('✅ Applied user table migrations');
+      saveDatabase();
+    } catch (e) {
+      // Columns likely already exist, ignore
+    }
   }
 }
 
@@ -61,6 +72,9 @@ async function initTablesSqlite() {
       email TEXT NOT NULL UNIQUE,
       passwordHash TEXT NOT NULL,
       profilePicture TEXT DEFAULT NULL,
+      firstName TEXT DEFAULT NULL,
+      lastName TEXT DEFAULT NULL,
+      notificationsEnabled INTEGER DEFAULT 1,
       createdAt TEXT DEFAULT (datetime('now'))
     );
     CREATE TABLE IF NOT EXISTS exercises (
@@ -149,6 +163,9 @@ async function initTablesPostgres() {
       email TEXT NOT NULL UNIQUE,
       passwordHash TEXT NOT NULL,
       profilePicture TEXT DEFAULT NULL,
+      "firstName" TEXT DEFAULT NULL,
+      "lastName" TEXT DEFAULT NULL,
+      "notificationsEnabled" INTEGER DEFAULT 1,
       createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
     CREATE TABLE IF NOT EXISTS exercises (
@@ -225,6 +242,14 @@ async function initTablesPostgres() {
     );
   `;
   await pgPool.query(schema);
+
+  try {
+    await pgPool.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS "firstName" TEXT DEFAULT NULL');
+    await pgPool.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS "lastName" TEXT DEFAULT NULL');
+    await pgPool.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS "notificationsEnabled" INTEGER DEFAULT 1');
+    console.log('✅ Applied user table migrations (Postgres)');
+  } catch (e) { }
+
   await seedDefaultsPostgres();
 }
 

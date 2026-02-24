@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #333;
+            color: white;
+            margin: 20px;
+            font-family: sans-serif;
+        }
+
+        canvas {
+            border: 1px solid #666;
+            margin: 10px;
+            background: #url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAOklEQVQYV2NkYGAwYkAD////Z4QxkAEsSGIwoXHg1MDCxIQhQRNiDDIXYgw1j01jU18Y4xGjB8uHAAAmcwwr6v9hLwAAAABJRU5ErkJggg==');
+        }
+
+        .controls {
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background: #DFFF00;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="controls">
+        <h2>Generate Clean Assets</h2>
+        <p>Click the button below to generate and download the logo, icon, and splash screen PNGs WITHOUT the glow.</p>
+        <button onclick="generateAll()">Download All Assets</button>
+    </div>
+
+    <h3>App Icon (1024x1024)</h3>
+    <canvas id="iconCanvas" width="1024" height="1024"></canvas>
+
+    <h3>Splash Screen (2732x2732)</h3>
+    <canvas id="splashCanvas" width="2732" height="2732" style="width: 500px; height: 500px;"></canvas>
+
+    <h3>Transparent Logo (1024x1024)</h3>
+    <canvas id="logoCanvas" width="1024" height="1024" style="width: 256px; height: 256px;"></canvas>
+
+    <script>
+        const PRIMARY = '#DFFF00';
+        const BG = '#0A0A0A'; // Deep black for splash background
+
+        function drawLogoBase(ctx, width, height) {
+            ctx.clearRect(0, 0, width, height);
+
+            const isSplash = width === 2732;
+            const logoScale = isSplash ? 3.5 : 1; // scale logo up for splash screen
+
+            const cx = width / 2;
+            const cy = height / 2;
+
+            ctx.font = `italic 900 ${280 * logoScale}px Inter`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            // Text color
+            ctx.fillStyle = PRIMARY;
+
+            // NO GLOW (shadowBlur = 0)
+            ctx.shadowColor = 'transparent';
+            ctx.shadowBlur = 0;
+
+            // Draw MNDZ
+            const text = 'MNDZ';
+
+            // Nudge Y slightly because 'Inter' uppercase might not center perfectly
+            const yOffset = 20 * logoScale;
+            ctx.fillText(text, cx, cy + yOffset);
+
+            // We draw the "Z" styling manually
+            const textMetrics = ctx.measureText(text);
+            const mnd = 'MND';
+            const mndMetrics = ctx.measureText(mnd);
+
+            // We want to add a green line styling to the Z like we did in the original, but the user just said "quitar glow", not change the logo.
+            // Wait, previously the logo might just be plain text 'MNDZ' in Inter italic 900, with Z having a special cut.
+            // Let's just do MNDZ text, and draw a polygon over the Z to slice it, or keep it simple.
+            // Let's exactly match the previous generation but remove shadowBlur.
+
+            // Slash effect on 'Z'
+            // We need to match the previous script's geometry
+            const zWidth = textMetrics.width - mndMetrics.width;
+            const slashX = cx + textMetrics.width / 2 - zWidth / 2;
+            const slashY = cy + yOffset;
+
+            ctx.save();
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.beginPath();
+            ctx.moveTo(slashX - 60 * logoScale, slashY - 40 * logoScale);
+            ctx.lineTo(slashX + 100 * logoScale, slashY - 40 * logoScale);
+            ctx.lineTo(slashX + 60 * logoScale, slashY + 40 * logoScale);
+            ctx.lineTo(slashX - 100 * logoScale, slashY + 40 * logoScale);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+
+            // Re-draw bottom right part of Z
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(slashX - 60 * logoScale, slashY - 40 * logoScale);
+            ctx.lineTo(slashX + 100 * logoScale, slashY - 40 * logoScale);
+            ctx.lineTo(slashX + 60 * logoScale, slashY + 40 * logoScale);
+            ctx.lineTo(slashX - 100 * logoScale, slashY + 40 * logoScale);
+            ctx.closePath();
+            ctx.clip();
+
+            // Move it slightly right to make a disconnected Z effect
+            ctx.fillText(text, cx + (15 * logoScale), cy + yOffset);
+            ctx.restore();
+        }
+
+        function drawIcon() {
+            const canvas = document.getElementById('iconCanvas');
+            const ctx = canvas.getContext('2d');
+
+            // Black background
+            ctx.fillStyle = BG;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // The exact same logo without glow
+            drawLogoBase(ctx, canvas.width, canvas.height);
+        }
+
+        function drawSplash() {
+            const canvas = document.getElementById('splashCanvas');
+            const ctx = canvas.getContext('2d');
+
+            // Background
+            ctx.fillStyle = BG;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            drawLogoBase(ctx, canvas.width, canvas.height);
+        }
+
+        function drawTransparentLogo() {
+            const canvas = document.getElementById('logoCanvas');
+            const ctx = canvas.getContext('2d');
+
+            // Transparent background
+            drawLogoBase(ctx, canvas.width, canvas.height);
+        }
+
+        function downloadCanvas(canvasId, filename) {
+            const canvas = document.getElementById(canvasId);
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        function generateAll() {
+            downloadCanvas('iconCanvas', 'icon.png');
+            downloadCanvas('splashCanvas', 'splash.png');
+            downloadCanvas('logoCanvas', 'logo_transparent.png');
+        }
+
+        // Wait for font to load
+        document.fonts.ready.then(() => {
+            drawIcon();
+            drawSplash();
+            drawTransparentLogo();
+            // Automatically download
+            setTimeout(() => {
+                generateAll();
+            }, 500);
+        });
+    </script>
+</body>
+
+</html>
