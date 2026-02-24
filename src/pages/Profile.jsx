@@ -209,7 +209,7 @@ export default function Profile() {
                         letterSpacing: '-0.02em',
                         marginTop: '16px',
                     }}>
-                        {displayName}
+                        {profile?.firstName ? `${profile.firstName} ${profile.lastName || ''}`.trim() : displayName}
                     </h2>
 
                     {/* Badge row */}
