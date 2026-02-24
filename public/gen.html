@@ -163,9 +163,13 @@
         }
 
         function generateAll() {
-            downloadCanvas('iconCanvas', 'icon.png');
-            downloadCanvas('splashCanvas', 'splash.png');
-            downloadCanvas('logoCanvas', 'logo_transparent.png');
+            const iconB64 = document.getElementById('iconCanvas').toDataURL('image/png');
+            const splashB64 = document.getElementById('splashCanvas').toDataURL('image/png');
+            const logoB64 = document.getElementById('logoCanvas').toDataURL('image/png');
+            console.log('---ICON_START---' + iconB64 + '---ICON_END---');
+            console.log('---SPLASH_START---' + splashB64 + '---SPLASH_END---');
+            console.log('---LOGO_START---' + logoB64 + '---LOGO_END---');
+            console.log('DONE_GENERATING');
         }
 
         // Wait for font to load

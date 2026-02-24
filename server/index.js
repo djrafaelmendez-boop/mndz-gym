@@ -65,11 +65,12 @@ app.post('/api/register', async (req, res) => {
 
 app.post('/api/login', async (req, res) => {
     try {
-        const { email, password } = req.body;
-        const user = await dbGet('SELECT * FROM users WHERE email = ?', [email]);
+        const { username, password } = req.body;
+        // Accept either username or email as a fallback, but primary is username
+        const user = await dbGet('SELECT * FROM users WHERE username = ? OR email = ?', [username, username]);
 
         if (!user) {
-            return res.status(400).json({ error: 'Invalid email or password.' });
+            return res.status(400).json({ error: 'Invalid username or password.' });
         }
 
         const validPassword = await bcrypt.compare(password, user.passwordHash);

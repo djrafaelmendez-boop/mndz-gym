@@ -21,8 +21,8 @@ export function AuthProvider({ children }) {
         }
     }, []);
 
-    const login = async (email, password) => {
-        const res = await api.login({ email, password });
+    const login = async (username, password) => {
+        const res = await api.login({ username, password });
         localStorage.setItem('mndz_token', res.token);
         setUser(res.user);
         return res;

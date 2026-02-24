@@ -25,7 +25,8 @@ export default function Auth() {
             const trimmedLastName = lastName.trim();
 
             if (isLogin) {
-                await login(trimmedEmail, password);
+                if (!trimmedUsername) throw new Error('Username is required.');
+                await login(trimmedUsername, password);
             } else {
                 if (!trimmedFirstName || !trimmedLastName) {
                     throw new Error('First Name and Last Name are required');
@@ -134,15 +135,27 @@ export default function Auth() {
                             />
                         </>
                     )}
-                    <input
-                        type="email"
-                        placeholder="Email"
-                        value={email}
-                        onChange={e => setEmail(e.target.value)}
-                        style={inputStyle}
-                        autoCapitalize="none"
-                        autoCorrect="off"
-                    />
+                    {isLogin ? (
+                        <input
+                            type="text"
+                            placeholder="Username"
+                            value={username}
+                            onChange={e => setUsername(e.target.value)}
+                            style={inputStyle}
+                            autoCapitalize="none"
+                            autoCorrect="off"
+                        />
+                    ) : (
+                        <input
+                            type="email"
+                            placeholder="Email"
+                            value={email}
+                            onChange={e => setEmail(e.target.value)}
+                            style={inputStyle}
+                            autoCapitalize="none"
+                            autoCorrect="off"
+                        />
+                    )}
                     <input
                         type="password"
                         placeholder="Password"
