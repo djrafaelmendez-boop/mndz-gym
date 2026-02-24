@@ -1,8 +1,10 @@
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+const API_BASE = 'https://mndz-gym-api.onrender.com/api';
 
 async function apiFetch(path, options = {}) {
+    const token = localStorage.getItem('mndz_token');
     const headers = {
         'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
         ...options.headers,
     };
 
@@ -35,6 +37,11 @@ async function apiFetch(path, options = {}) {
 }
 
 export const api = {
+    // Auth
+    getMe: () => apiFetch('/me'),
+    login: (data) => apiFetch('/login', { method: 'POST', body: JSON.stringify(data) }),
+    register: (data) => apiFetch('/register', { method: 'POST', body: JSON.stringify(data) }),
+
     // Exercises
     getExercises: (params = {}) => {
         const q = new URLSearchParams(params).toString();

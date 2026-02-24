@@ -187,22 +187,118 @@ export default function Schedule({ onNavigate }) {
                         fontWeight: 500,
                         textTransform: 'uppercase',
                     }}>
-                        THIS WEEK
+                        {(() => {
+                            const today = new Date();
+                            const todayWeek = getWeekDates(today);
+                            const currentMonday = formatDateStr(weekDates[0]);
+                            const todayMonday = formatDateStr(todayWeek[0]);
+                            if (currentMonday === todayMonday) return 'THIS WEEK';
+                            // Check next week
+                            const nextWeekDate = new Date(today);
+                            nextWeekDate.setDate(today.getDate() + 7);
+                            const nextMonday = formatDateStr(getWeekDates(nextWeekDate)[0]);
+                            if (currentMonday === nextMonday) return 'NEXT WEEK';
+                            // Check last week
+                            const lastWeekDate = new Date(today);
+                            lastWeekDate.setDate(today.getDate() - 7);
+                            const lastMonday = formatDateStr(getWeekDates(lastWeekDate)[0]);
+                            if (currentMonday === lastMonday) return 'LAST WEEK';
+                            // Otherwise show date range
+                            const mo = weekDates[0].toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                            const su = weekDates[6].toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                            return `${mo} – ${su}`.toUpperCase();
+                        })()}
                     </p>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    {/* Top-right icon removed */}
+                    {/* Return to today button — only show when not on current week */}
+                    {(() => {
+                        const today = new Date();
+                        const todayMonday = formatDateStr(getWeekDates(today)[0]);
+                        const currentMonday = formatDateStr(weekDates[0]);
+                        if (currentMonday !== todayMonday) {
+                            return (
+                                <button
+                                    onClick={() => setSelectedDate(new Date())}
+                                    style={{
+                                        background: 'rgba(223, 255, 0, 0.1)',
+                                        border: '1px solid rgba(223, 255, 0, 0.3)',
+                                        borderRadius: '999px',
+                                        padding: '4px 10px',
+                                        color: colors.primary,
+                                        fontSize: '10px',
+                                        fontWeight: 700,
+                                        textTransform: 'uppercase',
+                                        letterSpacing: '0.05em',
+                                        cursor: 'pointer',
+                                    }}
+                                >
+                                    Today
+                                </button>
+                            );
+                        }
+                        return null;
+                    })()}
                 </div>
             </div>
 
-            {/* Week Selector */}
+            {/* Week Navigation + Selector */}
             <div style={{ padding: '0 16px' }}>
-                <WeekDaySelector
-                    selectedDate={selectedDate}
-                    onSelectDate={setSelectedDate}
-                    weekDates={weekDates}
-                    dayStatuses={dayStatuses}
-                />
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                }}>
+                    {/* Prev Week Arrow */}
+                    <button
+                        onClick={() => {
+                            const prev = new Date(selectedDate);
+                            prev.setDate(prev.getDate() - 7);
+                            setSelectedDate(prev);
+                        }}
+                        style={{
+                            background: 'none',
+                            border: 'none',
+                            color: '#6B7280',
+                            cursor: 'pointer',
+                            padding: '8px 4px',
+                            display: 'flex',
+                            alignItems: 'center',
+                        }}
+                    >
+                        <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>chevron_left</span>
+                    </button>
+
+                    {/* Week Day Selector */}
+                    <div style={{ flex: 1 }}>
+                        <WeekDaySelector
+                            selectedDate={selectedDate}
+                            onSelectDate={setSelectedDate}
+                            weekDates={weekDates}
+                            dayStatuses={dayStatuses}
+                        />
+                    </div>
+
+                    {/* Next Week Arrow */}
+                    <button
+                        onClick={() => {
+                            const next = new Date(selectedDate);
+                            next.setDate(next.getDate() + 7);
+                            setSelectedDate(next);
+                        }}
+                        style={{
+                            background: 'none',
+                            border: 'none',
+                            color: '#6B7280',
+                            cursor: 'pointer',
+                            padding: '8px 4px',
+                            display: 'flex',
+                            alignItems: 'center',
+                        }}
+                    >
+                        <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>chevron_right</span>
+                    </button>
+                </div>
             </div>
 
             {/* Content Area */}
@@ -224,7 +320,17 @@ export default function Schedule({ onNavigate }) {
                             textTransform: 'uppercase',
                             letterSpacing: '0.02em',
                             color: '#fff',
-                        }}>TODAY'S WORKOUT</h2>
+                        }}>{(() => {
+                            const today = new Date();
+                            today.setHours(0, 0, 0, 0);
+                            const sel = new Date(selectedDate);
+                            sel.setHours(0, 0, 0, 0);
+                            if (sel.getTime() === today.getTime()) return "TODAY'S WORKOUT";
+                            const tomorrow = new Date(today);
+                            tomorrow.setDate(today.getDate() + 1);
+                            if (sel.getTime() === tomorrow.getTime()) return "TOMORROW'S WORKOUT";
+                            return selectedDate.toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase() + "'S WORKOUT";
+                        })()}</h2>
                         {/* Quick Add Button */}
                         <button
                             onClick={() => setShowAssign(true)}

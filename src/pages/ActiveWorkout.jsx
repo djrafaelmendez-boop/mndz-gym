@@ -76,6 +76,15 @@ export default function ActiveWorkout({ onBack, sessionId }) {
     };
 
     const handleCompleteExercise = async (exerciseId) => {
+        setWorkout(prev => {
+            if (!prev) return prev;
+            return {
+                ...prev,
+                exercises: prev.exercises.map(ex =>
+                    ex.id === exerciseId ? { ...ex, allComplete: true } : ex
+                )
+            };
+        });
         setViewMode('overview');
         setSelectedExerciseId(null);
     };
@@ -192,8 +201,8 @@ export default function ActiveWorkout({ onBack, sessionId }) {
                             // Active/Not Completed -> LIME
                             const themeColor = isCompleted ? COLORS.red : COLORS.lime;
                             const glowShadow = isCompleted
-                                ? `0 0 15px ${COLORS.red}66` // neon-red-glow
-                                : `0 0 10px ${COLORS.lime}66`; // neon-lime-glow
+                                ? 'none'
+                                : 'none';
 
                             // Calculation logic
                             const setLen = ex.sets.length;
@@ -218,7 +227,7 @@ export default function ActiveWorkout({ onBack, sessionId }) {
                                     <div style={{
                                         position: 'absolute', right: 0, top: 0, bottom: 0, width: '4px',
                                         background: themeColor,
-                                        boxShadow: `0 0 10px ${themeColor}`
+                                        boxShadow: 'none'
                                     }} />
 
                                     {/* Top Row: Title & Button */}
@@ -306,7 +315,7 @@ export default function ActiveWorkout({ onBack, sessionId }) {
                             padding: '16px', borderRadius: '12px',
                             fontSize: '14px', fontWeight: 900, fontStyle: 'italic', textTransform: 'uppercase',
                             letterSpacing: '0.05em', cursor: 'pointer',
-                            boxShadow: `0 0 20px ${allWorkoutsDone ? COLORS.red : COLORS.lime}4D`,
+                            boxShadow: 'none',
                             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
                             border: 'none', transition: 'all 0.2s',
                         }}
@@ -416,7 +425,7 @@ export default function ActiveWorkout({ onBack, sessionId }) {
                             if (isDone) {
                                 // COMPLETE
                                 styles.border = `1px solid rgba(255, 0, 60, 0.6)`;
-                                styles.shadow = `0 0 15px rgba(255, 0, 60, 0.4)`;
+                                styles.shadow = 'none';
                                 styles.bg = `linear-gradient(135deg, rgba(255,0,60,0.1) 0%, rgba(20,20,20,0) 100%)`;
                                 styles.labelColor = CRIMSON;
                                 styles.numColor = CRIMSON;
@@ -424,7 +433,7 @@ export default function ActiveWorkout({ onBack, sessionId }) {
                             } else if (isActive) {
                                 // ACTIVE
                                 styles.border = `1px solid ${COLORS.lime}`;
-                                styles.shadow = `0 0 10px rgba(223, 255, 0, 0.4)`;
+                                styles.shadow = 'none';
                                 styles.labelColor = COLORS.lime;
                                 styles.numColor = '#fff';
                                 styles.inputColor = '#fff';
@@ -455,7 +464,7 @@ export default function ActiveWorkout({ onBack, sessionId }) {
                                             position: 'absolute', left: '-4px', top: '50%', transform: 'translateY(-50%)',
                                             width: '8px', height: '32px', background: COLORS.lime,
                                             borderRadius: '0 999px 999px 0',
-                                            boxShadow: `0 0 10px rgba(223, 255, 0, 0.6)`
+                                            boxShadow: 'none'
                                         }} />
                                     )}
 
@@ -610,16 +619,15 @@ export default function ActiveWorkout({ onBack, sessionId }) {
                 }}>
                     <button
                         onClick={() => handleCompleteExercise(currentExercise.id)}
-                        disabled={!allSetsCompleted}
                         style={{
                             width: '100%',
-                            background: allSetsCompleted ? COLORS.lime : '#333',
-                            color: allSetsCompleted ? '#000' : '#666',
+                            background: COLORS.lime,
+                            color: '#000',
                             padding: '16px', borderRadius: '999px',
                             fontSize: '14px', fontWeight: 900, fontStyle: 'italic', textTransform: 'uppercase',
                             letterSpacing: '0.1em',
-                            cursor: allSetsCompleted ? 'pointer' : 'not-allowed',
-                            boxShadow: allSetsCompleted ? `0 0 20px ${COLORS.lime}55` : 'none',
+                            cursor: 'pointer',
+                            boxShadow: 'none',
                             border: 'none',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                             transition: 'all 0.2s'

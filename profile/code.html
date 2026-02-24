@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Profile - Antigravity</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#DFFF00", // Neon Lime
+                        "background-light": "#F3F4F6",
+                        "background-dark": "#0D0D0D", // Deep Charcoal/Black
+                        "surface-dark": "#161616", // Slightly lighter for cards
+                        "surface-light": "#FFFFFF",
+                        "text-secondary-dark": "#A1A1A1",
+                        "text-secondary-light": "#6B7280",
+                        "charcoal-start": "#262626", // Lighter charcoal for gradient start
+                    },
+                    fontFamily: {
+                        display: ["Inter", "sans-serif"],
+                        sans: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                    },
+                    backgroundImage: {
+                        'profile-gradient': 'linear-gradient(to bottom, #262626 0%, #0D0D0D 45%)',
+                    }
+                },
+            },
+        };
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 3px;
+        }
+        .neon-glow {
+            box-shadow: 0 0 10px rgba(223, 255, 0, 0.1);
+        }
+        .neon-text {
+             text-shadow: 0 0 10px rgba(223, 255, 0, 0.5);
+        }
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        body {
+          min-height: max(884px, 100dvh);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark dark:bg-profile-gradient text-gray-900 dark:text-white h-screen flex flex-col overflow-hidden selection:bg-primary selection:text-black transition-colors duration-200">
+<header class="flex-none px-6 pt-12 pb-4 flex justify-between items-end bg-transparent z-10">
+<div>
+<h1 class="text-3xl font-black italic tracking-tighter uppercase">Profile</h1>
+<p class="text-xs text-text-secondary-light dark:text-text-secondary-dark mt-1 tracking-wide font-medium">MEMBER SETTINGS</p>
+</div>
+<button class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors group">
+<span class="material-icons-outlined text-gray-600 dark:text-gray-400 group-hover:text-primary transition-colors">qr_code_scanner</span>
+</button>
+</header>
+<main class="flex-1 overflow-y-auto px-6 pb-24 space-y-8">
+<div class="flex flex-col items-center pt-4">
+<div class="relative group cursor-pointer">
+<div class="h-28 w-28 rounded-full bg-surface-dark border-2 border-primary shadow-[0_0_15px_rgba(223,255,0,0.15)] flex items-center justify-center overflow-hidden">
+<span class="text-4xl font-black text-white tracking-tighter italic">AG</span>
+</div>
+<button class="absolute bottom-0 right-0 bg-primary hover:bg-white text-black h-8 w-8 rounded-full flex items-center justify-center border-4 border-background-dark transition-colors">
+<span class="material-icons-outlined text-sm font-bold">edit</span>
+</button>
+</div>
+<div class="text-center mt-4">
+<h2 class="text-2xl font-black text-white uppercase tracking-tight">Alex Graham</h2>
+<div class="flex items-center justify-center space-x-2 mt-1">
+<span class="text-xs text-primary font-bold tracking-wide border border-primary/30 bg-primary/10 px-2 py-0.5 rounded">PRO MEMBER</span>
+<span class="text-xs text-text-secondary-dark">Since 2023</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-3">
+<div class="bg-surface-dark rounded-xl p-4 border border-gray-800 flex flex-col items-center justify-center relative overflow-hidden group">
+<div class="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<span class="text-2xl font-black text-white italic">142</span>
+<span class="text-[10px] font-bold text-text-secondary-dark uppercase tracking-wider mt-1">Workouts</span>
+</div>
+<div class="bg-surface-dark rounded-xl p-4 border border-gray-800 flex flex-col items-center justify-center relative overflow-hidden group">
+<div class="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<span class="text-2xl font-black text-white italic">12</span>
+<span class="text-[10px] font-bold text-text-secondary-dark uppercase tracking-wider mt-1">Streak</span>
+</div>
+<div class="bg-surface-dark rounded-xl p-4 border border-gray-800 flex flex-col items-center justify-center relative overflow-hidden group">
+<div class="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<span class="text-2xl font-black text-white italic">185</span>
+<span class="text-[10px] font-bold text-text-secondary-dark uppercase tracking-wider mt-1">LBS</span>
+</div>
+</div>
+<div class="space-y-6">
+<div>
+<h3 class="text-xs font-bold text-text-secondary-dark uppercase tracking-widest mb-3 pl-1">Account Info</h3>
+<div class="bg-surface-dark rounded-2xl border border-gray-800 overflow-hidden">
+<div class="p-4 border-b border-gray-800 flex items-center justify-between hover:bg-white/5 cursor-pointer transition-colors group">
+<div class="flex items-center space-x-4">
+<span class="material-icons-outlined text-primary group-hover:text-white transition-colors">person</span>
+<span class="text-sm font-bold text-gray-200">Personal Details</span>
+</div>
+<span class="material-icons-outlined text-gray-600 text-sm">chevron_right</span>
+</div>
+<div class="p-4 border-b border-gray-800 flex items-center justify-between hover:bg-white/5 cursor-pointer transition-colors group">
+<div class="flex items-center space-x-4">
+<span class="material-icons-outlined text-primary group-hover:text-white transition-colors">email</span>
+<span class="text-sm font-bold text-gray-200">Email &amp; Password</span>
+</div>
+<div class="flex items-center space-x-2">
+<span class="text-xs text-text-secondary-dark font-medium hidden sm:inline-block">alex@antigravity.com</span>
+<span class="material-icons-outlined text-gray-600 text-sm">chevron_right</span>
+</div>
+</div>
+<div class="p-4 flex items-center justify-between hover:bg-white/5 cursor-pointer transition-colors group">
+<div class="flex items-center space-x-4">
+<span class="material-icons-outlined text-primary group-hover:text-white transition-colors">credit_card</span>
+<span class="text-sm font-bold text-gray-200">Subscription</span>
+</div>
+<div class="flex items-center space-x-2">
+<span class="text-[10px] font-bold bg-primary text-black px-2 py-0.5 rounded">ACTIVE</span>
+<span class="material-icons-outlined text-gray-600 text-sm">chevron_right</span>
+</div>
+</div>
+</div>
+</div>
+<div>
+<h3 class="text-xs font-bold text-text-secondary-dark uppercase tracking-widest mb-3 pl-1">Preferences</h3>
+<div class="bg-surface-dark rounded-2xl border border-gray-800 overflow-hidden">
+<div class="p-4 border-b border-gray-800 flex items-center justify-between hover:bg-white/5 cursor-pointer transition-colors group">
+<div class="flex items-center space-x-4">
+<span class="material-icons-outlined text-primary group-hover:text-white transition-colors">notifications</span>
+<span class="text-sm font-bold text-gray-200">Notifications</span>
+</div>
+<div class="w-10 h-6 bg-primary rounded-full relative cursor-pointer shadow-[0_0_10px_rgba(223,255,0,0.3)]">
+<div class="absolute right-1 top-1 w-4 h-4 bg-black rounded-full shadow-sm"></div>
+</div>
+</div>
+<div class="p-4 border-b border-gray-800 flex items-center justify-between hover:bg-white/5 cursor-pointer transition-colors group">
+<div class="flex items-center space-x-4">
+<span class="material-icons-outlined text-primary group-hover:text-white transition-colors">fitness_center</span>
+<span class="text-sm font-bold text-gray-200">Units</span>
+</div>
+<span class="text-xs font-bold text-text-secondary-dark bg-gray-800 px-2 py-1 rounded border border-gray-700">LBS / MILES</span>
+</div>
+<div class="p-4 flex items-center justify-between hover:bg-white/5 cursor-pointer transition-colors group">
+<div class="flex items-center space-x-4">
+<span class="material-icons-outlined text-primary group-hover:text-white transition-colors">devices</span>
+<span class="text-sm font-bold text-gray-200">Devices &amp; Integrations</span>
+</div>
+<span class="material-icons-outlined text-gray-600 text-sm">chevron_right</span>
+</div>
+</div>
+</div>
+<button class="w-full py-4 rounded-xl border border-red-900/30 bg-red-950/20 text-red-500 font-bold text-sm flex items-center justify-center space-x-2 hover:bg-red-900/40 hover:text-red-400 transition-all">
+<span class="material-icons-outlined">logout</span>
+<span>Log Out</span>
+</button>
+<p class="text-center text-[10px] text-gray-700 dark:text-gray-800 font-bold uppercase tracking-widest pt-4 pb-8">Version 2.4.0 (Build 302)</p>
+</div>
+</main>
+<nav class="flex-none bg-surface-light dark:bg-surface-dark border-t border-gray-200 dark:border-gray-800 pb-safe">
+<div class="flex justify-around items-center h-16 px-2">
+<a class="flex flex-col items-center justify-center w-full h-full text-text-secondary-light dark:text-text-secondary-dark hover:text-gray-900 dark:hover:text-white transition-colors group" href="#">
+<span class="material-icons-outlined text-2xl mb-1 group-hover:-translate-y-0.5 transition-transform">calendar_today</span>
+<span class="text-[10px] font-bold tracking-wide">SCHEDULE</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-text-secondary-light dark:text-text-secondary-dark hover:text-gray-900 dark:hover:text-white transition-colors group" href="#">
+<span class="material-icons-outlined text-2xl mb-1 group-hover:-translate-y-0.5 transition-transform">assignment</span>
+<span class="text-[10px] font-bold tracking-wide">ROUTINES</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-text-secondary-light dark:text-text-secondary-dark hover:text-gray-900 dark:hover:text-white transition-colors group" href="#">
+<span class="material-icons-outlined text-2xl mb-1 group-hover:-translate-y-0.5 transition-transform">fitness_center</span>
+<span class="text-[10px] font-bold tracking-wide">EXERCISES</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-text-secondary-light dark:text-text-secondary-dark hover:text-gray-900 dark:hover:text-white transition-colors group" href="#">
+<span class="material-icons-outlined text-2xl mb-1 group-hover:-translate-y-0.5 transition-transform">show_chart</span>
+<span class="text-[10px] font-bold tracking-wide">PROGRESS</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-primary transition-colors" href="#">
+<span class="material-icons-outlined text-2xl mb-1 neon-text">person</span>
+<span class="text-[10px] font-bold tracking-wide text-primary">PROFILE</span>
+</a>
+</div>
+</nav>
+<script>
+        // This script forces the dark class on the html element to ensure the requested dark theme is displayed by default.
+        document.documentElement.classList.add('dark');
+    </script>
+</body></html>

@@ -153,7 +153,7 @@ export default function Auth() {
                             textTransform: 'uppercase',
                             letterSpacing: '0.05em',
                             cursor: loading ? 'not-allowed' : 'pointer',
-                            boxShadow: `0 0 15px ${colors.primaryGlow}, 0 0 30px rgba(223,255,0,0.1)`,
+                            boxShadow: 'none',
                             opacity: loading ? 0.7 : 1,
                             marginTop: '8px',
                             transition: 'all 0.2s',

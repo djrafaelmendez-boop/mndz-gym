@@ -142,7 +142,7 @@ export default function NewExercise({ onBack }) {
                         textTransform: 'uppercase',
                         letterSpacing: '0.05em',
                         cursor: saving ? 'not-allowed' : 'pointer',
-                        boxShadow: `0 0 15px ${colors.primaryGlow}`,
+                        boxShadow: 'none',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',

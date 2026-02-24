@@ -123,7 +123,7 @@ export default function SetRow({ set, onUpdate, readOnly = false }) {
                     cursor: readOnly ? 'default' : 'pointer',
                     flexShrink: 0,
                     transition: 'all 0.2s',
-                    boxShadow: isCompleted ? `0 0 8px ${colors.completedRedGlow}` : 'none',
+                    boxShadow: 'none',
                 }}
             >
                 <span className="material-icons-outlined" style={{

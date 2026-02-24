@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { api } from '../api';
+import { muscleGroups } from '../styles/designTokens';
 import ExerciseRow from '../components/ExerciseRow';
 
 // Colors — strict from references
@@ -24,6 +25,8 @@ export default function CreateRoutine({ onBack, editRoutine }) {
     const [showPicker, setShowPicker] = useState(false);
     const [saving, setSaving] = useState(false);
     const [editingIndex, setEditingIndex] = useState(null);
+    const [pickerSearch, setPickerSearch] = useState('');
+    const [pickerFilter, setPickerFilter] = useState('all');
 
     useEffect(() => {
         if (editRoutine?.exercises) {
@@ -51,8 +54,32 @@ export default function CreateRoutine({ onBack, editRoutine }) {
     };
 
     useEffect(() => {
-        if (showPicker) loadExercises();
+        if (showPicker) {
+            loadExercises();
+            setPickerSearch('');
+            setPickerFilter('all');
+        }
     }, [showPicker]);
+
+    // Filtered exercises for picker
+    const filteredPickerExercises = useMemo(() => {
+        let list = allExercises;
+        if (pickerFilter !== 'all') {
+            list = list.filter(ex => {
+                const mg = (ex.muscleGroup || '').toLowerCase();
+                const f = pickerFilter.toLowerCase();
+                if (f === 'arms') return mg === 'arms' || mg === 'biceps' || mg === 'triceps';
+                return mg === f;
+            });
+        }
+        if (pickerSearch.trim()) {
+            const q = pickerSearch.trim().toLowerCase();
+            list = list.filter(ex => (ex.name || '').toLowerCase().includes(q));
+        }
+        return list;
+    }, [allExercises, pickerFilter, pickerSearch]);
+
+    const pickerFilters = ['all', ...muscleGroups];
 
     const addExercise = (ex) => {
         if (exercises.find(e => e.exerciseId === ex.id)) return;
@@ -153,6 +180,7 @@ export default function CreateRoutine({ onBack, editRoutine }) {
                 background: `linear-gradient(to bottom, #1C1C1C 0%, #111111 30%, ${COLORS.bgDark} 100%)`,
                 fontFamily: 'Inter, sans-serif',
             }}>
+                {/* Header */}
                 <div style={{
                     padding: 'calc(env(safe-area-inset-top) + 16px) 24px 16px 24px',
                     display: 'flex',
@@ -181,16 +209,121 @@ export default function CreateRoutine({ onBack, editRoutine }) {
                         Add Exercise
                     </h2>
                 </div>
-                <div style={{ flex: 1, overflow: 'auto' }}>
-                    {allExercises.map(ex => (
-                        <ExerciseRow
-                            key={ex.id}
-                            exercise={ex}
-                            onClick={() => addExercise(ex)}
-                            selected={exercises.some(e => e.exerciseId === ex.id)}
-                            showCheck
+
+                {/* Search Bar */}
+                <div style={{
+                    padding: '0 24px',
+                    marginBottom: '12px',
+                }}>
+                    <div style={{ position: 'relative' }}>
+                        <span className="material-symbols-outlined" style={{
+                            position: 'absolute',
+                            left: '16px',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            color: '#9CA3AF',
+                            fontSize: '22px',
+                        }}>search</span>
+                        <input
+                            value={pickerSearch}
+                            onChange={e => setPickerSearch(e.target.value)}
+                            placeholder="Search exercises..."
+                            style={{
+                                width: '100%',
+                                background: '#161616',
+                                border: '1px solid #1F2937',
+                                color: '#fff',
+                                borderRadius: '12px',
+                                padding: '12px 16px 12px 48px',
+                                fontSize: '16px',
+                                fontWeight: 500,
+                                fontFamily: 'Inter, sans-serif',
+                                outline: 'none',
+                                boxShadow: '0 1px 2px rgba(0,0,0,0.2)',
+                                boxSizing: 'border-box',
+                            }}
                         />
-                    ))}
+                    </div>
+                </div>
+
+                {/* Muscle Group Filter Chips */}
+                <div style={{ marginBottom: '12px' }}>
+                    <div style={{
+                        display: 'flex',
+                        gap: '12px',
+                        overflowX: 'auto',
+                        padding: '4px 24px',
+                        msOverflowStyle: 'none',
+                        scrollbarWidth: 'none',
+                    }}>
+                        {pickerFilters.map(f => {
+                            const isActive = pickerFilter === f;
+                            return (
+                                <button
+                                    key={f}
+                                    onClick={() => setPickerFilter(f)}
+                                    style={{
+                                        flexShrink: 0,
+                                        padding: '8px 20px',
+                                        borderRadius: '999px',
+                                        background: isActive ? '#DFFF00' : '#161616',
+                                        color: isActive ? '#000' : '#9CA3AF',
+                                        fontSize: '12px',
+                                        fontWeight: 700,
+                                        letterSpacing: '0.04em',
+                                        textTransform: 'capitalize',
+                                        cursor: 'pointer',
+                                        border: isActive ? '1px solid #DFFF00' : '1px solid #1F2937',
+                                        boxShadow: 'none',
+                                        whiteSpace: 'nowrap',
+                                        transition: 'all 0.15s',
+                                    }}
+                                >
+                                    {f === 'all' ? 'All' : f}
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                {/* Exercise List */}
+                <div style={{ flex: 1, overflow: 'auto', paddingBottom: '24px' }}>
+                    {filteredPickerExercises.length === 0 ? (
+                        <div style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: '48px 24px',
+                            gap: '12px',
+                        }}>
+                            <span className="material-symbols-outlined" style={{
+                                fontSize: '48px',
+                                color: '#374151',
+                            }}>search_off</span>
+                            <p style={{
+                                color: '#555',
+                                fontSize: '14px',
+                                fontWeight: 600,
+                                textAlign: 'center',
+                            }}>No exercises found</p>
+                            <p style={{
+                                color: '#444',
+                                fontSize: '12px',
+                                textAlign: 'center',
+                            }}>Try a different search or filter</p>
+                        </div>
+                    ) : (
+                        filteredPickerExercises.map(ex => (
+                            <ExerciseRow
+                                key={ex.id}
+                                exercise={ex}
+                                onClick={() => addExercise(ex)}
+                                selected={exercises.some(e => e.exerciseId === ex.id)}
+                                showCheck
+                            />
+                        ))
+                    )}
                 </div>
             </div>
         );
@@ -495,7 +628,7 @@ export default function CreateRoutine({ onBack, editRoutine }) {
                                         textTransform: 'uppercase',
                                         letterSpacing: '0.05em',
                                         cursor: 'pointer',
-                                        boxShadow: isActive ? '0 2px 12px rgba(223,255,0,0.2)' : 'none',
+                                        boxShadow: 'none',
                                         transition: 'all 0.2s',
                                     }}
                                 >
@@ -639,7 +772,7 @@ export default function CreateRoutine({ onBack, editRoutine }) {
                         letterSpacing: '0.06em',
                         fontSize: '18px',
                         cursor: saving ? 'not-allowed' : 'pointer',
-                        boxShadow: '0 0 15px rgba(223,255,0,0.3), 0 6px 20px rgba(223,255,0,0.2)',
+                        boxShadow: 'none',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',

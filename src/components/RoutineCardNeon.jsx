@@ -13,7 +13,7 @@ export default function RoutineCardNeon({ routine, status = 'ready', onStart, on
             border: `1px solid ${borderColor}`,
             borderRadius: '16px',
             padding: '24px',
-            boxShadow: `0 0 20px ${glowColor}`,
+            boxShadow: 'none',
             minWidth: '280px',
             maxWidth: '100%',
             flex: '1 1 280px',
@@ -181,7 +181,7 @@ export default function RoutineCardNeon({ routine, status = 'ready', onStart, on
                         alignItems: 'center',
                         justifyContent: 'center',
                         gap: '8px',
-                        boxShadow: `0 0 15px ${colors.primaryGlow}, 0 0 30px rgba(223,255,0,0.1)`,
+                        boxShadow: 'none',
                         marginTop: 'auto',
                     }}
                 >

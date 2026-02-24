@@ -406,7 +406,7 @@ function RoutineCard({ routine, isMenuOpen, onMenuToggle, onEdit, onDelete, onCl
                                 ? {
                                     background: '#DFFF00',
                                     color: '#000',
-                                    boxShadow: '0 1px 4px rgba(223,255,0,0.2)',
+                                    boxShadow: 'none',
                                 }
                                 : {
                                     background: '#1F2937',

@@ -241,7 +241,7 @@ function SessionCard({ session, isTop, isBodyweight, globalMaxLbs, globalMaxReps
                 : '1px solid #1F2937',
             borderRadius: '16px',
             padding: '20px',
-            boxShadow: isTop ? '0 0 20px rgba(223,255,0,0.08)' : 'none',
+            boxShadow: 'none',
         }}>
             {/* Date Header */}
             <div style={{

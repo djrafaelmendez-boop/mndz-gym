@@ -12,9 +12,12 @@ import Progress from './pages/Progress';
 import Profile from './pages/Profile';
 import ActiveWorkout from './pages/ActiveWorkout';
 import ExerciseHistory from './pages/ExerciseHistory';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import Auth from './pages/Auth';
 
 function AppContent() {
     const { activeSession } = useWorkout();
+    const { user, loading: authLoading } = useAuth();
     const [showSplash, setShowSplash] = useState(true);
     const [activeTab, setActiveTab] = useState('schedule');
     const [subPage, setSubPage] = useState(null);
@@ -30,8 +33,12 @@ function AppContent() {
         setSubPageData(null);
     };
 
-    if (showSplash) {
+    if (showSplash || authLoading) {
         return <SplashScreen onComplete={() => setShowSplash(false)} />;
+    }
+
+    if (!user) {
+        return <Auth />;
     }
 
     // Sub-pages (full screen overlays)
@@ -92,7 +99,7 @@ function AppContent() {
                         alignItems: 'center',
                         gap: '10px',
                         cursor: 'pointer',
-                        boxShadow: `0 0 15px ${colors.primaryGlow}`,
+                        boxShadow: 'none',
                         maxWidth: '220px',
                         animation: 'fadeInUp 0.3s ease-out',
                     }}
@@ -139,8 +146,10 @@ function AppContent() {
 
 export default function App() {
     return (
-        <WorkoutProvider>
-            <AppContent />
-        </WorkoutProvider>
+        <AuthProvider>
+            <WorkoutProvider>
+                <AppContent />
+            </WorkoutProvider>
+        </AuthProvider>
     );
 }
