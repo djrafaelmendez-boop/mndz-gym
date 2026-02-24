@@ -564,6 +564,23 @@ app.post('/api/progress/steps', authenticateToken, async (req, res) => {
     }
 });
 
+app.get('/api/progress/attendance', authenticateToken, async (req, res) => {
+    try {
+        const { year } = req.query;
+        let query = "SELECT DISTINCT date(startedAt) as d FROM workout_sessions WHERE userId = ? AND completedAt IS NOT NULL";
+        const params = [req.userId];
+        if (year) {
+            query += " AND strftime('%Y', startedAt) = ?";
+            params.push(String(year));
+        }
+        query += " ORDER BY d ASC";
+        const rows = await dbAll(query, params);
+        res.json(rows.map(r => r.d));
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // ═══════════════════════════════════════════════
 // PROFILE ROUTES (simplified — no auth)
 // ═══════════════════════════════════════════════

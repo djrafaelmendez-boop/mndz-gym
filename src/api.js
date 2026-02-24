@@ -70,6 +70,7 @@ export const api = {
     completeWorkout: (id) => apiFetch(`/workout/${id}/complete`, { method: 'PUT' }),
 
     // Progress
+    getAttendance: (year) => apiFetch(`/progress/attendance?year=${year}`),
     getWeightLogs: () => apiFetch('/progress/weight'),
     addWeightLog: (data) => apiFetch('/progress/weight', { method: 'POST', body: JSON.stringify(data) }),
     getStepsLogs: () => apiFetch('/progress/steps'),
