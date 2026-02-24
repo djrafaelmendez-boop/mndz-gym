@@ -27,6 +27,7 @@ export default function Progress() {
     const [calMonth, setCalMonth] = useState(now.getMonth());
     const [calYear, setCalYear] = useState(now.getFullYear());
     const [weightSummaryYear, setWeightSummaryYear] = useState(now.getFullYear());
+    const [weightMode, setWeightMode] = useState('lowest'); // 'lowest' | 'highest'
 
     const loadData = async () => {
         try {
@@ -100,20 +101,26 @@ export default function Progress() {
         return count;
     }, [attendanceDates, calMonth, calYear]);
 
-    // Weight summary: lowest weight per month for the selected year
-    const monthlyLowestWeights = useMemo(() => {
+    // Weight summary: lowest or highest weight per month for the selected year
+    const monthlyWeights = useMemo(() => {
         const result = new Array(12).fill(null);
         weightLogs.forEach(log => {
             if (!log.date) return;
             const [y, m] = log.date.split('-');
             if (parseInt(y) !== weightSummaryYear) return;
             const monthIdx = parseInt(m) - 1;
-            if (result[monthIdx] === null || log.weight < result[monthIdx]) {
-                result[monthIdx] = log.weight;
+            if (weightMode === 'lowest') {
+                if (result[monthIdx] === null || log.weight < result[monthIdx]) {
+                    result[monthIdx] = log.weight;
+                }
+            } else {
+                if (result[monthIdx] === null || log.weight > result[monthIdx]) {
+                    result[monthIdx] = log.weight;
+                }
             }
         });
         return result;
-    }, [weightLogs, weightSummaryYear]);
+    }, [weightLogs, weightSummaryYear, weightMode]);
 
     // Existing chart data
     const handleAddWeight = async () => {
@@ -336,7 +343,7 @@ export default function Progress() {
                 {/* SECTION 2: WEIGHT PROGRESS SUMMARY         */}
                 {/* ═══════════════════════════════════════════ */}
                 <div style={cardStyle}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                         {sectionLabel('Weight Progress')}
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                             <button onClick={() => setWeightSummaryYear(y => y - 1)} style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', padding: '2px' }}>
@@ -349,10 +356,33 @@ export default function Progress() {
                         </div>
                     </div>
 
+                    {/* Lowest / Highest toggle */}
+                    <div style={{ display: 'flex', gap: '4px', background: 'rgba(255,255,255,0.04)', borderRadius: '8px', padding: '3px', marginBottom: '14px', alignSelf: 'flex-start', width: 'fit-content' }}>
+                        {['lowest', 'highest'].map(mode => (
+                            <button
+                                key={mode}
+                                onClick={() => setWeightMode(mode)}
+                                style={{
+                                    padding: '5px 14px',
+                                    borderRadius: '6px',
+                                    border: 'none',
+                                    background: weightMode === mode ? neonLime : 'transparent',
+                                    color: weightMode === mode ? '#000' : '#888',
+                                    fontSize: '11px',
+                                    fontWeight: 700,
+                                    cursor: 'pointer',
+                                    textTransform: 'capitalize',
+                                }}
+                            >
+                                {mode}
+                            </button>
+                        ))}
+                    </div>
+
                     {/* 3x4 grid */}
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
                         {MONTH_SHORT.map((m, i) => {
-                            const val = monthlyLowestWeights[i];
+                            const val = monthlyWeights[i];
                             const hasData = val !== null;
                             return (
                                 <div key={m} style={{
@@ -379,7 +409,7 @@ export default function Progress() {
                         })}
                     </div>
 
-                    {monthlyLowestWeights.every(v => v === null) && (
+                    {monthlyWeights.every(v => v === null) && (
                         <p style={{ color: '#555', fontSize: '12px', textAlign: 'center', marginTop: '12px' }}>
                             Log your weight to track monthly progress
                         </p>
