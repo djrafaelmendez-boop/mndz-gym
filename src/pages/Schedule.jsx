@@ -20,7 +20,8 @@ function getWeekDates(baseDate) {
 }
 
 function formatDateStr(d) {
-    return d.toISOString().split('T')[0];
+    // Use local date, not UTC
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
 export default function Schedule({ onNavigate }) {
@@ -32,27 +33,6 @@ export default function Schedule({ onNavigate }) {
     const [startLoading, setStartLoading] = useState(false);
     const [startError, setStartError] = useState(null);
     const { startSession } = useWorkout();
-
-    // Quick weight log
-    const [showWeightLog, setShowWeightLog] = useState(false);
-    const [quickWeight, setQuickWeight] = useState('');
-    const [weightSaved, setWeightSaved] = useState(false);
-
-    const handleQuickWeight = async () => {
-        if (!quickWeight) return;
-        // Use local device date (not UTC)
-        const now = new Date();
-        const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-        try {
-            await api.addWeightLog({ weight: parseFloat(quickWeight), date: today });
-            setQuickWeight('');
-            setShowWeightLog(false);
-            setWeightSaved(true);
-            setTimeout(() => setWeightSaved(false), 2000);
-        } catch (err) {
-            console.error('Failed to log weight:', err);
-        }
-    };
 
     const weekDates = useMemo(() => getWeekDates(selectedDate), [selectedDate]);
 
@@ -332,8 +312,8 @@ export default function Schedule({ onNavigate }) {
                 gap: '24px',
             }}>
                 {/* Today's Workout Header */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 4px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 4px', flexWrap: 'wrap', rowGap: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
                         <h2 style={{
                             fontSize: '16px',
                             fontWeight: 800,
@@ -367,12 +347,13 @@ export default function Schedule({ onNavigate }) {
                                 cursor: 'pointer',
                                 color: colors.primary,
                                 transition: 'all 0.2s',
+                                flexShrink: 0,
                             }}
                         >
                             <span className="material-icons-outlined" style={{ fontSize: '18px' }}>add</span>
                         </button>
                     </div>
-                    <span style={{ fontSize: '12px', fontWeight: 600, color: colors.primary, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    <span style={{ fontSize: '12px', fontWeight: 600, color: colors.primary, textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>
                         {selectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
                     </span>
                 </div>
@@ -688,86 +669,6 @@ export default function Schedule({ onNavigate }) {
                             gap: '12px',
                         }}>
                             {daySchedules.map((sr, idx) => renderCard(sr, idx))}
-                        </div>
-                    );
-                })()}
-
-                {/* Weigh In — discreet action, only shown on current day */}
-                {(() => {
-                    const now = new Date();
-                    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-                    if (selectedDateStr !== todayStr) return null;
-                    return (
-                        <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '0 4px' }}>
-                            {showWeightLog ? (
-                                <div style={{
-                                    display: 'flex',
-                                    gap: '8px',
-                                    width: '100%',
-                                }}>
-                                    <input
-                                        type="number"
-                                        value={quickWeight}
-                                        onChange={e => setQuickWeight(e.target.value)}
-                                        placeholder="Body weight (lbs)"
-                                        autoFocus
-                                        style={{
-                                            flex: 1,
-                                            padding: '10px 12px',
-                                            background: 'rgba(255,255,255,0.04)',
-                                            border: '1px solid rgba(255,255,255,0.1)',
-                                            borderRadius: '8px',
-                                            color: '#fff',
-                                            fontSize: '14px',
-                                            fontFamily: 'Inter, sans-serif',
-                                            outline: 'none',
-                                        }}
-                                    />
-                                    <button onClick={handleQuickWeight} style={{
-                                        padding: '10px 14px',
-                                        background: colors.primary,
-                                        color: '#000',
-                                        border: 'none',
-                                        borderRadius: '8px',
-                                        fontWeight: 700,
-                                        fontSize: '12px',
-                                        cursor: 'pointer',
-                                    }}>
-                                        SAVE
-                                    </button>
-                                    <button onClick={() => setShowWeightLog(false)} style={{
-                                        padding: '10px',
-                                        background: 'none',
-                                        border: '1px solid rgba(255,255,255,0.1)',
-                                        borderRadius: '8px',
-                                        color: '#888',
-                                        cursor: 'pointer',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                    }}>
-                                        <span className="material-icons-outlined" style={{ fontSize: '16px' }}>close</span>
-                                    </button>
-                                </div>
-                            ) : (
-                                <button
-                                    onClick={() => { setShowWeightLog(true); setShowAssign(false); }}
-                                    style={{
-                                        background: 'none',
-                                        border: 'none',
-                                        cursor: 'pointer',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '6px',
-                                        padding: '6px 0',
-                                    }}
-                                >
-                                    <span className="material-icons-outlined" style={{ fontSize: '16px', color: '#666' }}>monitor_weight</span>
-                                    <span style={{ fontSize: '12px', fontWeight: 600, color: '#666' }}>Weigh In</span>
-                                    {weightSaved && (
-                                        <span style={{ fontSize: '11px', color: colors.primary, fontWeight: 600, marginLeft: '4px' }}>✓ Saved</span>
-                                    )}
-                                </button>
-                            )}
                         </div>
                     );
                 })()}

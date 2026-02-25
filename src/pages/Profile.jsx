@@ -22,9 +22,9 @@ export default function Profile() {
     const [passwordError, setPasswordError] = useState('');
     const [passwordLoading, setPasswordLoading] = useState(false);
 
-    const displayName = (profile?.firstName && profile?.lastName)
-        ? `${profile.firstName} ${profile.lastName}`
-        : (profile?.username || user?.username || 'MNDZ');
+    const displayName = (profile?.firstName || profile?.lastName)
+        ? `${profile?.firstName || ''} ${profile?.lastName || ''}`.trim()
+        : 'MNDZ';
 
     const initials = displayName
         .split(' ')
@@ -89,10 +89,11 @@ export default function Profile() {
         }
     };
 
+    const unitLabel = (profile?.preferredUnits || 'lbs').toUpperCase();
     const stats = [
         { label: 'WORKOUTS', value: profile?.workouts || 0 },
         { label: 'STREAK', value: profile?.streak || 0 },
-        { label: 'LBS', value: profile?.currentWeight || '—' },
+        { label: unitLabel, value: profile?.currentWeight || '—' },
     ];
 
     // -- Shared row style for menu items
@@ -221,7 +222,7 @@ export default function Profile() {
                         letterSpacing: '-0.02em',
                         marginTop: '16px',
                     }}>
-                        {profile?.firstName ? `${profile.firstName} ${profile.lastName || ''}`.trim() : displayName}
+                        {displayName}
                     </h2>
 
                     {/* Badge row */}

@@ -48,16 +48,13 @@ export async function initDatabase() {
     await initTablesSqlite();
 
     // Migrations for existing DB
-    try {
-      sqliteDb.exec('ALTER TABLE users ADD COLUMN firstName TEXT DEFAULT NULL');
-      sqliteDb.exec('ALTER TABLE users ADD COLUMN lastName TEXT DEFAULT NULL');
-      sqliteDb.exec('ALTER TABLE users ADD COLUMN notificationsEnabled INTEGER DEFAULT 1');
-      sqliteDb.exec("ALTER TABLE users ADD COLUMN preferredUnits TEXT DEFAULT 'lbs'");
-      console.log('✅ Applied user table migrations');
-      saveDatabase();
-    } catch (e) {
-      // Columns likely already exist, ignore
-    }
+    // Use individual try-catch blocks so one existing column doesn't stop others
+    try { sqliteDb.exec('ALTER TABLE users ADD COLUMN firstName TEXT DEFAULT NULL'); } catch (e) { }
+    try { sqliteDb.exec('ALTER TABLE users ADD COLUMN lastName TEXT DEFAULT NULL'); } catch (e) { }
+    try { sqliteDb.exec('ALTER TABLE users ADD COLUMN notificationsEnabled INTEGER DEFAULT 1'); } catch (e) { }
+    try { sqliteDb.exec("ALTER TABLE users ADD COLUMN preferredUnits TEXT DEFAULT 'lbs'"); } catch (e) { }
+    console.log('✅ Applied user table migrations');
+    saveDatabase();
   }
 }
 

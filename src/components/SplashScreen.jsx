@@ -41,12 +41,12 @@ export default function SplashScreen({ onComplete }) {
                 src={logo}
                 alt="MNDZ"
                 style={{
-                    width: '85%',
-                    maxWidth: '420px',
+                    width: '100%',
+                    maxWidth: '900px',
                     height: 'auto',
                     objectFit: 'contain',
                     imageRendering: 'auto',
-                    marginBottom: '40px',
+                    marginBottom: '20px',
                 }}
             />
 

@@ -57,7 +57,8 @@ export default function Progress() {
         return days;
     }, [calMonth, calYear]);
 
-    const todayStr = now.toISOString().split('T')[0];
+    // Use LOCAL device date for "today" — not UTC
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
     const isWorkoutDay = (day) => {
         if (!day) return false;
@@ -115,6 +116,32 @@ export default function Progress() {
         });
         return result;
     }, [weightLogs, weightSummaryYear, weightMode]);
+
+    // --- Add Today's Weight state ---
+    const [showWeightInput, setShowWeightInput] = useState(false);
+    const [weightValue, setWeightValue] = useState('');
+    const [weightSaving, setWeightSaving] = useState(false);
+    const [weightSavedMsg, setWeightSavedMsg] = useState('');
+
+    const handleSaveWeight = async () => {
+        const w = parseFloat(weightValue);
+        if (isNaN(w) || w <= 0) return;
+        setWeightSaving(true);
+        try {
+            // Always use local device date
+            await api.addWeightLog({ weight: w, date: todayStr });
+            setWeightValue('');
+            setShowWeightInput(false);
+            setWeightSavedMsg('✓ Saved');
+            setTimeout(() => setWeightSavedMsg(''), 2500);
+            // Reload weight data
+            loadData();
+        } catch (err) {
+            console.error('Failed to save weight:', err);
+        } finally {
+            setWeightSaving(false);
+        }
+    };
 
 
 
@@ -372,6 +399,101 @@ export default function Progress() {
                         <p style={{ color: '#555', fontSize: '12px', textAlign: 'center', marginTop: '12px' }}>
                             Log your weight to track monthly progress
                         </p>
+                    )}
+                </div>
+
+                {/* Add Today's Weight */}
+                <div style={cardStyle}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        {sectionLabel("Log Body Weight")}
+                        {weightSavedMsg && (
+                            <span style={{ fontSize: '12px', color: neonLime, fontWeight: 600 }}>{weightSavedMsg}</span>
+                        )}
+                    </div>
+                    {showWeightInput ? (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                <input
+                                    type="number"
+                                    value={weightValue}
+                                    onChange={e => setWeightValue(e.target.value)}
+                                    placeholder="Body weight"
+                                    autoFocus
+                                    style={{
+                                        flex: 1,
+                                        padding: '12px',
+                                        background: 'rgba(255,255,255,0.04)',
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                        borderRadius: '8px',
+                                        color: '#fff',
+                                        fontSize: '15px',
+                                        fontFamily: 'Inter, sans-serif',
+                                        outline: 'none',
+                                    }}
+                                />
+                                <span style={{ fontSize: '13px', color: '#888', fontWeight: 600, minWidth: '40px', textAlign: 'center' }}>
+                                    {todayStr.slice(5).replace('-', '/')}
+                                </span>
+                            </div>
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                                <button
+                                    onClick={handleSaveWeight}
+                                    disabled={weightSaving}
+                                    style={{
+                                        flex: 1,
+                                        padding: '12px 18px',
+                                        background: neonLime,
+                                        color: '#000',
+                                        border: 'none',
+                                        borderRadius: '8px',
+                                        fontWeight: 800,
+                                        fontSize: '13px',
+                                        cursor: 'pointer',
+                                    }}
+                                >
+                                    SAVE
+                                </button>
+                                <button
+                                    onClick={() => { setShowWeightInput(false); setWeightValue(''); }}
+                                    style={{
+                                        padding: '12px',
+                                        background: 'none',
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                        borderRadius: '8px',
+                                        color: '#888',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                    }}
+                                >
+                                    <span className="material-icons-outlined" style={{ fontSize: '18px' }}>close</span>
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        <button
+                            onClick={() => setShowWeightInput(true)}
+                            style={{
+                                width: '100%',
+                                padding: '14px',
+                                background: 'rgba(223,255,0,0.06)',
+                                border: `1px solid rgba(223,255,0,0.15)`,
+                                borderRadius: '10px',
+                                color: neonLime,
+                                fontSize: '13px',
+                                fontWeight: 700,
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '8px',
+                                letterSpacing: '0.03em',
+                            }}
+                        >
+                            <span className="material-icons-outlined" style={{ fontSize: '18px' }}>monitor_weight</span>
+                            Add Today's Weight
+                        </button>
                     )}
                 </div>
 

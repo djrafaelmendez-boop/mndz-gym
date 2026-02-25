@@ -1,23 +1,27 @@
 from PIL import Image, ImageDraw
 import os
+import shutil
+
+# 1. Copy the official logos to src/assets
+shutil.copyfile('LOGO/logo.png', 'src/assets/logo_transparent.png')
+shutil.copyfile('LOGO/logo 2.png', 'src/assets/logo.png')
 
 ICON_SIZE = 1024
 
-# Create gradient background — richer gray gradient (not flat black)
-# Top: #3a3a3a (medium dark gray), Bottom: #111111 (very dark)
+# Create gradient background
+# Top: #333333 (dark gray), Bottom: #111111 (almost black)
 img = Image.new('RGBA', (ICON_SIZE, ICON_SIZE), (0, 0, 0, 255))
 draw = ImageDraw.Draw(img)
 
 for y in range(ICON_SIZE):
     t = y / ICON_SIZE
-    # Top: rgb(58,58,58) -> Bottom: rgb(17,17,17)
-    r = int(58 + (17 - 58) * t)
-    g = int(58 + (17 - 58) * t)
-    b = int(58 + (17 - 58) * t)
+    r = int(51 + (17 - 51) * t)
+    g = int(51 + (17 - 51) * t)
+    b = int(51 + (17 - 51) * t)
     draw.line([(0, y), (ICON_SIZE - 1, y)], fill=(r, g, b, 255))
 
-# Load the original transparent logo
-logo = Image.open('src/assets/logo_transparent.png').convert('RGBA')
+# Load the official transparent logo directly from LOGO folder
+logo = Image.open('LOGO/logo.png').convert('RGBA')
 
 # Scale logo to fit ~65% of icon width
 logo_target_width = int(ICON_SIZE * 0.65)
@@ -33,7 +37,7 @@ img.paste(logo_resized, (x_offset, y_offset), logo_resized)
 
 # Save icon
 img.save('src/assets/icon.png', 'PNG')
-print(f"✅ Generated icon.png ({ICON_SIZE}x{ICON_SIZE}) with gray gradient background (#3a3a3a → #111111)")
+print(f"✅ Generated icon.png ({ICON_SIZE}x{ICON_SIZE}) with gray gradient background")
 
 # Splash version
 SPLASH_SIZE = 2732
@@ -42,9 +46,9 @@ splash_draw = ImageDraw.Draw(splash)
 
 for y in range(SPLASH_SIZE):
     t = y / SPLASH_SIZE
-    r = int(58 + (17 - 58) * t)
-    g = int(58 + (17 - 58) * t)
-    b = int(58 + (17 - 58) * t)
+    r = int(51 + (17 - 51) * t)
+    g = int(51 + (17 - 51) * t)
+    b = int(51 + (17 - 51) * t)
     splash_draw.line([(0, y), (SPLASH_SIZE - 1, y)], fill=(r, g, b, 255))
 
 splash_logo_width = int(SPLASH_SIZE * 0.40)
