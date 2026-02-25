@@ -52,6 +52,7 @@ export async function initDatabase() {
       sqliteDb.exec('ALTER TABLE users ADD COLUMN firstName TEXT DEFAULT NULL');
       sqliteDb.exec('ALTER TABLE users ADD COLUMN lastName TEXT DEFAULT NULL');
       sqliteDb.exec('ALTER TABLE users ADD COLUMN notificationsEnabled INTEGER DEFAULT 1');
+      sqliteDb.exec("ALTER TABLE users ADD COLUMN preferredUnits TEXT DEFAULT 'lbs'");
       console.log('✅ Applied user table migrations');
       saveDatabase();
     } catch (e) {
@@ -75,6 +76,7 @@ async function initTablesSqlite() {
       firstName TEXT DEFAULT NULL,
       lastName TEXT DEFAULT NULL,
       notificationsEnabled INTEGER DEFAULT 1,
+      preferredUnits TEXT DEFAULT 'lbs',
       createdAt TEXT DEFAULT (datetime('now'))
     );
     CREATE TABLE IF NOT EXISTS exercises (
@@ -166,6 +168,7 @@ async function initTablesPostgres() {
       "firstName" TEXT DEFAULT NULL,
       "lastName" TEXT DEFAULT NULL,
       "notificationsEnabled" INTEGER DEFAULT 1,
+      "preferredUnits" TEXT DEFAULT 'lbs',
       createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
     CREATE TABLE IF NOT EXISTS exercises (
@@ -247,6 +250,7 @@ async function initTablesPostgres() {
     await pgPool.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS "firstName" TEXT DEFAULT NULL');
     await pgPool.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS "lastName" TEXT DEFAULT NULL');
     await pgPool.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS "notificationsEnabled" INTEGER DEFAULT 1');
+    await pgPool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS \"preferredUnits\" TEXT DEFAULT 'lbs'");
     console.log('✅ Applied user table migrations (Postgres)');
   } catch (e) { }
 

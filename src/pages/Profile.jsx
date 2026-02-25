@@ -60,6 +60,18 @@ export default function Profile() {
         }
     };
 
+    const handleToggleUnits = async () => {
+        const current = profile?.preferredUnits || 'lbs';
+        const newUnits = current === 'lbs' ? 'kg' : 'lbs';
+        setProfile(prev => ({ ...prev, preferredUnits: newUnits }));
+        try {
+            await api.updateUnits(newUnits);
+        } catch (err) {
+            console.error('Failed to update units:', err);
+            setProfile(prev => ({ ...prev, preferredUnits: current }));
+        }
+    };
+
     const handleChangePassword = async (e) => {
         e.preventDefault();
         setPasswordError('');
@@ -366,7 +378,7 @@ export default function Profile() {
                             </div>
                         </div>
                         {/* Units */}
-                        <div style={menuRowStyle(false)}>
+                        <div style={menuRowStyle(false)} onClick={handleToggleUnits}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                                 <span className="material-icons-outlined" style={{ fontSize: '22px', color: neonLime }}>fitness_center</span>
                                 <span style={{ fontSize: '14px', fontWeight: 700, color: '#E5E7EB' }}>Units</span>
@@ -374,13 +386,14 @@ export default function Profile() {
                             <span style={{
                                 fontSize: '11px',
                                 fontWeight: 700,
-                                color: textSecondary,
-                                background: borderColor,
-                                padding: '4px 8px',
+                                color: '#000',
+                                background: neonLime,
+                                padding: '4px 10px',
                                 borderRadius: '4px',
-                                border: '1px solid #374151',
+                                cursor: 'pointer',
+                                letterSpacing: '0.05em',
                             }}>
-                                LBS / MILES
+                                {(profile?.preferredUnits || 'lbs').toUpperCase()}
                             </span>
                         </div>
                     </div>

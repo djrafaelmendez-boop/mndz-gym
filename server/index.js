@@ -608,7 +608,7 @@ app.get('/api/profile', authenticateToken, async (req, res) => {
             }
         }
 
-        const user = await dbGet('SELECT username, firstName, lastName, profilePicture, notificationsEnabled FROM users WHERE id = ?', [req.userId]);
+        const user = await dbGet('SELECT username, firstName, lastName, profilePicture, notificationsEnabled, preferredUnits FROM users WHERE id = ?', [req.userId]);
 
         res.json({
             username: user?.username || 'User',
@@ -616,6 +616,7 @@ app.get('/api/profile', authenticateToken, async (req, res) => {
             lastName: user?.lastName,
             profilePicture: user?.profilePicture,
             notificationsEnabled: user?.notificationsEnabled === 1,
+            preferredUnits: user?.preferredUnits || 'lbs',
             workouts: workoutCount?.c || 0,
             streak,
             currentWeight: latestWeight?.weight || null,
@@ -663,6 +664,18 @@ app.put('/api/profile/notifications', authenticateToken, async (req, res) => {
         await dbRun('UPDATE users SET notificationsEnabled = ? WHERE id = ?', [enabled ? 1 : 0, req.userId]);
         saveDatabase();
         res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.put('/api/profile/units', authenticateToken, async (req, res) => {
+    try {
+        const { units } = req.body;
+        if (units !== 'lbs' && units !== 'kg') return res.status(400).json({ error: 'Invalid units. Use lbs or kg.' });
+        await dbRun('UPDATE users SET preferredUnits = ? WHERE id = ?', [units, req.userId]);
+        saveDatabase();
+        res.json({ success: true, preferredUnits: units });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

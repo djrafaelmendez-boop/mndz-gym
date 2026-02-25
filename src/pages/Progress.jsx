@@ -101,13 +101,15 @@ export default function Progress() {
             const [y, m] = log.date.split('-');
             if (parseInt(y) !== weightSummaryYear) return;
             const monthIdx = parseInt(m) - 1;
+            const w = parseFloat(log.weight);
+            if (isNaN(w)) return;
             if (weightMode === 'lowest') {
-                if (result[monthIdx] === null || log.weight < result[monthIdx]) {
-                    result[monthIdx] = log.weight;
+                if (result[monthIdx] === null || w < result[monthIdx]) {
+                    result[monthIdx] = w;
                 }
             } else {
-                if (result[monthIdx] === null || log.weight > result[monthIdx]) {
-                    result[monthIdx] = log.weight;
+                if (result[monthIdx] === null || w > result[monthIdx]) {
+                    result[monthIdx] = w;
                 }
             }
         });

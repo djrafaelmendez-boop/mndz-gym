@@ -40,7 +40,9 @@ export default function Schedule({ onNavigate }) {
 
     const handleQuickWeight = async () => {
         if (!quickWeight) return;
-        const today = new Date().toISOString().split('T')[0];
+        // Use local device date (not UTC)
+        const now = new Date();
+        const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
         try {
             await api.addWeightLog({ weight: parseFloat(quickWeight), date: today });
             setQuickWeight('');
@@ -370,85 +372,10 @@ export default function Schedule({ onNavigate }) {
                             <span className="material-icons-outlined" style={{ fontSize: '18px' }}>add</span>
                         </button>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        {weightSaved && (
-                            <span style={{ fontSize: '11px', color: colors.primary, fontWeight: 600 }}>✓ Saved</span>
-                        )}
-                        <button
-                            onClick={() => { setShowWeightLog(!showWeightLog); setShowAssign(false); }}
-                            title="Log Weight"
-                            style={{
-                                background: showWeightLog ? 'rgba(223,255,0,0.15)' : 'none',
-                                border: 'none',
-                                cursor: 'pointer',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '4px',
-                                padding: '4px 8px',
-                                borderRadius: '6px',
-                            }}
-                        >
-                            <span className="material-icons-outlined" style={{ fontSize: '16px', color: colors.primary }}>monitor_weight</span>
-                            <span style={{ fontSize: '11px', fontWeight: 600, color: '#888' }}>Add Weight</span>
-                        </button>
-                        <span style={{ fontSize: '12px', fontWeight: 600, color: colors.primary, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                            {selectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
-                        </span>
-                    </div>
+                    <span style={{ fontSize: '12px', fontWeight: 600, color: colors.primary, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        {selectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
+                    </span>
                 </div>
-
-                {/* Quick weight input */}
-                {showWeightLog && (
-                    <div style={{
-                        display: 'flex',
-                        gap: '8px',
-                        padding: '0 4px',
-                        marginTop: '-12px',
-                    }}>
-                        <input
-                            type="number"
-                            value={quickWeight}
-                            onChange={e => setQuickWeight(e.target.value)}
-                            placeholder="Weight (lbs)"
-                            autoFocus
-                            style={{
-                                flex: 1,
-                                padding: '10px 12px',
-                                background: 'rgba(255,255,255,0.04)',
-                                border: '1px solid rgba(255,255,255,0.1)',
-                                borderRadius: '8px',
-                                color: '#fff',
-                                fontSize: '14px',
-                                fontFamily: 'Inter, sans-serif',
-                                outline: 'none',
-                            }}
-                        />
-                        <button onClick={handleQuickWeight} style={{
-                            padding: '10px 14px',
-                            background: colors.primary,
-                            color: '#000',
-                            border: 'none',
-                            borderRadius: '8px',
-                            fontWeight: 700,
-                            fontSize: '12px',
-                            cursor: 'pointer',
-                        }}>
-                            SAVE
-                        </button>
-                        <button onClick={() => setShowWeightLog(false)} style={{
-                            padding: '10px',
-                            background: 'none',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            borderRadius: '8px',
-                            color: '#888',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                        }}>
-                            <span className="material-icons-outlined" style={{ fontSize: '16px' }}>close</span>
-                        </button>
-                    </div>
-                )}
 
                 {showAssign ? (
                     <div style={{ background: colors.surfaceDark, borderRadius: '16px', padding: '16px', border: `1px solid ${colors.borderDark}` }}>
@@ -765,7 +692,87 @@ export default function Schedule({ onNavigate }) {
                     );
                 })()}
 
-                {/* Bottom padding to avoid nav overlap if needed, usually container handles it */}
+                {/* Weigh In — discreet action, only shown on current day */}
+                {(() => {
+                    const now = new Date();
+                    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+                    if (selectedDateStr !== todayStr) return null;
+                    return (
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '0 4px' }}>
+                            {showWeightLog ? (
+                                <div style={{
+                                    display: 'flex',
+                                    gap: '8px',
+                                    width: '100%',
+                                }}>
+                                    <input
+                                        type="number"
+                                        value={quickWeight}
+                                        onChange={e => setQuickWeight(e.target.value)}
+                                        placeholder="Body weight (lbs)"
+                                        autoFocus
+                                        style={{
+                                            flex: 1,
+                                            padding: '10px 12px',
+                                            background: 'rgba(255,255,255,0.04)',
+                                            border: '1px solid rgba(255,255,255,0.1)',
+                                            borderRadius: '8px',
+                                            color: '#fff',
+                                            fontSize: '14px',
+                                            fontFamily: 'Inter, sans-serif',
+                                            outline: 'none',
+                                        }}
+                                    />
+                                    <button onClick={handleQuickWeight} style={{
+                                        padding: '10px 14px',
+                                        background: colors.primary,
+                                        color: '#000',
+                                        border: 'none',
+                                        borderRadius: '8px',
+                                        fontWeight: 700,
+                                        fontSize: '12px',
+                                        cursor: 'pointer',
+                                    }}>
+                                        SAVE
+                                    </button>
+                                    <button onClick={() => setShowWeightLog(false)} style={{
+                                        padding: '10px',
+                                        background: 'none',
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                        borderRadius: '8px',
+                                        color: '#888',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                    }}>
+                                        <span className="material-icons-outlined" style={{ fontSize: '16px' }}>close</span>
+                                    </button>
+                                </div>
+                            ) : (
+                                <button
+                                    onClick={() => { setShowWeightLog(true); setShowAssign(false); }}
+                                    style={{
+                                        background: 'none',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '6px',
+                                        padding: '6px 0',
+                                    }}
+                                >
+                                    <span className="material-icons-outlined" style={{ fontSize: '16px', color: '#666' }}>monitor_weight</span>
+                                    <span style={{ fontSize: '12px', fontWeight: 600, color: '#666' }}>Weigh In</span>
+                                    {weightSaved && (
+                                        <span style={{ fontSize: '11px', color: colors.primary, fontWeight: 600, marginLeft: '4px' }}>✓ Saved</span>
+                                    )}
+                                </button>
+                            )}
+                        </div>
+                    );
+                })()}
+
+                {/* Bottom padding to avoid nav overlap */}
                 <div style={{ height: '80px' }} />
             </div>
 

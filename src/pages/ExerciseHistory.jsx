@@ -78,7 +78,7 @@ export default function ExerciseHistory({ onBack, exercise }) {
             {/* ── Header ── */}
             <header style={{
                 flexShrink: 0,
-                padding: '48px 24px 16px 24px',
+                padding: 'calc(env(safe-area-inset-top) + 16px) 24px 16px 24px',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '16px',
