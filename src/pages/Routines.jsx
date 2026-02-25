@@ -5,8 +5,8 @@ import { api } from '../api';
 const COLORS = {
     primary: '#DFFF00',
     primaryDim: '#b2cc00',
-    bgDark: '#0D0D0D',
-    surfaceDark: '#161616',
+    bgDark: '#0A0F1E',
+    surfaceDark: '#111827',
     textSecondary: '#A1A1A1',
     textMuted: '#6B7280',
     borderDark: '#1F2937', // gray-800
@@ -66,7 +66,7 @@ export default function Routines({ onNavigate }) {
             display: 'flex',
             flexDirection: 'column',
             overflow: 'hidden',
-            background: `linear-gradient(to bottom, #1C1C1C 0%, #111111 30%, ${COLORS.bgDark} 100%)`,
+            background: `linear-gradient(to bottom, ${COLORS.surfaceDark} 0%, ${COLORS.bgDark} 100%)`,
             fontFamily: 'Inter, sans-serif',
             position: 'relative',
         }}>

@@ -3,7 +3,7 @@ import { api } from '../api';
 import { colors } from '../styles/designTokens';
 
 const neonLime = '#DFFF00';
-const surfaceDark = '#161616';
+const surfaceDark = '#111827';
 const borderColor = '#1F2937';
 
 const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -167,7 +167,7 @@ export default function Progress() {
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
             {/* Header */}
             <div style={{
-                background: 'linear-gradient(to bottom, #262626 0%, #0D0D0D 100px)',
+                background: `linear-gradient(to bottom, ${colors.bgGradientTop} 0%, ${colors.bgDark} 100px)`,
                 padding: '16px 20px',
                 paddingTop: 'calc(env(safe-area-inset-top) + 24px)',
             }}>

@@ -21,7 +21,7 @@ export default function TabBar({ activeTab, onTabChange }) {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                background: 'linear-gradient(180deg, #1E1E1E 0%, #161616 100%)',
+                background: 'linear-gradient(180deg, #1A2236 0%, #111827 100%)',
                 borderRadius: '999px',
                 padding: '8px 16px',
                 border: '1px solid rgba(255,255,255,0.06)',

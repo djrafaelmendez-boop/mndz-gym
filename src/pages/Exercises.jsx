@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { api } from '../api';
-import { muscleGroups } from '../styles/designTokens';
+import { muscleGroups, colors } from '../styles/designTokens';
 import ExerciseRow from '../components/ExerciseRow';
 
 export default function Exercises({ onNavigate }) {
@@ -43,7 +43,7 @@ export default function Exercises({ onNavigate }) {
                 left: 0,
                 right: 0,
                 height: '256px',
-                background: 'linear-gradient(to bottom, #2A2A2A 0%, #151515 40%, #0D0D0D 100%)',
+                background: `linear-gradient(to bottom, ${colors.bgGradientTop} 0%, ${colors.bgDark} 40%, ${colors.bgDark} 100%)`,
                 opacity: 0.9,
                 pointerEvents: 'none',
                 zIndex: 0,

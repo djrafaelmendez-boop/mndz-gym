@@ -52,7 +52,7 @@ export default function NewExercise({ onBack }) {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '12px',
-                background: 'linear-gradient(to bottom, #262626 0%, #0D0D0D 100px)',
+                background: `linear-gradient(to bottom, ${colors.bgGradientTop} 0%, ${colors.bgDark} 100px)`,
             }}>
                 <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#fff' }}>
                     <span className="material-icons-outlined">arrow_back</span>

@@ -153,7 +153,7 @@ export default function Schedule({ onNavigate }) {
             display: 'flex',
             flexDirection: 'column',
             overflow: 'hidden',
-            background: `linear-gradient(to bottom, #262626 0%, #0D0D0D 100px)`,
+            background: `linear-gradient(to bottom, ${colors.bgGradientTop} 0%, ${colors.bgDark} 100px)`,
         }}>
             {/* Header */}
             <div style={{

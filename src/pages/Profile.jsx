@@ -4,7 +4,7 @@ import { api } from '../api';
 import { colors } from '../styles/designTokens';
 
 const neonLime = '#DFFF00';
-const surfaceDark = '#161616';
+const surfaceDark = '#111827';
 const borderColor = '#1F2937'; // gray-800
 const textSecondary = '#A1A1A1';
 
@@ -129,7 +129,7 @@ export default function Profile() {
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
             {/* Header */}
             <div style={{
-                background: 'linear-gradient(to bottom, #262626 0%, #0D0D0D 45%)',
+                background: `linear-gradient(to bottom, ${colors.bgGradientTop} 0%, ${colors.bgDark} 45%)`,
                 padding: '16px 24px',
                 paddingTop: 'calc(env(safe-area-inset-top) + 16px)',
                 display: 'flex',
@@ -212,7 +212,7 @@ export default function Profile() {
                             height: '32px',
                             borderRadius: '50%',
                             background: neonLime,
-                            border: `4px solid #0D0D0D`,
+                            border: `4px solid ${colors.bgDark}`,
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
