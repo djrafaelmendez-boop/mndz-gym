@@ -33,8 +33,12 @@ export default function Progress() {
 
     const loadAttendance = async (year) => {
         try {
-            const dates = await api.getAttendance(year);
-            setAttendanceDates(new Set(dates));
+            const rawDates = await api.getAttendance(year);
+            const localDates = rawDates.map(isoString => {
+                const d = new Date(isoString);
+                return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+            });
+            setAttendanceDates(new Set(localDates));
         } catch (err) {
             console.error(err);
         }

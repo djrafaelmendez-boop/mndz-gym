@@ -569,7 +569,7 @@ app.post('/api/progress/steps', authenticateToken, async (req, res) => {
 app.get('/api/progress/attendance', authenticateToken, async (req, res) => {
     try {
         const { year } = req.query;
-        let query = "SELECT DISTINCT date(startedAt) as d FROM workout_sessions WHERE userId = ? AND completedAt IS NOT NULL";
+        let query = "SELECT startedAt as d FROM workout_sessions WHERE userId = ? AND completedAt IS NOT NULL";
         const params = [req.userId];
         if (year) {
             query += " AND strftime('%Y', startedAt) = ?";

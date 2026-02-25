@@ -39,8 +39,8 @@ export function AuthProvider({ children }) {
         localStorage.removeItem('mndz_token');
         localStorage.removeItem('mndz_active_session');
         setUser(null);
-        // Force full refresh to clear any stale contexts/state
-        window.location.href = '/';
+        // Force full refresh safely for iOS Capacitor
+        window.location.reload();
     };
 
     return (

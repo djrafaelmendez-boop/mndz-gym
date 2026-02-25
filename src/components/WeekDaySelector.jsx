@@ -2,6 +2,11 @@ import { colors } from '../styles/designTokens';
 
 const DAYS = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
 
+function formatDateLocal(d) {
+    if (!d) return '';
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
 export default function WeekDaySelector({ selectedDate, onSelectDate, weekDates, dayStatuses = {} }) {
     return (
         <div style={{
@@ -17,7 +22,7 @@ export default function WeekDaySelector({ selectedDate, onSelectDate, weekDates,
             {weekDates.map((date, i) => {
                 const dayNum = date.getDate();
                 const isSelected = selectedDate && date.toDateString() === selectedDate.toDateString();
-                const dateStr = date.toISOString().split('T')[0];
+                const dateStr = formatDateLocal(date);
                 const status = dayStatuses[dateStr]; // 'full', 'partial', 'missed', or undefined
 
                 return (
