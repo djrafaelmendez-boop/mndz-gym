@@ -534,6 +534,7 @@ app.post('/api/progress/weight', authenticateToken, async (req, res) => {
         } else {
             await dbRun('INSERT INTO body_weight_logs (userId, weight, date) VALUES (?, ?, ?)', [req.userId, weight, date]);
         }
+        saveDatabase();
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ error: err.message });

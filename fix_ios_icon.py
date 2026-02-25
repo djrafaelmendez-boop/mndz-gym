@@ -21,7 +21,7 @@ for y in range(ICON_SIZE):
 logo = Image.open('src/assets/logo_transparent.png').convert('RGBA')
 
 # Scale logo to be well-balanced (60% width)
-logo_target_width = int(ICON_SIZE * 0.60)
+logo_target_width = int(ICON_SIZE * 0.95)
 ratio = logo_target_width / logo.width
 new_h = int(logo.height * ratio)
 logo_resized = logo.resize((logo_target_width, new_h), Image.LANCZOS)
