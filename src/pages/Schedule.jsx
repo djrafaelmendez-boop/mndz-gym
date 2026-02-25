@@ -559,13 +559,36 @@ export default function Schedule({ onNavigate }) {
                                             </span>
                                         )}
                                         {isCompleted && (
-                                            <span className="material-symbols-outlined" style={{
-                                                fontSize: '20px', // text-xl
-                                                color: crimson, // text-crimson
-                                                verticalAlign: 'middle',
-                                                marginLeft: '4px',
-                                                fontVariationSettings: "'FILL' 1",
-                                            }}>local_fire_department</span>
+                                            <span style={{ display: 'inline-flex', alignItems: 'center', marginLeft: '8px', verticalAlign: 'middle' }}>
+                                                <span className="material-symbols-outlined" style={{
+                                                    fontSize: '20px', // text-xl
+                                                    color: crimson, // text-crimson
+                                                    fontVariationSettings: "'FILL' 1",
+                                                }}>local_fire_department</span>
+                                                {sr.startedAt && sr.completedAt && (() => {
+                                                    const start = new Date(sr.startedAt).getTime();
+                                                    const end = new Date(sr.completedAt).getTime();
+                                                    const diffMins = Math.round((end - start) / 60000);
+                                                    if (diffMins > 0) {
+                                                        return (
+                                                            <span style={{
+                                                                marginLeft: '4px',
+                                                                fontSize: '11px',
+                                                                fontWeight: 700,
+                                                                color: '#9CA3AF',
+                                                                letterSpacing: '0.05em',
+                                                                background: 'rgba(255,255,255,0.05)',
+                                                                padding: '2px 6px',
+                                                                borderRadius: '4px',
+                                                                fontStyle: 'normal',
+                                                            }}>
+                                                                {diffMins} MIN
+                                                            </span>
+                                                        );
+                                                    }
+                                                    return null;
+                                                })()}
+                                            </span>
                                         )}
                                     </h3>
 

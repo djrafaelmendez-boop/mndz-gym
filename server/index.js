@@ -281,7 +281,7 @@ app.get('/api/schedule', authenticateToken, async (req, res) => {
     try {
         const { startDate, endDate } = req.query;
         let query = `
-            SELECT sr.*, r.name as routineName, r.primaryMuscles, r.difficulty, r.estimatedMinutes, ws.id as workoutSessionId
+            SELECT sr.*, r.name as routineName, r.primaryMuscles, r.difficulty, r.estimatedMinutes, ws.id as workoutSessionId, ws.startedAt, ws.completedAt
             FROM scheduled_routines sr
             JOIN routines r ON r.id = sr.routineId
             LEFT JOIN workout_sessions ws ON ws.scheduledRoutineId = sr.id
@@ -660,6 +660,47 @@ app.put('/api/profile/avatar', authenticateToken, async (req, res) => {
     }
 });
 
+app.delete('/api/profile', authenticateToken, async (req, res) => {
+    try {
+        const userId = req.userId;
+
+        // 1. Delete set logs tied to the user's workout sessions
+        await dbRun('DELETE FROM set_logs WHERE workoutSessionId IN (SELECT id FROM workout_sessions WHERE userId = ?)', [userId]);
+
+        // 2. Delete workout sessions
+        await dbRun('DELETE FROM workout_sessions WHERE userId = ?', [userId]);
+
+        // 3. Delete scheduled routines
+        await dbRun('DELETE FROM scheduled_routines WHERE userId = ?', [userId]);
+
+        // 4. Delete planned sets tied to the user's routines
+        await dbRun('DELETE FROM planned_sets WHERE routineExerciseId IN (SELECT id FROM routine_exercises WHERE routineId IN (SELECT id FROM routines WHERE userId = ?))', [userId]);
+
+        // 5. Delete routine exercises
+        await dbRun('DELETE FROM routine_exercises WHERE routineId IN (SELECT id FROM routines WHERE userId = ?)', [userId]);
+
+        // 6. Delete routines
+        await dbRun('DELETE FROM routines WHERE userId = ?', [userId]);
+
+        // 7. Delete body weight logs
+        await dbRun('DELETE FROM body_weight_logs WHERE userId = ?', [userId]);
+
+        // 8. Delete steps logs
+        await dbRun('DELETE FROM steps_logs WHERE userId = ?', [userId]);
+
+        // 9. Delete custom exercises
+        await dbRun('DELETE FROM exercises WHERE userId = ? AND isCustom = 1', [userId]);
+
+        // 10. Finally, delete the user account
+        await dbRun('DELETE FROM users WHERE id = ?', [userId]);
+
+        saveDatabase();
+        res.json({ success: true, message: 'Account completely deleted.' });
+    } catch (err) {
+        console.error('Account deletion error:', err);
+        res.status(500).json({ error: 'Failed to delete account. ' + err.message });
+    }
+});
 app.put('/api/profile/notifications', authenticateToken, async (req, res) => {
     try {
         const { enabled } = req.body;

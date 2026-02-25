@@ -82,4 +82,5 @@ export const api = {
     updateNotifications: (enabled) => apiFetch('/profile/notifications', { method: 'PUT', body: JSON.stringify({ enabled }) }),
     updatePassword: (currentPassword, newPassword) => apiFetch('/profile/password', { method: 'PUT', body: JSON.stringify({ currentPassword, newPassword }) }),
     updateUnits: (units) => apiFetch('/profile/units', { method: 'PUT', body: JSON.stringify({ units }) }),
+    deleteProfile: () => apiFetch('/profile', { method: 'DELETE' }),
 };
