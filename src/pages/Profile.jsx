@@ -168,7 +168,7 @@ export default function Profile() {
                             height: '112px',
                             borderRadius: '50%',
                             border: `2px solid ${neonLime}`,
-                            background: profile?.profilePicture ? `url(${profile.profilePicture}) center/cover` : surfaceDark,
+                            background: profile?.profilePicture ? `url("${profile.profilePicture}") center/cover` : surfaceDark,
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
