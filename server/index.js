@@ -312,6 +312,9 @@ app.get('/api/schedule', authenticateToken, async (req, res) => {
                 return { ...ex, setCount: setCountRow?.c || 0, reps: firstSet?.plannedReps || 0 };
             }));
 
+            if (sr.startedAt && !sr.startedAt.includes('T')) sr.startedAt = sr.startedAt.replace(' ', 'T') + 'Z';
+            if (sr.completedAt && !sr.completedAt.includes('T')) sr.completedAt = sr.completedAt.replace(' ', 'T') + 'Z';
+
             return { ...sr, exercises: exercisesWithSets };
         }));
 
@@ -412,6 +415,9 @@ app.get('/api/workout/:id', authenticateToken, async (req, res) => {
             const allComplete = sets.length > 0 && sets.every(s => s.completed);
             return { ...ex, sets, allComplete };
         }));
+
+        if (session.startedAt && !session.startedAt.includes('T')) session.startedAt = session.startedAt.replace(' ', 'T') + 'Z';
+        if (session.completedAt && !session.completedAt.includes('T')) session.completedAt = session.completedAt.replace(' ', 'T') + 'Z';
 
         const routine = await dbGet('SELECT name FROM routines WHERE id = ?', [session.routineId]);
         res.json({ ...session, routineName: routine?.name, exercises: exercisesWithSets });
@@ -569,7 +575,7 @@ app.post('/api/progress/steps', authenticateToken, async (req, res) => {
 app.get('/api/progress/attendance', authenticateToken, async (req, res) => {
     try {
         const { year } = req.query;
-        let query = "SELECT startedAt as d FROM workout_sessions WHERE userId = ? AND completedAt IS NOT NULL";
+        let query = "SELECT strftime('%Y-%m-%dT%H:%M:%SZ', startedAt) as d FROM workout_sessions WHERE userId = ? AND completedAt IS NOT NULL";
         const params = [req.userId];
         if (year) {
             query += " AND strftime('%Y', startedAt) = ?";
