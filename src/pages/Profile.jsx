@@ -4,7 +4,7 @@ import { api } from '../api';
 import { colors } from '../styles/designTokens';
 
 const neonLime = '#DFFF00';
-const surfaceDark = '#111827';
+const surfaceDark = '#161616';
 const borderColor = '#1F2937'; // gray-800
 const textSecondary = '#A1A1A1';
 

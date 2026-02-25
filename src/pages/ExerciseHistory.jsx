@@ -3,8 +3,8 @@ import { api } from '../api';
 
 const COLORS = {
     primary: '#DFFF00',
-    bgDark: '#0A0F1E',
-    surfaceDark: '#111827',
+    bgDark: '#0D0D0D',
+    surfaceDark: '#161616',
     textSecondary: '#A1A1A1',
     borderDark: '#1F2937',
 };

@@ -8,20 +8,12 @@ export const colors = {
     primaryBorder: 'rgba(223, 255, 0, 0.4)',
     primaryGlow: 'rgba(223, 255, 0, 0.3)',
 
-    // ── Backgrounds ──
-    // ORIGINAL BLACK THEME (uncomment to revert):
-    // bgDark: '#0D0D0D',
-    // bgGradientTop: '#1a1a1a',
-    // bgGradientBottom: '#0a0a0a',
-    // surfaceDark: '#161616',
-    // surfaceLight: '#1e1e1e',
-
-    // TEST: DARK NAVY BLUE THEME (comment out to revert)
-    bgDark: '#0A0F1E',
-    bgGradientTop: '#141B2D',
-    bgGradientBottom: '#070B16',
-    surfaceDark: '#111827',
-    surfaceLight: '#1A2236',
+    // Backgrounds
+    bgDark: '#0D0D0D',
+    bgGradientTop: '#1a1a1a',
+    bgGradientBottom: '#0a0a0a',
+    surfaceDark: '#161616',
+    surfaceLight: '#1e1e1e',
 
     // Text
     textPrimary: '#FFFFFF',

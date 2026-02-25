@@ -6,8 +6,8 @@ import { useWorkout } from '../context/WorkoutContext';
 const COLORS = {
     lime: '#DFFF00',       // Primary / Neon Lime
     red: '#FF3131',        // Neon Red (from variant_1)
-    bgDark: '#0A0F1E',     // Background Dark
-    surface: '#111827',    // Surface Dark
+    bgDark: '#0D0D0D',     // Background Dark
+    surface: '#161616',    // Surface Dark
     textGray: '#A1A1A1',
 };
 
