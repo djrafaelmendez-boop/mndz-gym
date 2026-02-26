@@ -419,7 +419,7 @@ app.get('/api/workout/:id', authenticateToken, async (req, res) => {
         if (!session) return res.status(404).json({ error: 'Session not found' });
 
         const exercises = await dbAll(`
-            SELECT re.*, e.name as exerciseName, e.muscleGroup, e.equipment
+            SELECT re.*, e.name as exerciseName, e.muscleGroup, e.equipment, e.imageUrl, e.videoUrl, e.instructions
             FROM routine_exercises re
             JOIN exercises e ON e.id = re.exerciseId
             WHERE re.routineId = ?

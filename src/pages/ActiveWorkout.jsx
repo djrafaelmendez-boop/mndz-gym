@@ -11,6 +11,183 @@ const COLORS = {
     textGray: '#A1A1A1',
 };
 
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// Exercise Info Panel (Media + How To)
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function ExerciseInfoPanel({ exercise }) {
+    const [expanded, setExpanded] = useState(false);
+    const imageUrl = exercise?.imageUrl || null;
+    const videoUrl = exercise?.videoUrl || null;
+    const instructions = exercise?.instructions || '';
+    const hasContent = imageUrl || videoUrl || instructions;
+
+    if (!hasContent) {
+        // Show a minimal toggle even without content
+        return null;
+    }
+
+    return (
+        <div style={{ marginBottom: '20px' }}>
+            {/* Toggle Button */}
+            <button
+                onClick={() => setExpanded(prev => !prev)}
+                style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '12px 16px',
+                    background: COLORS.surface,
+                    border: '1px solid #1F2937',
+                    borderRadius: expanded ? '12px 12px 0 0' : '12px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                }}
+            >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span className="material-symbols-outlined" style={{
+                        fontSize: '18px',
+                        color: COLORS.lime,
+                    }}>info</span>
+                    <span style={{
+                        fontSize: '12px',
+                        fontWeight: 800,
+                        fontStyle: 'italic',
+                        color: '#D1D5DB',
+                        letterSpacing: '0.04em',
+                        textTransform: 'uppercase',
+                    }}>Exercise Info</span>
+                </div>
+                <span className="material-symbols-outlined" style={{
+                    fontSize: '20px',
+                    color: '#6B7280',
+                    transition: 'transform 0.2s',
+                    transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                }}>expand_more</span>
+            </button>
+
+            {/* Expandable Content */}
+            {expanded && (
+                <div style={{
+                    background: COLORS.surface,
+                    border: '1px solid #1F2937',
+                    borderTop: 'none',
+                    borderRadius: '0 0 12px 12px',
+                    padding: '16px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '16px',
+                }}>
+                    {/* Media Section */}
+                    <div style={{ position: 'relative' }}>
+                        <div style={{
+                            width: '100%',
+                            aspectRatio: '16 / 9',
+                            borderRadius: '10px',
+                            overflow: 'hidden',
+                            background: '#1A1A1A',
+                            border: '1px solid #262626',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}>
+                            {imageUrl ? (
+                                <img
+                                    src={imageUrl}
+                                    alt="Exercise"
+                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                />
+                            ) : (
+                                <div style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    gap: '8px',
+                                }}>
+                                    <span className="material-symbols-outlined" style={{
+                                        fontSize: '40px',
+                                        color: '#2A2A2A',
+                                    }}>fitness_center</span>
+                                    <span style={{
+                                        fontSize: '10px',
+                                        fontWeight: 600,
+                                        color: '#3A3A3A',
+                                        letterSpacing: '0.08em',
+                                        textTransform: 'uppercase',
+                                    }}>Exercise Photo</span>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Video Button */}
+                        {videoUrl && (
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    window.open(videoUrl, '_blank');
+                                }}
+                                style={{
+                                    position: 'absolute',
+                                    bottom: '8px',
+                                    right: '8px',
+                                    width: '38px',
+                                    height: '38px',
+                                    borderRadius: '10px',
+                                    background: 'rgba(223,255,0,0.9)',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
+                                }}
+                            >
+                                <span className="material-symbols-outlined" style={{
+                                    fontSize: '20px', color: '#000',
+                                }}>play_arrow</span>
+                            </button>
+                        )}
+                    </div>
+
+                    {/* How To Section */}
+                    {instructions && (
+                        <div>
+                            <div style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                marginBottom: '10px',
+                            }}>
+                                <span className="material-symbols-outlined" style={{
+                                    fontSize: '16px',
+                                    color: COLORS.lime,
+                                }}>menu_book</span>
+                                <span style={{
+                                    fontSize: '11px',
+                                    fontWeight: 900,
+                                    fontStyle: 'italic',
+                                    color: '#fff',
+                                    letterSpacing: '0.06em',
+                                    textTransform: 'uppercase',
+                                }}>How To</span>
+                            </div>
+                            <p style={{
+                                fontSize: '12px',
+                                color: '#D1D5DB',
+                                lineHeight: 1.6,
+                                margin: 0,
+                                whiteSpace: 'pre-line',
+                            }}>
+                                {instructions}
+                            </p>
+                        </div>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+}
+
 export default function ActiveWorkout({ onBack, sessionId }) {
     const { activeSession, formattedTime, completeSession } = useWorkout();
     const effectiveSessionId = sessionId || activeSession?.id;
@@ -399,6 +576,9 @@ export default function ActiveWorkout({ onBack, sessionId }) {
                         </div>
                         {/* Camera Icon Removed per user request */}
                     </div>
+
+                    {/* ── Exercise Info (Media + How To) ── */}
+                    <ExerciseInfoPanel exercise={currentExercise} />
 
                     {/* Sets List Strict */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
