@@ -288,6 +288,7 @@ function RoutineCard({ routine, isMenuOpen, onMenuToggle, onEdit, onDelete, onCl
                             letterSpacing: '-0.04em',
                             lineHeight: 1.1,
                             margin: 0,
+                            paddingRight: '4px',
                             background: 'linear-gradient(to right, #ffffff, #DFFF00)',
                             WebkitBackgroundClip: 'text',
                             backgroundClip: 'text',
