@@ -170,7 +170,7 @@ export default function Schedule({ onNavigate }) {
             }}>
                 <div>
                     <h1 style={{
-                        fontSize: '42px',
+                        fontSize: '30px',
                         fontWeight: 900, // Black
                         fontStyle: 'italic',
                         textTransform: 'uppercase',
