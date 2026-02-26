@@ -99,6 +99,18 @@ app.get('/api/me', authenticateToken, async (req, res) => {
 // ═══════════════════════════════════════════════
 // EXERCISES ROUTES
 // ═══════════════════════════════════════════════
+// TEMPORARY DEBUG ENDPOINT FOR POSTGRES PATCH
+app.get('/api/patch-debug', async (req, res) => {
+    try {
+        const { pgPool } = await import('./database.js');
+        if (!pgPool) return res.json({ error: 'Not running Postgres' });
+
+        const result = await pgPool.query(`UPDATE exercises SET "imageUrl" = '/exercises/BARBELL%20BENCH%20PRESS/BARBELL%20BENCH%20PRESS.png' WHERE name = 'Barbell Bench Press' AND isCustom = 0`);
+        res.json({ success: true, rowCount: result.rowCount, command: result.command });
+    } catch (e) {
+        res.json({ error: e.message, stack: e.stack });
+    }
+});
 
 app.get('/api/exercises', authenticateToken, async (req, res) => {
     try {

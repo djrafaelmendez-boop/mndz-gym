@@ -1,27 +1,38 @@
 const API_BASE = 'https://mndz-gym-api.onrender.com/api';
 
 async function check() {
-    console.log("Fetching production exercises...");
-    // Let's create a test login, or just fetch if there's a public endpoint?
-    // Wait, GET /api/exercises is authenticated.
-    // I will just login with the test account I made in the browser subagent.
-    const loginRes = await fetch(`${API_BASE}/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: 'testuser', password: 'Password123!' })
-    });
-    const loginData = await loginRes.json();
-    if (!loginData.token) {
-        console.error("Login failed:", loginData);
-        process.exit(1);
-    }
+    console.log("Checking Render API...");
+    try {
+        const loginRes = await fetch(`${API_BASE}/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: 'testuser', password: 'Password123!' })
+        });
 
-    const exRes = await fetch(`${API_BASE}/exercises`, {
-        headers: { 'Authorization': `Bearer ${loginData.token}` }
-    });
-    const exercises = await exRes.json();
-    const bench = exercises.find(e => e.name === 'Barbell Bench Press');
-    console.log("Barbell Bench Press data:", bench);
+        if (!loginRes.ok) {
+            console.log("Login failed with status:", loginRes.status);
+            const text = await loginRes.text();
+            console.log("Response:", text.substring(0, 100));
+            return;
+        }
+
+        const loginData = await loginRes.json();
+
+        const exRes = await fetch(`${API_BASE}/exercises`, {
+            headers: { 'Authorization': `Bearer ${loginData.token}` }
+        });
+
+        if (!exRes.ok) {
+            console.log("Exercises fetch failed:", exRes.status);
+            return;
+        }
+
+        const exercises = await exRes.json();
+        const bench = exercises.find(e => e.name === 'Barbell Bench Press');
+        console.log("Barbell Bench Press data:", bench);
+    } catch (err) {
+        console.log("Error:", err.message);
+    }
 }
 
 check();
