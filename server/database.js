@@ -4,6 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import pg from 'pg';
 import dotenv from 'dotenv';
+import DEFAULT_EXERCISES from './defaultExercises.js';
 
 dotenv.config();
 
@@ -258,64 +259,38 @@ async function initTablesPostgres() {
 // SEEDING
 // -----------------------------------------------------------------------------
 
-const DEFAULT_EXERCISES = [
-  ['Barbell Bench Press', 'chest', 'Barbell'],
-  ['Incline Dumbbell Press', 'chest', 'Dumbbell'],
-  ['Cable Fly', 'chest', 'Cable'],
-  ['Push Ups', 'chest', 'Bodyweight'],
-  ['Dips', 'chest', 'Bodyweight'],
-  ['Deadlift', 'back', 'Barbell'],
-  ['Pull Ups', 'back', 'Bodyweight'],
-  ['Barbell Rows', 'back', 'Barbell'],
-  ['Lat Pulldown', 'back', 'Machine'],
-  ['Seated Cable Row', 'back', 'Cable'],
-  ['Romanian Deadlift', 'legs', 'Barbell'],
-  ['Barbell Squat', 'legs', 'Barbell'],
-  ['Leg Press', 'legs', 'Machine'],
-  ['Walking Lunges', 'legs', 'Bodyweight'],
-  ['Leg Extensions', 'legs', 'Machine'],
-  ['Bulgarian Split Squat', 'legs', 'Dumbbell'],
-  ['Dumbbell Shoulder Press', 'shoulders', 'Dumbbell'],
-  ['Military Press', 'shoulders', 'Barbell'],
-  ['Lateral Raises', 'shoulders', 'Dumbbell'],
-  ['Face Pulls', 'shoulders', 'Cable'],
-  ['Tricep Pushdown', 'triceps', 'Cable'],
-  ['Tricep Extensions', 'triceps', 'Cable'],
-  ['Skull Crushers', 'triceps', 'Barbell'],
-  ['Weighted Dips', 'triceps', 'Bodyweight'],
-  ['Barbell Curl', 'biceps', 'Barbell'],
-  ['Incline Dumbbell Curl', 'biceps', 'Dumbbell'],
-  ['Hammer Curls', 'biceps', 'Dumbbell'],
-  ['Preacher Curls', 'biceps', 'Machine'],
-  ['Hanging Leg Raise', 'abs', 'Bodyweight'],
-  ['Cable Crunches', 'abs', 'Cable'],
-  ['Planks', 'abs', 'Bodyweight'],
-  ['Ab Wheel Rollouts', 'abs', 'Bodyweight'],
-];
+// DEFAULT_EXERCISES is imported from ./defaultExercises.js
+const DEFAULT_EXERCISE_COUNT = DEFAULT_EXERCISES.length;
 
 async function seedDefaultsSqlite() {
-  const result = sqliteDb.exec('SELECT COUNT(*) as c FROM exercises WHERE isCustom = 0');
+  const result = sqliteDb.exec('SELECT COUNT(*) as c FROM exercises WHERE isCustom = 0 AND userId IS NULL');
   const count = result[0]?.values[0]?.[0] || 0;
-  if (count === 0) {
+  if (count !== DEFAULT_EXERCISE_COUNT) {
+    // Remove old global defaults and re-seed with the full library
+    sqliteDb.run('DELETE FROM exercises WHERE isCustom = 0 AND userId IS NULL');
     const stmt = sqliteDb.prepare('INSERT INTO exercises (name, muscleGroup, equipment, isCustom) VALUES (?, ?, ?, 0)');
     for (const [name, muscle, equip] of DEFAULT_EXERCISES) {
       stmt.run([name, muscle, equip]);
     }
     stmt.free();
     saveDatabase();
+    console.log(`Seeded ${DEFAULT_EXERCISE_COUNT} default exercises`);
   }
 }
 
 async function seedDefaultsPostgres() {
-  const res = await pgPool.query('SELECT COUNT(*) as c FROM exercises WHERE isCustom = 0');
+  const res = await pgPool.query('SELECT COUNT(*) as c FROM exercises WHERE "isCustom" = 0 AND "userId" IS NULL');
   const count = parseInt(res.rows[0].c);
-  if (count === 0) {
+  if (count !== DEFAULT_EXERCISE_COUNT) {
+    // Remove old global defaults and re-seed with the full library
+    await pgPool.query('DELETE FROM exercises WHERE "isCustom" = 0 AND "userId" IS NULL');
     for (const [name, muscle, equip] of DEFAULT_EXERCISES) {
       await pgPool.query(
         'INSERT INTO exercises (name, "muscleGroup", equipment, "isCustom") VALUES ($1, $2, $3, 0)',
         [name, muscle, equip]
       );
     }
+    console.log(`Seeded ${DEFAULT_EXERCISE_COUNT} default exercises (Postgres)`);
   }
 }
 

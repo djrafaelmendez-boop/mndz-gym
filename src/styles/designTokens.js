@@ -109,7 +109,7 @@ export const shadows = {
 
 export const equipmentTypes = ['Barbell', 'Dumbbell', 'Machine', 'Bodyweight', 'Cable', 'Band'];
 
-export const muscleGroups = ['chest', 'back', 'shoulders', 'legs', 'abs', 'arms'];
+export const muscleGroups = ['chest', 'legs', 'arms', 'back', 'shoulders', 'abs'];
 
 export const motivationalQuotes = [
     "Keep going.", "Show up.", "Progress over perfection.",
