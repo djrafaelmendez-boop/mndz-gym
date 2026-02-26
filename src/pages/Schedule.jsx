@@ -171,12 +171,18 @@ export default function Schedule({ onNavigate }) {
                 <div>
                     <h1 style={{
                         fontSize: '30px',
-                        fontWeight: 900,
+                        fontWeight: 900, // Black
                         fontStyle: 'italic',
                         textTransform: 'uppercase',
                         letterSpacing: '-0.04em',
-                        color: '#fff',
                         lineHeight: 1,
+                        margin: 0,
+                        paddingRight: '4px',
+                        // Gradient text matching the reference
+                        background: 'linear-gradient(to right, #ffffff, #888888)',
+                        WebkitBackgroundClip: 'text',
+                        backgroundClip: 'text',
+                        color: 'transparent',
                     }}>
                         Schedule
                     </h1>
