@@ -19,12 +19,6 @@ function ExerciseInfoPanel({ exercise }) {
     const imageUrl = exercise?.imageUrl || null;
     const videoUrl = exercise?.videoUrl || null;
     const instructions = exercise?.instructions || '';
-    const hasContent = imageUrl || videoUrl || instructions;
-
-    if (!hasContent) {
-        // Show a minimal toggle even without content
-        return null;
-    }
 
     return (
         <div style={{ marginBottom: '20px' }}>
