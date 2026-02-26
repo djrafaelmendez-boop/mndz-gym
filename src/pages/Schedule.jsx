@@ -470,215 +470,218 @@ export default function Schedule({ onNavigate }) {
 
                         return (
                             <div key={`${sr.id}-${sr.workoutSessionId || 'pending'}-${idx}`} style={{
-                                background: surfaceDark, // bg-surface-dark
-                                border: isCompleted
-                                    ? `1px solid rgba(220, 20, 60, 0.6)` // border-crimson/60
-                                    : `1px solid rgba(223, 255, 0, 0.6)`, // border-primary/60
-                                borderRadius: '16px', // rounded-2xl
-                                padding: '16px', // p-4
-                                // card-glow-crimson vs card-glow-active removed
-                                boxShadow: 'none',
-                                position: 'relative',
-                                overflow: 'hidden',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                minHeight: '320px', // h-[320px]
+                                background: isCompleted
+                                    ? 'linear-gradient(135deg, rgba(220,20,60,0.5) 0%, rgba(220,20,60,0.1) 30%, rgba(220,20,60,0) 100%)'
+                                    : 'linear-gradient(135deg, rgba(223,255,0,0.5) 0%, rgba(223,255,0,0.1) 30%, rgba(223,255,0,0) 100%)',
+                                padding: '1px',
+                                borderRadius: '16px',
                             }}>
-                                {/* Radial blur accent from HTML Lines 180 / 215 */}
                                 <div style={{
-                                    position: 'absolute',
-                                    right: '-16px',
-                                    top: '-16px',
-                                    width: '128px',
-                                    height: '128px',
-                                    background: isCompleted
-                                        ? 'rgba(220, 20, 60, 0.2)' // bg-crimson/20
-                                        : 'rgba(223, 255, 0, 0.2)', // bg-primary/20
-                                    borderRadius: '50%',
-                                    filter: 'blur(24px)', // blur-2xl ~ 24px-40px
-                                    pointerEvents: 'none',
-                                }} />
-
-                                {/* Close Button (Top Right) */}
-                                <button
-                                    onClick={(e) => handleDeleteClick(sr.id, e)}
-                                    style={{
+                                    background: surfaceDark,
+                                    borderRadius: '16px',
+                                    padding: '16px',
+                                    position: 'relative',
+                                    overflow: 'hidden',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    minHeight: '320px',
+                                }}>
+                                    {/* Subtle glow orb */}
+                                    <div style={{
                                         position: 'absolute',
-                                        top: '12px',
-                                        right: '12px',
-                                        zIndex: 30,
-                                        width: '24px',
-                                        height: '24px',
+                                        right: '-40px',
+                                        top: '-40px',
+                                        width: '160px',
+                                        height: '160px',
+                                        background: isCompleted
+                                            ? 'rgba(220, 20, 60, 0.05)'
+                                            : 'rgba(223, 255, 0, 0.05)',
                                         borderRadius: '50%',
-                                        background: 'rgba(0,0,0,0.6)', // bg-black/60
-                                        border: '1px solid rgba(255,255,255,0.1)', // border-white/10
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        cursor: 'pointer',
-                                        color: '#fff',
-                                        transition: 'all 0.2s',
-                                    }}
-                                >
-                                    <span className="material-icons-outlined" style={{ fontSize: '14px' }}>close</span>
-                                </button>
+                                        filter: 'blur(48px)',
+                                        pointerEvents: 'none',
+                                    }} />
 
-                                {/* Badge */}
-                                <div style={{ ...badgeOuterStyle, position: 'relative', zIndex: 10 }}>
-                                    <div style={badgeStyle}>
-                                        {badgeLabel}
+                                    {/* Close Button (Top Right) */}
+                                    <button
+                                        onClick={(e) => handleDeleteClick(sr.id, e)}
+                                        style={{
+                                            position: 'absolute',
+                                            top: '12px',
+                                            right: '12px',
+                                            zIndex: 30,
+                                            width: '24px',
+                                            height: '24px',
+                                            borderRadius: '50%',
+                                            background: 'rgba(0,0,0,0.6)', // bg-black/60
+                                            border: '1px solid rgba(255,255,255,0.1)', // border-white/10
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            cursor: 'pointer',
+                                            color: '#fff',
+                                            transition: 'all 0.2s',
+                                        }}
+                                    >
+                                        <span className="material-icons-outlined" style={{ fontSize: '14px' }}>close</span>
+                                    </button>
+
+                                    {/* Badge */}
+                                    <div style={{ ...badgeOuterStyle, position: 'relative', zIndex: 10 }}>
+                                        <div style={badgeStyle}>
+                                            {badgeLabel}
+                                        </div>
                                     </div>
-                                </div>
 
-                                {/* Content */}
-                                <div style={{ flex: 1, position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
-                                    {/* Title */}
-                                    <h3 style={{
-                                        fontSize: '24px', // text-2xl
-                                        fontWeight: 900, // font-black
-                                        fontStyle: 'italic',
-                                        textTransform: 'uppercase',
-                                        letterSpacing: '-0.05em', // tracking-tighter
-                                        lineHeight: 1, // leading-none
-                                        color: '#fff',
-                                        marginBottom: '8px',
-                                        textShadow: 'none',
-                                    }}>
-                                        {firstLine}
-                                        {secondLine && <br />}
-                                        {secondLine && (
-                                            <span style={{
-                                                background: isCompleted
-                                                    ? `linear-gradient(to right, ${crimson}, ${crimsonLight})`
-                                                    : neonLime, // Just text-primary for up next
-                                                WebkitBackgroundClip: 'text',
-                                                WebkitTextFillColor: isCompleted ? 'transparent' : neonLime,
-                                                color: isCompleted ? 'transparent' : neonLime,
-                                            }}>
-                                                {secondLine}
-                                            </span>
-                                        )}
-                                        {isCompleted && (
-                                            <span style={{ display: 'inline-flex', alignItems: 'center', marginLeft: '8px', verticalAlign: 'middle' }}>
-                                                <span className="material-symbols-outlined" style={{
-                                                    fontSize: '20px', // text-xl
-                                                    color: crimson, // text-crimson
-                                                    fontVariationSettings: "'FILL' 1",
-                                                }}>local_fire_department</span>
-                                                {sr.startedAt && sr.completedAt && (() => {
-                                                    const start = new Date(sr.startedAt).getTime();
-                                                    const end = new Date(sr.completedAt).getTime();
-                                                    const diffMins = Math.round((end - start) / 60000);
-                                                    if (diffMins > 0) {
-                                                        return (
-                                                            <span style={{
-                                                                marginLeft: '4px',
-                                                                fontSize: '11px',
-                                                                fontWeight: 700,
-                                                                color: '#9CA3AF',
-                                                                letterSpacing: '0.05em',
-                                                                background: 'rgba(255,255,255,0.05)',
-                                                                padding: '2px 6px',
-                                                                borderRadius: '4px',
-                                                                fontStyle: 'normal',
-                                                            }}>
-                                                                {diffMins} MIN
-                                                            </span>
-                                                        );
-                                                    }
-                                                    return null;
-                                                })()}
-                                            </span>
-                                        )}
-                                    </h3>
-
-                                    {/* Exercises */}
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px', marginTop: 'auto', opacity: isCompleted ? 0.7 : 1 }}>
-                                        {exercises.slice(0, maxPreview).map((ex, i) => (
-                                            <div key={i} style={{
-                                                display: 'flex',
-                                                justifyContent: 'space-between',
-                                                alignItems: 'center',
-                                                fontSize: '12px', // text-xs
-                                                color: '#9CA3AF', // text-gray-400
-                                                borderBottom: i === 0 ? '1px solid rgba(31, 41, 55, 0.5)' : 'none', // border-gray-800/50
-                                                paddingBottom: i === 0 ? '4px' : '0',
-                                            }}>
-                                                <span>{ex.exerciseName}</span>
+                                    {/* Content */}
+                                    <div style={{ flex: 1, position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
+                                        {/* Title */}
+                                        <h3 style={{
+                                            fontSize: '24px', // text-2xl
+                                            fontWeight: 900, // font-black
+                                            fontStyle: 'italic',
+                                            textTransform: 'uppercase',
+                                            letterSpacing: '-0.05em', // tracking-tighter
+                                            lineHeight: 1, // leading-none
+                                            color: '#fff',
+                                            marginBottom: '8px',
+                                            textShadow: 'none',
+                                        }}>
+                                            {firstLine}
+                                            {secondLine && <br />}
+                                            {secondLine && (
                                                 <span style={{
-                                                    fontWeight: 700,
-                                                    color: isCompleted ? '#fff' : neonLime,
-                                                    textDecoration: isCompleted ? 'line-through' : 'none',
-                                                    textDecorationColor: isCompleted ? 'rgba(220, 20, 60, 0.5)' : 'transparent', // decoration-crimson/50
+                                                    background: isCompleted
+                                                        ? `linear-gradient(to right, ${crimson}, ${crimsonLight})`
+                                                        : neonLime, // Just text-primary for up next
+                                                    WebkitBackgroundClip: 'text',
+                                                    WebkitTextFillColor: isCompleted ? 'transparent' : neonLime,
+                                                    color: isCompleted ? 'transparent' : neonLime,
                                                 }}>
-                                                    {ex.setCount || 3}x{ex.reps || 10}
+                                                    {secondLine}
                                                 </span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
+                                            )}
+                                            {isCompleted && (
+                                                <span style={{ display: 'inline-flex', alignItems: 'center', marginLeft: '8px', verticalAlign: 'middle' }}>
+                                                    <span className="material-symbols-outlined" style={{
+                                                        fontSize: '20px', // text-xl
+                                                        color: crimson, // text-crimson
+                                                        fontVariationSettings: "'FILL' 1",
+                                                    }}>local_fire_department</span>
+                                                    {sr.startedAt && sr.completedAt && (() => {
+                                                        const start = new Date(sr.startedAt).getTime();
+                                                        const end = new Date(sr.completedAt).getTime();
+                                                        const diffMins = Math.round((end - start) / 60000);
+                                                        if (diffMins > 0) {
+                                                            return (
+                                                                <span style={{
+                                                                    marginLeft: '4px',
+                                                                    fontSize: '11px',
+                                                                    fontWeight: 700,
+                                                                    color: '#9CA3AF',
+                                                                    letterSpacing: '0.05em',
+                                                                    background: 'rgba(255,255,255,0.05)',
+                                                                    padding: '2px 6px',
+                                                                    borderRadius: '4px',
+                                                                    fontStyle: 'normal',
+                                                                }}>
+                                                                    {diffMins} MIN
+                                                                </span>
+                                                            );
+                                                        }
+                                                        return null;
+                                                    })()}
+                                                </span>
+                                            )}
+                                        </h3>
 
-                                {/* Action Button */}
-                                <div style={{ marginTop: 'auto' }}>
-                                    {isCompleted ? (
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                if (!sr.workoutSessionId) return alert('Session log not found.');
-                                                onNavigate('activeWorkout', { sessionId: sr.workoutSessionId });
-                                            }}
-                                            style={{
-                                                width: '100%',
-                                                background: 'rgba(31, 41, 55, 0.8)', // bg-gray-800/80
-                                                color: '#9CA3AF', // text-gray-400
-                                                padding: '10px',
-                                                borderRadius: '999px',
-                                                fontSize: '12px',
-                                                fontWeight: 700,
-                                                fontStyle: 'italic',
-                                                textTransform: 'uppercase',
-                                                letterSpacing: '0.05em', // tracking-wider
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                border: '1px solid #374151', // border-gray-700
-                                                cursor: 'pointer',
-                                                transition: 'all 0.2s',
-                                            }}
-                                        >
-                                            Edit Results
-                                            <span className="material-icons-outlined" style={{ fontSize: '14px', marginLeft: '4px', fontWeight: 'bold' }}>edit</span>
-                                        </button>
-                                    ) : (
-                                        <button
-                                            onClick={() => handleStartWorkout(sr)}
-                                            disabled={startLoading}
-                                            style={{
-                                                width: '100%',
-                                                background: neonLime,
-                                                color: '#000',
-                                                padding: '10px',
-                                                borderRadius: '999px',
-                                                fontSize: '12px',
-                                                fontWeight: 900, // font-black
-                                                fontStyle: 'italic',
-                                                textTransform: 'uppercase',
-                                                letterSpacing: '0.05em',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                border: 'none',
-                                                cursor: startLoading ? 'wait' : 'pointer',
-                                                // btn-neon-glow removed
-                                                boxShadow: 'none',
-                                                transform: 'scale(1)',
-                                                transition: 'transform 0.2s',
-                                            }}
-                                        >
-                                            {startLoading ? 'LOADING...' : 'Start'}
-                                            <span className="material-icons-outlined" style={{ fontSize: '14px', marginLeft: '4px', fontWeight: 'bold' }}>play_arrow</span>
-                                        </button>
-                                    )}
+                                        {/* Exercises */}
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px', marginTop: 'auto', opacity: isCompleted ? 0.7 : 1 }}>
+                                            {exercises.slice(0, maxPreview).map((ex, i) => (
+                                                <div key={i} style={{
+                                                    display: 'flex',
+                                                    justifyContent: 'space-between',
+                                                    alignItems: 'center',
+                                                    fontSize: '12px', // text-xs
+                                                    color: '#9CA3AF', // text-gray-400
+                                                    borderBottom: i === 0 ? '1px solid rgba(31, 41, 55, 0.5)' : 'none', // border-gray-800/50
+                                                    paddingBottom: i === 0 ? '4px' : '0',
+                                                }}>
+                                                    <span>{ex.exerciseName}</span>
+                                                    <span style={{
+                                                        fontWeight: 700,
+                                                        color: isCompleted ? '#fff' : neonLime,
+                                                        textDecoration: isCompleted ? 'line-through' : 'none',
+                                                        textDecorationColor: isCompleted ? 'rgba(220, 20, 60, 0.5)' : 'transparent', // decoration-crimson/50
+                                                    }}>
+                                                        {ex.setCount || 3}x{ex.reps || 10}
+                                                    </span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Action Button */}
+                                    <div style={{ marginTop: 'auto' }}>
+                                        {isCompleted ? (
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    if (!sr.workoutSessionId) return alert('Session log not found.');
+                                                    onNavigate('activeWorkout', { sessionId: sr.workoutSessionId });
+                                                }}
+                                                style={{
+                                                    width: '100%',
+                                                    background: 'rgba(31, 41, 55, 0.8)', // bg-gray-800/80
+                                                    color: '#9CA3AF', // text-gray-400
+                                                    padding: '10px',
+                                                    borderRadius: '999px',
+                                                    fontSize: '12px',
+                                                    fontWeight: 700,
+                                                    fontStyle: 'italic',
+                                                    textTransform: 'uppercase',
+                                                    letterSpacing: '0.05em', // tracking-wider
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    border: '1px solid #374151', // border-gray-700
+                                                    cursor: 'pointer',
+                                                    transition: 'all 0.2s',
+                                                }}
+                                            >
+                                                Edit Results
+                                                <span className="material-icons-outlined" style={{ fontSize: '14px', marginLeft: '4px', fontWeight: 'bold' }}>edit</span>
+                                            </button>
+                                        ) : (
+                                            <button
+                                                onClick={() => handleStartWorkout(sr)}
+                                                disabled={startLoading}
+                                                style={{
+                                                    width: '100%',
+                                                    background: neonLime,
+                                                    color: '#000',
+                                                    padding: '10px',
+                                                    borderRadius: '999px',
+                                                    fontSize: '12px',
+                                                    fontWeight: 900, // font-black
+                                                    fontStyle: 'italic',
+                                                    textTransform: 'uppercase',
+                                                    letterSpacing: '0.05em',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    border: 'none',
+                                                    cursor: startLoading ? 'wait' : 'pointer',
+                                                    // btn-neon-glow removed
+                                                    boxShadow: 'none',
+                                                    transform: 'scale(1)',
+                                                    transition: 'transform 0.2s',
+                                                }}
+                                            >
+                                                {startLoading ? 'LOADING...' : 'Start'}
+                                                <span className="material-icons-outlined" style={{ fontSize: '14px', marginLeft: '4px', fontWeight: 'bold' }}>play_arrow</span>
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         );
@@ -701,38 +704,40 @@ export default function Schedule({ onNavigate }) {
             </div>
 
             {/* Delete Confirmation Modal */}
-            {deleteRoutineId && (
-                <div style={{
-                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-                    background: 'rgba(0,0,0,0.8)',
-                    backdropFilter: 'blur(4px)',
-                    zIndex: 100,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    padding: '24px'
-                }} onClick={cancelDelete}>
+            {
+                deleteRoutineId && (
                     <div style={{
-                        background: '#1a1a1a',
-                        border: '1px solid #333',
-                        borderRadius: '16px',
-                        padding: '24px',
-                        width: '100%',
-                        maxWidth: '320px',
-                        boxShadow: '0 4px 24px rgba(0,0,0,0.5)',
-                        textAlign: 'center'
-                    }} onClick={e => e.stopPropagation()}>
-                        <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#fff', marginBottom: '8px' }}>Delete workout?</h3>
-                        <p style={{ fontSize: '14px', color: '#aaa', marginBottom: '24px' }}>This will remove this workout from the day.</p>
-                        <div style={{ display: 'flex', gap: '12px' }}>
-                            <button onClick={cancelDelete} style={{
-                                flex: 1, padding: '12px', borderRadius: '8px', background: 'transparent', border: '1px solid #333', color: '#fff', fontWeight: 600, cursor: 'pointer'
-                            }}>Cancel</button>
-                            <button onClick={confirmDelete} style={{
-                                flex: 1, padding: '12px', borderRadius: '8px', background: '#FF3B3B', border: 'none', color: '#000', fontWeight: 700, cursor: 'pointer'
-                            }}>Delete</button>
+                        position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                        background: 'rgba(0,0,0,0.8)',
+                        backdropFilter: 'blur(4px)',
+                        zIndex: 100,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        padding: '24px'
+                    }} onClick={cancelDelete}>
+                        <div style={{
+                            background: '#1a1a1a',
+                            border: '1px solid #333',
+                            borderRadius: '16px',
+                            padding: '24px',
+                            width: '100%',
+                            maxWidth: '320px',
+                            boxShadow: '0 4px 24px rgba(0,0,0,0.5)',
+                            textAlign: 'center'
+                        }} onClick={e => e.stopPropagation()}>
+                            <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#fff', marginBottom: '8px' }}>Delete workout?</h3>
+                            <p style={{ fontSize: '14px', color: '#aaa', marginBottom: '24px' }}>This will remove this workout from the day.</p>
+                            <div style={{ display: 'flex', gap: '12px' }}>
+                                <button onClick={cancelDelete} style={{
+                                    flex: 1, padding: '12px', borderRadius: '8px', background: 'transparent', border: '1px solid #333', color: '#fff', fontWeight: 600, cursor: 'pointer'
+                                }}>Cancel</button>
+                                <button onClick={confirmDelete} style={{
+                                    flex: 1, padding: '12px', borderRadius: '8px', background: '#FF3B3B', border: 'none', color: '#000', fontWeight: 700, cursor: 'pointer'
+                                }}>Delete</button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            )}
+                )
+            }
         </div>
     );
 }
