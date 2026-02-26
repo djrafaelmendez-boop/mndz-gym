@@ -54,7 +54,11 @@ export async function initDatabase() {
     try { sqliteDb.exec('ALTER TABLE users ADD COLUMN lastName TEXT DEFAULT NULL'); } catch (e) { }
     try { sqliteDb.exec('ALTER TABLE users ADD COLUMN notificationsEnabled INTEGER DEFAULT 1'); } catch (e) { }
     try { sqliteDb.exec("ALTER TABLE users ADD COLUMN preferredUnits TEXT DEFAULT 'lbs'"); } catch (e) { }
-    console.log('✅ Applied user table migrations');
+    // Exercise detail fields
+    try { sqliteDb.exec('ALTER TABLE exercises ADD COLUMN imageUrl TEXT DEFAULT NULL'); } catch (e) { }
+    try { sqliteDb.exec('ALTER TABLE exercises ADD COLUMN videoUrl TEXT DEFAULT NULL'); } catch (e) { }
+    try { sqliteDb.exec("ALTER TABLE exercises ADD COLUMN instructions TEXT DEFAULT ''"); } catch (e) { }
+    console.log('✅ Applied table migrations');
     saveDatabase();
   }
 }
@@ -249,7 +253,11 @@ async function initTablesPostgres() {
     await pgPool.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS "lastName" TEXT DEFAULT NULL');
     await pgPool.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS "notificationsEnabled" INTEGER DEFAULT 1');
     await pgPool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS \"preferredUnits\" TEXT DEFAULT 'lbs'");
-    console.log('✅ Applied user table migrations (Postgres)');
+    // Exercise detail fields
+    await pgPool.query('ALTER TABLE exercises ADD COLUMN IF NOT EXISTS "imageUrl" TEXT DEFAULT NULL');
+    await pgPool.query('ALTER TABLE exercises ADD COLUMN IF NOT EXISTS "videoUrl" TEXT DEFAULT NULL');
+    await pgPool.query("ALTER TABLE exercises ADD COLUMN IF NOT EXISTS instructions TEXT DEFAULT ''");
+    console.log('✅ Applied table migrations (Postgres)');
   } catch (e) { }
 
   await seedDefaultsPostgres();

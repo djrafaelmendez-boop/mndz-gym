@@ -530,6 +530,9 @@ app.get('/api/exercises/:id/history', authenticateToken, async (req, res) => {
             exerciseName: exercise.name,
             equipment: exercise.equipment,
             muscleGroup: exercise.muscleGroup,
+            imageUrl: exercise.imageUrl || null,
+            videoUrl: exercise.videoUrl || null,
+            instructions: exercise.instructions || '',
             sessions,
         });
     } catch (err) {

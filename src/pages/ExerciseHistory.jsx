@@ -10,7 +10,8 @@ const COLORS = {
 };
 
 export default function ExerciseHistory({ onBack, exercise }) {
-    const [tab, setTab] = useState('all'); // 'all' | 'max'
+    const [mainTab, setMainTab] = useState('details'); // 'details' | 'history'
+    const [historyTab, setHistoryTab] = useState('all'); // 'all' | 'max'
     const [history, setHistory] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -25,11 +26,16 @@ export default function ExerciseHistory({ onBack, exercise }) {
 
     const isBodyweight = (history?.equipment || exercise?.equipment || '').toLowerCase() === 'bodyweight';
     const sessions = history?.sessions || [];
+    const exerciseName = (history?.exerciseName || exercise?.name || '').toUpperCase();
+    const instructions = history?.instructions || exercise?.instructions || '';
+    const imageUrl = history?.imageUrl || exercise?.imageUrl || null;
+    const videoUrl = history?.videoUrl || exercise?.videoUrl || null;
+    const muscleGroup = (history?.muscleGroup || exercise?.muscleGroup || '').toUpperCase();
+    const equipment = history?.equipment || exercise?.equipment || '';
 
     // ── Compute global max for highlighting ──
     let globalMaxLbs = 0;
     let globalMaxReps = 0;
-
     for (const s of sessions) {
         for (const set of s.sets) {
             if (!isBodyweight && set.weight > globalMaxLbs) globalMaxLbs = set.weight;
@@ -37,20 +43,17 @@ export default function ExerciseHistory({ onBack, exercise }) {
         }
     }
 
-    // ── MAX SETS tab: filter to only sessions containing the max value ──
+    // ── MAX SETS tab ──
     const maxSessions = (() => {
         if (isBodyweight) {
-            // Show sessions that contain the max reps
             return sessions.filter(s => s.sets.some(set => set.reps === globalMaxReps));
         } else {
-            // Show sessions that contain the max weight
             return sessions.filter(s => s.sets.some(set => set.weight === globalMaxLbs));
         }
     })();
 
-    const displaySessions = tab === 'all' ? sessions : maxSessions;
+    const displaySessions = historyTab === 'all' ? sessions : maxSessions;
 
-    // Format date string from ISO → "MMM DD, YYYY"
     const formatDate = (dateStr) => {
         try {
             const d = new Date(dateStr);
@@ -64,8 +67,6 @@ export default function ExerciseHistory({ onBack, exercise }) {
         }
     };
 
-    const exerciseName = (history?.exerciseName || exercise?.name || '').toUpperCase();
-
     return (
         <div style={{
             flex: 1,
@@ -78,7 +79,7 @@ export default function ExerciseHistory({ onBack, exercise }) {
             {/* ── Header ── */}
             <header style={{
                 flexShrink: 0,
-                padding: 'calc(env(safe-area-inset-top) + 16px) 24px 16px 24px',
+                padding: 'calc(env(safe-area-inset-top) + 16px) 24px 12px 24px',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '16px',
@@ -95,36 +96,63 @@ export default function ExerciseHistory({ onBack, exercise }) {
                 }}>
                     <span className="material-symbols-outlined" style={{ color: '#9CA3AF', fontSize: '24px' }}>arrow_back</span>
                 </button>
-                <div>
+                <div style={{ flex: 1, minWidth: 0 }}>
                     <h1 style={{
-                        fontSize: '22px',
+                        fontSize: '20px',
                         fontWeight: 900,
                         fontStyle: 'italic',
                         textTransform: 'uppercase',
                         letterSpacing: '-0.04em',
-                        color: '#fff',
                         lineHeight: 1.1,
                         margin: 0,
+                        paddingRight: '4px',
+                        background: 'linear-gradient(to right, #ffffff, #888888)',
+                        WebkitBackgroundClip: 'text',
+                        backgroundClip: 'text',
+                        color: 'transparent',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
                     }}>
-                        History: {exerciseName}
+                        {exerciseName}
                     </h1>
-                    <p style={{
-                        fontSize: '12px',
-                        color: COLORS.primary,
-                        letterSpacing: '0.08em',
-                        fontWeight: 700,
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
                         marginTop: '4px',
                     }}>
-                        FULL PERFORMANCE LOG
-                    </p>
+                        <span style={{
+                            fontSize: '10px',
+                            fontWeight: 700,
+                            color: COLORS.primary,
+                            letterSpacing: '0.08em',
+                            textTransform: 'uppercase',
+                        }}>
+                            {muscleGroup}
+                        </span>
+                        {equipment && (
+                            <>
+                                <span style={{
+                                    width: '3px', height: '3px',
+                                    borderRadius: '50%', background: '#374151',
+                                }} />
+                                <span style={{
+                                    fontSize: '10px',
+                                    fontWeight: 600,
+                                    color: '#9CA3AF',
+                                    letterSpacing: '0.04em',
+                                }}>
+                                    {equipment}
+                                </span>
+                            </>
+                        )}
+                    </div>
                 </div>
             </header>
 
-            {/* ── Segmented Tab Bar ── */}
-            <div style={{
-                padding: '0 24px',
-                marginBottom: '20px',
-            }}>
+            {/* ── Main Tab Bar (Details / History) ── */}
+            <div style={{ padding: '0 24px', marginBottom: '16px' }}>
                 <div style={{
                     display: 'flex',
                     background: COLORS.surfaceDark,
@@ -133,14 +161,14 @@ export default function ExerciseHistory({ onBack, exercise }) {
                     padding: '4px',
                 }}>
                     {[
-                        { key: 'all', label: 'ALL SETS' },
-                        { key: 'max', label: 'MAX SETS' },
+                        { key: 'details', label: 'DETAILS' },
+                        { key: 'history', label: 'HISTORY' },
                     ].map(t => {
-                        const isActive = tab === t.key;
+                        const isActive = mainTab === t.key;
                         return (
                             <button
                                 key={t.key}
-                                onClick={() => setTab(t.key)}
+                                onClick={() => setMainTab(t.key)}
                                 style={{
                                     flex: 1,
                                     padding: '10px 0',
@@ -163,48 +191,301 @@ export default function ExerciseHistory({ onBack, exercise }) {
                 </div>
             </div>
 
-            {/* ── Content ── */}
+            {/* ── Content Area ── */}
             <main style={{
                 flex: 1,
                 overflowY: 'auto',
                 padding: '0 24px 40px 24px',
             }}>
                 {loading ? (
-                    <p style={{ color: '#555', textAlign: 'center', marginTop: '32px' }}>Loading history...</p>
-                ) : displaySessions.length === 0 ? (
-                    <div style={{ textAlign: 'center', marginTop: '48px', color: '#555' }}>
-                        <span className="material-symbols-outlined" style={{ fontSize: '48px', display: 'block', marginBottom: '16px' }}>
-                            history
-                        </span>
-                        <p style={{ fontSize: '16px', fontWeight: 600, marginBottom: '8px', color: '#777' }}>
-                            No History Yet
-                        </p>
-                        <p style={{ fontSize: '13px' }}>
-                            Complete workouts with this exercise to see data here
-                        </p>
-                    </div>
+                    <p style={{ color: '#555', textAlign: 'center', marginTop: '32px' }}>Loading...</p>
+                ) : mainTab === 'details' ? (
+                    <DetailsContent
+                        imageUrl={imageUrl}
+                        videoUrl={videoUrl}
+                        instructions={instructions}
+                        exerciseName={exerciseName}
+                        muscleGroup={muscleGroup}
+                        equipment={equipment}
+                    />
                 ) : (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                        {displaySessions.map((session, sIdx) => {
-                            // For the top card (first session), give it the lime border glow
-                            const isTop = sIdx === 0;
-
-                            return (
-                                <SessionCard
-                                    key={sIdx}
-                                    session={session}
-                                    isTop={isTop}
-                                    isBodyweight={isBodyweight}
-                                    globalMaxLbs={globalMaxLbs}
-                                    globalMaxReps={globalMaxReps}
-                                    formatDate={formatDate}
-                                    tab={tab}
-                                />
-                            );
-                        })}
-                    </div>
+                    <HistoryContent
+                        sessions={sessions}
+                        displaySessions={displaySessions}
+                        historyTab={historyTab}
+                        setHistoryTab={setHistoryTab}
+                        isBodyweight={isBodyweight}
+                        globalMaxLbs={globalMaxLbs}
+                        globalMaxReps={globalMaxReps}
+                        formatDate={formatDate}
+                    />
                 )}
             </main>
+        </div>
+    );
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// DETAILS TAB CONTENT
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function DetailsContent({ imageUrl, videoUrl, instructions, exerciseName, muscleGroup, equipment }) {
+    return (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            {/* ── Media Section ── */}
+            <div style={{ position: 'relative' }}>
+                <div style={{
+                    width: '100%',
+                    aspectRatio: '16 / 10',
+                    borderRadius: '16px',
+                    overflow: 'hidden',
+                    background: '#1A1A1A',
+                    border: '1px solid #1F2937',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}>
+                    {imageUrl ? (
+                        <img
+                            src={imageUrl}
+                            alt={exerciseName}
+                            style={{
+                                width: '100%',
+                                height: '100%',
+                                objectFit: 'cover',
+                            }}
+                        />
+                    ) : (
+                        <div style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            gap: '12px',
+                        }}>
+                            <span className="material-symbols-outlined" style={{
+                                fontSize: '56px',
+                                color: '#2A2A2A',
+                            }}>fitness_center</span>
+                            <span style={{
+                                fontSize: '11px',
+                                fontWeight: 600,
+                                color: '#3A3A3A',
+                                letterSpacing: '0.08em',
+                                textTransform: 'uppercase',
+                            }}>Exercise Photo</span>
+                        </div>
+                    )}
+                </div>
+
+                {/* Video icon button */}
+                {videoUrl ? (
+                    <button
+                        onClick={() => window.open(videoUrl, '_blank')}
+                        style={{
+                            position: 'absolute',
+                            bottom: '12px',
+                            right: '12px',
+                            width: '44px',
+                            height: '44px',
+                            borderRadius: '12px',
+                            background: 'rgba(223,255,0,0.9)',
+                            border: 'none',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                            transition: 'all 0.2s',
+                        }}
+                    >
+                        <span className="material-symbols-outlined" style={{
+                            fontSize: '22px',
+                            color: '#000',
+                        }}>play_arrow</span>
+                    </button>
+                ) : (
+                    <div style={{
+                        position: 'absolute',
+                        bottom: '12px',
+                        right: '12px',
+                        width: '44px',
+                        height: '44px',
+                        borderRadius: '12px',
+                        background: 'rgba(40,40,40,0.7)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}>
+                        <span className="material-symbols-outlined" style={{
+                            fontSize: '22px',
+                            color: '#555',
+                        }}>play_arrow</span>
+                    </div>
+                )}
+            </div>
+
+            {/* ── How To Section ── */}
+            <div style={{
+                background: '#161616',
+                borderRadius: '16px',
+                border: '1px solid #1F2937',
+                padding: '20px',
+            }}>
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    marginBottom: '16px',
+                }}>
+                    <span className="material-symbols-outlined" style={{
+                        fontSize: '20px',
+                        color: '#DFFF00',
+                    }}>menu_book</span>
+                    <h2 style={{
+                        fontSize: '14px',
+                        fontWeight: 900,
+                        fontStyle: 'italic',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.06em',
+                        color: '#fff',
+                        margin: 0,
+                    }}>How To</h2>
+                </div>
+
+                {instructions ? (
+                    <div style={{
+                        fontSize: '13px',
+                        color: '#D1D5DB',
+                        lineHeight: 1.7,
+                        whiteSpace: 'pre-line',
+                    }}>
+                        {instructions}
+                    </div>
+                ) : (
+                    <p style={{
+                        fontSize: '13px',
+                        color: '#555',
+                        fontStyle: 'italic',
+                        margin: 0,
+                    }}>
+                        No instructions available yet for this exercise.
+                    </p>
+                )}
+            </div>
+
+            {/* ── Exercise Info Pills ── */}
+            <div style={{
+                display: 'flex',
+                gap: '12px',
+                flexWrap: 'wrap',
+            }}>
+                {muscleGroup && (
+                    <div style={{
+                        padding: '8px 16px',
+                        borderRadius: '10px',
+                        background: 'rgba(223,255,0,0.08)',
+                        border: '1px solid rgba(223,255,0,0.2)',
+                    }}>
+                        <span style={{
+                            fontSize: '11px',
+                            fontWeight: 700,
+                            color: '#DFFF00',
+                            letterSpacing: '0.06em',
+                        }}>{muscleGroup}</span>
+                    </div>
+                )}
+                {equipment && (
+                    <div style={{
+                        padding: '8px 16px',
+                        borderRadius: '10px',
+                        background: 'rgba(161,161,161,0.08)',
+                        border: '1px solid rgba(161,161,161,0.15)',
+                    }}>
+                        <span style={{
+                            fontSize: '11px',
+                            fontWeight: 700,
+                            color: '#A1A1A1',
+                            letterSpacing: '0.06em',
+                        }}>{equipment}</span>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// HISTORY TAB CONTENT
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function HistoryContent({ displaySessions, historyTab, setHistoryTab, isBodyweight, globalMaxLbs, globalMaxReps, formatDate }) {
+    return (
+        <div>
+            {/* Sub-tabs: ALL SETS / MAX SETS */}
+            <div style={{ marginBottom: '20px' }}>
+                <div style={{
+                    display: 'flex',
+                    background: '#161616',
+                    borderRadius: '10px',
+                    border: '1px solid #1F2937',
+                    padding: '3px',
+                }}>
+                    {[
+                        { key: 'all', label: 'ALL SETS' },
+                        { key: 'max', label: 'MAX SETS' },
+                    ].map(t => {
+                        const isActive = historyTab === t.key;
+                        return (
+                            <button
+                                key={t.key}
+                                onClick={() => setHistoryTab(t.key)}
+                                style={{
+                                    flex: 1,
+                                    padding: '8px 0',
+                                    borderRadius: '8px',
+                                    border: 'none',
+                                    background: isActive ? '#2A2A2A' : 'transparent',
+                                    color: isActive ? '#fff' : '#6B7280',
+                                    fontWeight: 800,
+                                    fontSize: '11px',
+                                    letterSpacing: '0.06em',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s',
+                                }}
+                            >
+                                {t.label}
+                            </button>
+                        );
+                    })}
+                </div>
+            </div>
+
+            {displaySessions.length === 0 ? (
+                <div style={{ textAlign: 'center', marginTop: '48px', color: '#555' }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: '48px', display: 'block', marginBottom: '16px' }}>
+                        history
+                    </span>
+                    <p style={{ fontSize: '16px', fontWeight: 600, marginBottom: '8px', color: '#777' }}>
+                        No History Yet
+                    </p>
+                    <p style={{ fontSize: '13px' }}>
+                        Log this exercise in a workout to see progress here.
+                    </p>
+                </div>
+            ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                    {displaySessions.map((session, sIdx) => (
+                        <SessionCard
+                            key={sIdx}
+                            session={session}
+                            isTop={sIdx === 0}
+                            isBodyweight={isBodyweight}
+                            globalMaxLbs={globalMaxLbs}
+                            globalMaxReps={globalMaxReps}
+                            formatDate={formatDate}
+                            tab={historyTab}
+                        />
+                    ))}
+                </div>
+            )}
         </div>
     );
 }
@@ -213,20 +494,16 @@ export default function ExerciseHistory({ onBack, exercise }) {
 // Session Date Card
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 function SessionCard({ session, isTop, isBodyweight, globalMaxLbs, globalMaxReps, formatDate, tab }) {
-    // In the "all" tab, highlight the max values per this session
-    // In the "max" tab, highlight the global max values
     const highlightLbs = (weight) => {
         if (isBodyweight) return false;
         if (tab === 'max') return weight === globalMaxLbs;
-        // In ALL SETS, highlight the highest weight in THIS session
         const maxInSession = Math.max(...session.sets.map(s => s.weight || 0));
         return weight === maxInSession && weight > 0;
     };
 
     const highlightReps = (reps) => {
-        if (!isBodyweight && tab === 'all') return false; // weighted ALL SETS: don't highlight reps
+        if (!isBodyweight && tab === 'all') return false;
         if (tab === 'max') return reps === globalMaxReps;
-        // In bodyweight ALL SETS → highlight highest reps in session
         const maxRepsInSession = Math.max(...session.sets.map(s => s.reps || 0));
         return reps === maxRepsInSession && reps > 0;
     };
@@ -300,7 +577,6 @@ function SessionCard({ session, isTop, isBodyweight, globalMaxLbs, globalMaxReps
                             display: 'grid',
                             gridTemplateColumns: '1fr 1fr',
                             gap: '16px',
-                            paddingLeft: '4px',
                             padding: '4px 4px',
                         }}>
                             <span style={{
