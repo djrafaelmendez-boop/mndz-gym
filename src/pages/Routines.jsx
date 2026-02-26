@@ -292,7 +292,6 @@ function RoutineCard({ routine, isMenuOpen, onMenuToggle, onEdit, onDelete, onCl
                             WebkitBackgroundClip: 'text',
                             backgroundClip: 'text',
                             color: 'transparent',
-                            textShadow: '0 0 10px rgba(223,255,0,0.3)',
                         }}>
                             {routine.name}
                         </h3>
