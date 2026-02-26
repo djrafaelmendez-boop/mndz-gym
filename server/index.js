@@ -149,6 +149,25 @@ app.delete('/api/exercises/:id', authenticateToken, async (req, res) => {
     }
 });
 
+// Bulk delete custom exercises
+app.post('/api/exercises/bulk-delete', authenticateToken, async (req, res) => {
+    try {
+        const { ids } = req.body;
+        if (!ids || !Array.isArray(ids) || ids.length === 0) {
+            return res.status(400).json({ error: 'No exercise IDs provided.' });
+        }
+        const placeholders = ids.map(() => '?').join(',');
+        await dbRun(
+            `DELETE FROM exercises WHERE id IN (${placeholders}) AND userId = ? AND isCustom = 1`,
+            [...ids, req.userId]
+        );
+        saveDatabase();
+        res.json({ success: true, deleted: ids.length });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // ═══════════════════════════════════════════════
 // ROUTINES ROUTES
 // ═══════════════════════════════════════════════

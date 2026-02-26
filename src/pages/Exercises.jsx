@@ -8,6 +8,9 @@ export default function Exercises({ onNavigate }) {
     const [search, setSearch] = useState('');
     const [filter, setFilter] = useState('all');
     const [loading, setLoading] = useState(true);
+    const [selectMode, setSelectMode] = useState(false);
+    const [selectedIds, setSelectedIds] = useState(new Set());
+    const [deleting, setDeleting] = useState(false);
 
     const loadExercises = async () => {
         setLoading(true);
@@ -89,20 +92,41 @@ export default function Exercises({ onNavigate }) {
                         MOVEMENT DATABASE
                     </p>
                 </div>
-                <button
-                    style={{
-                        padding: '8px',
-                        borderRadius: '50%',
-                        background: 'none',
-                        border: 'none',
-                        cursor: 'pointer',
-                    }}
-                >
-                    <span className="material-symbols-outlined" style={{
-                        fontSize: '24px',
-                        color: '#9CA3AF',
-                    }}>filter_list</span>
-                </button>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                    {/* Edit / Select toggle */}
+                    <button
+                        onClick={() => {
+                            setSelectMode(prev => !prev);
+                            setSelectedIds(new Set());
+                        }}
+                        style={{
+                            padding: '8px',
+                            borderRadius: '50%',
+                            background: selectMode ? 'rgba(223,255,0,0.15)' : 'none',
+                            border: selectMode ? '1px solid rgba(223,255,0,0.3)' : 'none',
+                            cursor: 'pointer',
+                        }}
+                    >
+                        <span className="material-symbols-outlined" style={{
+                            fontSize: '24px',
+                            color: selectMode ? '#DFFF00' : '#9CA3AF',
+                        }}>{selectMode ? 'close' : 'edit'}</span>
+                    </button>
+                    <button
+                        style={{
+                            padding: '8px',
+                            borderRadius: '50%',
+                            background: 'none',
+                            border: 'none',
+                            cursor: 'pointer',
+                        }}
+                    >
+                        <span className="material-symbols-outlined" style={{
+                            fontSize: '24px',
+                            color: '#9CA3AF',
+                        }}>filter_list</span>
+                    </button>
+                </div>
             </header>
 
             {/* ── Scrollable content ── */}
@@ -253,52 +277,128 @@ export default function Exercises({ onNavigate }) {
                     ) : exercises.length === 0 ? (
                         <p style={{ color: '#555', textAlign: 'center', marginTop: '32px' }}>No exercises found</p>
                     ) : (
-                        exercises.map(ex => (
-                            <ExerciseRow
-                                key={ex.id}
-                                exercise={ex}
-                                onClick={() => onNavigate('exerciseHistory', { exercise: ex })}
-                            />
-                        ))
+                        exercises.map(ex => {
+                            const isCustom = ex.isCustom === 1;
+                            return (
+                                <ExerciseRow
+                                    key={ex.id}
+                                    exercise={ex}
+                                    showCheck={selectMode}
+                                    selected={selectedIds.has(ex.id)}
+                                    onClick={() => {
+                                        if (selectMode) {
+                                            if (!isCustom) return; // cannot select system exercises
+                                            setSelectedIds(prev => {
+                                                const next = new Set(prev);
+                                                if (next.has(ex.id)) next.delete(ex.id);
+                                                else next.add(ex.id);
+                                                return next;
+                                            });
+                                        } else {
+                                            onNavigate('exerciseHistory', { exercise: ex });
+                                        }
+                                    }}
+                                />
+                            );
+                        })
                     )}
                 </div>
             </main>
+            {/* ── Delete action bar (select mode) ── */}
+            {selectMode && selectedIds.size > 0 && (
+                <div style={{
+                    position: 'fixed',
+                    bottom: 'calc(80px + env(safe-area-inset-bottom))',
+                    left: '16px',
+                    right: '16px',
+                    zIndex: 50,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    background: '#1F2937',
+                    border: '1px solid #374151',
+                    borderRadius: '16px',
+                    padding: '12px 20px',
+                    boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
+                }}>
+                    <span style={{ fontSize: '14px', fontWeight: 700, color: '#fff' }}>
+                        {selectedIds.size} selected
+                    </span>
+                    <button
+                        disabled={deleting}
+                        onClick={async () => {
+                            if (!confirm(`Delete ${selectedIds.size} exercise(s)? This cannot be undone.`)) return;
+                            setDeleting(true);
+                            try {
+                                await api.bulkDeleteExercises(Array.from(selectedIds));
+                                setSelectedIds(new Set());
+                                setSelectMode(false);
+                                loadExercises();
+                            } catch (err) {
+                                console.error(err);
+                                alert('Failed to delete exercises.');
+                            } finally {
+                                setDeleting(false);
+                            }
+                        }}
+                        style={{
+                            padding: '10px 24px',
+                            borderRadius: '12px',
+                            background: '#DC2626',
+                            color: '#fff',
+                            fontSize: '13px',
+                            fontWeight: 800,
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.06em',
+                            border: 'none',
+                            cursor: deleting ? 'wait' : 'pointer',
+                            opacity: deleting ? 0.6 : 1,
+                            transition: 'all 0.2s',
+                        }}
+                    >
+                        {deleting ? 'Deleting...' : 'Delete'}
+                    </button>
+                </div>
+            )}
+
             {/* ── Floating Add Button (from A6 reference) ── */}
-            <div style={{
-                position: 'fixed',
-                bottom: 'calc(90px + env(safe-area-inset-bottom))',
-                right: '24px',
-                zIndex: 40,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-            }}>
-                <button
-                    onClick={() => onNavigate('newExercise')}
-                    style={{
-                        width: '56px',
-                        height: '56px',
-                        borderRadius: '999px',
-                        background: '#DFFF00',
-                        color: '#000',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        border: 'none',
-                        cursor: 'pointer',
-                        boxShadow: 'none',
-                        transition: 'all 0.2s',
-                        outline: 'none',
-                    }}
-                    onMouseDown={e => e.currentTarget.style.transform = 'scale(0.95)'}
-                    onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
-                >
-                    <span className="material-symbols-outlined" style={{
-                        fontSize: '32px',
-                        fontWeight: 'bold',
-                    }}>add</span>
-                </button>
-            </div>
+            {!selectMode && (
+                <div style={{
+                    position: 'fixed',
+                    bottom: 'calc(90px + env(safe-area-inset-bottom))',
+                    right: '24px',
+                    zIndex: 40,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}>
+                    <button
+                        onClick={() => onNavigate('newExercise')}
+                        style={{
+                            width: '56px',
+                            height: '56px',
+                            borderRadius: '999px',
+                            background: '#DFFF00',
+                            color: '#000',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            border: 'none',
+                            cursor: 'pointer',
+                            boxShadow: 'none',
+                            transition: 'all 0.2s',
+                            outline: 'none',
+                        }}
+                        onMouseDown={e => e.currentTarget.style.transform = 'scale(0.95)'}
+                        onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
+                    >
+                        <span className="material-symbols-outlined" style={{
+                            fontSize: '32px',
+                            fontWeight: 'bold',
+                        }}>add</span>
+                    </button>
+                </div>
+            )}
         </div>
     );
 }

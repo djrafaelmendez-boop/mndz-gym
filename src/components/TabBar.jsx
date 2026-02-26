@@ -21,11 +21,13 @@ export default function TabBar({ activeTab, onTabChange }) {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                background: 'linear-gradient(180deg, #1E1E1E 0%, #161616 100%)',
+                background: 'rgba(22, 22, 22, 0.75)',
+                backdropFilter: 'blur(24px)',
+                WebkitBackdropFilter: 'blur(24px)',
                 borderRadius: '999px',
                 padding: '8px 16px',
-                border: '1px solid rgba(255,255,255,0.06)',
-                boxShadow: '0 4px 24px rgba(0,0,0,0.5), 0 0 1px rgba(255,255,255,0.05)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.6), 0 0 1px rgba(255,255,255,0.05)',
             }}>
                 {tabItems.map(tab => {
                     const isActive = activeTab === tab.key;
