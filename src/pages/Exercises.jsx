@@ -287,7 +287,6 @@ export default function Exercises({ onNavigate }) {
                                     selected={selectedIds.has(ex.id)}
                                     onClick={() => {
                                         if (selectMode) {
-                                            if (!isCustom) return; // cannot select system exercises
                                             setSelectedIds(prev => {
                                                 const next = new Set(prev);
                                                 if (next.has(ex.id)) next.delete(ex.id);

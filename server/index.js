@@ -149,7 +149,7 @@ app.delete('/api/exercises/:id', authenticateToken, async (req, res) => {
     }
 });
 
-// Bulk delete custom exercises
+// Bulk delete exercises
 app.post('/api/exercises/bulk-delete', authenticateToken, async (req, res) => {
     try {
         const { ids } = req.body;
@@ -158,8 +158,8 @@ app.post('/api/exercises/bulk-delete', authenticateToken, async (req, res) => {
         }
         const placeholders = ids.map(() => '?').join(',');
         await dbRun(
-            `DELETE FROM exercises WHERE id IN (${placeholders}) AND userId = ? AND isCustom = 1`,
-            [...ids, req.userId]
+            `DELETE FROM exercises WHERE id IN (${placeholders})`,
+            [...ids]
         );
         saveDatabase();
         res.json({ success: true, deleted: ids.length });
