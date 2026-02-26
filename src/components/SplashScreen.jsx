@@ -1,20 +1,24 @@
 import { useState, useEffect } from 'react';
 import logo from '../assets/logo_transparent.png';
 
-export default function SplashScreen({ onComplete }) {
+export default function SplashScreen({ onComplete, isReady }) {
     const [visible, setVisible] = useState(true);
     const [fadeOut, setFadeOut] = useState(false);
 
     useEffect(() => {
+        if (!isReady) return;
+
+        // Wait an extra 1s after ready to ensure smooth transition
         const timer = setTimeout(() => {
             setFadeOut(true);
             setTimeout(() => {
                 setVisible(false);
                 if (onComplete) onComplete();
             }, 500);
-        }, 2000);
+        }, 1000);
+
         return () => clearTimeout(timer);
-    }, [onComplete]);
+    }, [isReady, onComplete]);
 
     if (!visible) return null;
 

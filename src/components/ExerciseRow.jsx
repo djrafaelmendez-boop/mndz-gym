@@ -37,7 +37,9 @@ export default function ExerciseRow({ exercise, onClick, selected, showCheck }) 
     /* Format the tag label – arms / biceps / triceps all show as ARMS */
     const tagLabel = (mg === 'triceps' || mg === 'biceps' || mg === 'arms') ? 'ARMS' : mg.toUpperCase();
 
-    const isImageSource = icon.includes('/') || icon.includes('data:') || icon.includes('static');
+    // Prioritize the custom image URL from the database, fallback to static muscle icon
+    const iconSource = exercise.imageUrl || icon;
+    const isImageSource = iconSource.includes('/') || iconSource.includes('data:') || iconSource.includes('static');
 
     return (
         <div
@@ -74,7 +76,7 @@ export default function ExerciseRow({ exercise, onClick, selected, showCheck }) 
                 }}>
                     {isImageSource ? (
                         <img
-                            src={icon}
+                            src={iconSource}
                             alt=""
                             style={{
                                 width: '100%',

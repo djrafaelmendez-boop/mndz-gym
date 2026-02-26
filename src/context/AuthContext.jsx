@@ -12,8 +12,12 @@ export function AuthProvider({ children }) {
         if (token) {
             api.getMe()
                 .then(setUser)
-                .catch(() => {
-                    localStorage.removeItem('mndz_token');
+                .catch((err) => {
+                    // Only remove token if the server explicitly says Unauthorized
+                    // Network errors or timeouts shouldn't silently log the user out
+                    if (err.message && err.message.includes('401')) {
+                        localStorage.removeItem('mndz_token');
+                    }
                 })
                 .finally(() => setLoading(false));
         } else {

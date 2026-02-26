@@ -8,9 +8,9 @@ async function apiFetch(path, options = {}) {
         ...options.headers,
     };
 
-    // Add timeout to prevent infinite hangs
+    // Add timeout to prevent infinite hangs (60s for Render free tier cold-start)
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+    const timeoutId = setTimeout(() => controller.abort(), 60000);
 
     try {
         const res = await fetch(`${API_BASE}${path}`, {

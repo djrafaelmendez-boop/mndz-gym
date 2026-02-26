@@ -59,6 +59,10 @@ export async function initDatabase() {
     try { sqliteDb.exec('ALTER TABLE exercises ADD COLUMN videoUrl TEXT DEFAULT NULL'); } catch (e) { }
     try { sqliteDb.exec("ALTER TABLE exercises ADD COLUMN instructions TEXT DEFAULT ''"); } catch (e) { }
     console.log('✅ Applied table migrations');
+
+    // Seed defaults AFTER migrations so the schema matches
+    await seedDefaultsSqlite();
+
     saveDatabase();
   }
 }
@@ -89,6 +93,9 @@ async function initTablesSqlite() {
       isCustom INTEGER DEFAULT 0,
       userId INTEGER DEFAULT NULL,
       notes TEXT DEFAULT '',
+      imageUrl TEXT DEFAULT NULL,
+      videoUrl TEXT DEFAULT NULL,
+      instructions TEXT DEFAULT '',
       createdAt TEXT DEFAULT (datetime('now'))
     );
     CREATE TABLE IF NOT EXISTS routines (
@@ -148,14 +155,10 @@ async function initTablesSqlite() {
       date TEXT NOT NULL
     );
     CREATE TABLE IF NOT EXISTS steps_logs (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      userId INTEGER NOT NULL,
-      steps INTEGER NOT NULL,
       date TEXT NOT NULL
     );
   `;
   sqliteDb.run(schema);
-  await seedDefaultsSqlite();
 }
 
 async function initTablesPostgres() {
@@ -181,6 +184,9 @@ async function initTablesPostgres() {
       isCustom INTEGER DEFAULT 0,
       userId INTEGER DEFAULT NULL,
       notes TEXT DEFAULT '',
+      "imageUrl" TEXT DEFAULT NULL,
+      "videoUrl" TEXT DEFAULT NULL,
+      "instructions" TEXT DEFAULT '',
       createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
     CREATE TABLE IF NOT EXISTS routines (
@@ -258,6 +264,13 @@ async function initTablesPostgres() {
     await pgPool.query('ALTER TABLE exercises ADD COLUMN IF NOT EXISTS "videoUrl" TEXT DEFAULT NULL');
     await pgPool.query("ALTER TABLE exercises ADD COLUMN IF NOT EXISTS instructions TEXT DEFAULT ''");
     console.log('✅ Applied table migrations (Postgres)');
+
+    // Force patch existing Barbell Bench Press
+    try {
+      await pgPool.query(`UPDATE exercises SET "imageUrl" = '/exercises/BARBELL%20BENCH%20PRESS/BARBELL%20BENCH%20PRESS.png' WHERE name = 'Barbell Bench Press' AND "isCustom" = 0`);
+      console.log('✅ Patched Barbell Bench Press image (Postgres)');
+    } catch (e) { console.error('Failed to patch image:', e); }
+
   } catch (e) { }
 
   await seedDefaultsPostgres();
@@ -276,9 +289,9 @@ async function seedDefaultsSqlite() {
   if (count !== DEFAULT_EXERCISE_COUNT) {
     // Remove old global defaults and re-seed with the full library
     sqliteDb.run('DELETE FROM exercises WHERE isCustom = 0 AND userId IS NULL');
-    const stmt = sqliteDb.prepare('INSERT INTO exercises (name, muscleGroup, equipment, isCustom) VALUES (?, ?, ?, 0)');
-    for (const [name, muscle, equip] of DEFAULT_EXERCISES) {
-      stmt.run([name, muscle, equip]);
+    const stmt = sqliteDb.prepare('INSERT INTO exercises (name, muscleGroup, equipment, imageUrl, isCustom) VALUES (?, ?, ?, ?, 0)');
+    for (const [name, muscle, equip, imgUrl] of DEFAULT_EXERCISES) {
+      stmt.run([name, muscle, equip, imgUrl || null]);
     }
     stmt.free();
     saveDatabase();
@@ -292,10 +305,10 @@ async function seedDefaultsPostgres() {
   if (count !== DEFAULT_EXERCISE_COUNT) {
     // Remove old global defaults and re-seed with the full library
     await pgPool.query('DELETE FROM exercises WHERE "isCustom" = 0 AND "userId" IS NULL');
-    for (const [name, muscle, equip] of DEFAULT_EXERCISES) {
+    for (const [name, muscle, equip, imgUrl] of DEFAULT_EXERCISES) {
       await pgPool.query(
-        'INSERT INTO exercises (name, "muscleGroup", equipment, "isCustom") VALUES ($1, $2, $3, 0)',
-        [name, muscle, equip]
+        'INSERT INTO exercises (name, "muscleGroup", equipment, "imageUrl", "isCustom") VALUES ($1, $2, $3, $4, 0)',
+        [name, muscle, equip, imgUrl || null]
       );
     }
     console.log(`Seeded ${DEFAULT_EXERCISE_COUNT} default exercises (Postgres)`);

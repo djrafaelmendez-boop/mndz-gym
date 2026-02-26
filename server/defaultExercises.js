@@ -8,7 +8,7 @@ const DEFAULT_EXERCISES = [
     // ═══════════════════════════════════════
     // CHEST
     // ═══════════════════════════════════════
-    ['Barbell Bench Press', 'chest', 'Barbell'],
+    ['Barbell Bench Press', 'chest', 'Barbell', '/exercises/BARBELL BENCH PRESS/BARBELL BENCH PRESS.png'],
     ['Dumbbell Bench Press', 'chest', 'Dumbbell'],
     ['Smith Machine Bench Press', 'chest', 'Machine'],
     ['Machine Chest Press', 'chest', 'Machine'],

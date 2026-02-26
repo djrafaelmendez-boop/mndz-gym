@@ -34,7 +34,7 @@ function AppContent() {
     };
 
     if (showSplash || authLoading) {
-        return <SplashScreen onComplete={() => setShowSplash(false)} />;
+        return <SplashScreen isReady={!authLoading} onComplete={() => setShowSplash(false)} />;
     }
 
     if (!user) {
