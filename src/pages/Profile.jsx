@@ -143,8 +143,13 @@ export default function Profile() {
                         fontStyle: 'italic',
                         textTransform: 'uppercase',
                         letterSpacing: '-0.04em',
-                        color: '#fff',
                         lineHeight: 1,
+                        margin: 0,
+                        paddingRight: '4px',
+                        background: 'linear-gradient(to right, #ffffff, #888888)',
+                        WebkitBackgroundClip: 'text',
+                        backgroundClip: 'text',
+                        color: 'transparent',
                     }}>
                         Profile
                     </h1>

@@ -177,7 +177,13 @@ export default function Progress() {
                     fontStyle: 'italic',
                     textTransform: 'uppercase',
                     letterSpacing: '-0.04em',
-                    marginBottom: '4px',
+                    lineHeight: 1,
+                    margin: 0,
+                    paddingRight: '4px',
+                    background: 'linear-gradient(to right, #ffffff, #888888)',
+                    WebkitBackgroundClip: 'text',
+                    backgroundClip: 'text',
+                    color: 'transparent',
                 }}>
                     PROGRESS
                 </h1>
