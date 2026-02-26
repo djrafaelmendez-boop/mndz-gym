@@ -114,7 +114,7 @@ function ExerciseInfoPanel({ exercise }) {
                         </div>
 
                         {/* Video Button */}
-                        {videoUrl && (
+                        {videoUrl ? (
                             <button
                                 onClick={(e) => {
                                     e.stopPropagation();
@@ -140,6 +140,25 @@ function ExerciseInfoPanel({ exercise }) {
                                     fontSize: '20px', color: '#000',
                                 }}>play_arrow</span>
                             </button>
+                        ) : (
+                            <div
+                                style={{
+                                    position: 'absolute',
+                                    bottom: '8px',
+                                    right: '8px',
+                                    width: '38px',
+                                    height: '38px',
+                                    borderRadius: '10px',
+                                    background: 'rgba(40,40,40,0.7)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                <span className="material-symbols-outlined" style={{
+                                    fontSize: '20px', color: '#555',
+                                }}>play_arrow</span>
+                            </div>
                         )}
                     </div>
 
