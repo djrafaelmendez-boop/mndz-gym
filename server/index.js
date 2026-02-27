@@ -102,10 +102,8 @@ app.get('/api/me', authenticateToken, async (req, res) => {
 // TEMPORARY DEBUG ENDPOINT FOR POSTGRES PATCH
 app.get('/api/patch-debug', async (req, res) => {
     try {
-        if (!pgPool) return res.json({ error: 'Not running Postgres' });
-
-        const result = await pgPool.query(`UPDATE exercises SET "imageUrl" = '/exercises/BARBELL%20BENCH%20PRESS/BARBELL%20BENCH%20PRESS.png' WHERE name = 'Barbell Bench Press' AND isCustom = 0`);
-        res.json({ success: true, rowCount: result.rowCount, command: result.command });
+        const result = await dbRun(`UPDATE exercises SET "imageUrl" = '/exercises/BARBELL%20BENCH%20PRESS/BARBELL%20BENCH%20PRESS.png' WHERE name = 'Barbell Bench Press' AND isCustom = 0`);
+        res.json({ success: true, result });
     } catch (e) {
         res.json({ error: e.message, stack: e.stack });
     }
