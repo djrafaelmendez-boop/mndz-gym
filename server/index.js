@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import { initDatabase, dbRun, dbGet, dbAll, saveDatabase } from './database.js';
+import { initDatabase, dbRun, dbGet, dbAll, saveDatabase, pgPool } from './database.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
@@ -102,7 +102,6 @@ app.get('/api/me', authenticateToken, async (req, res) => {
 // TEMPORARY DEBUG ENDPOINT FOR POSTGRES PATCH
 app.get('/api/patch-debug', async (req, res) => {
     try {
-        const { pgPool } = await import('./database.js');
         if (!pgPool) return res.json({ error: 'Not running Postgres' });
 
         const result = await pgPool.query(`UPDATE exercises SET "imageUrl" = '/exercises/BARBELL%20BENCH%20PRESS/BARBELL%20BENCH%20PRESS.png' WHERE name = 'Barbell Bench Press' AND isCustom = 0`);
