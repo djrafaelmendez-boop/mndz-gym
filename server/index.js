@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import { initDatabase, dbRun, dbGet, dbAll, saveDatabase, pgPool } from './database.js';
+import { initDatabase, dbRun, dbGet, dbAll, saveDatabase } from './database.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
