@@ -267,7 +267,9 @@ async function initTablesPostgres() {
 
     // Force patch existing Barbell Bench Press
     try {
-      await pgPool.query(`UPDATE exercises SET "imageUrl" = '/exercises/BARBELL%20BENCH%20PRESS/BARBELL%20BENCH%20PRESS.png', "videoUrl" = 'https://youtube.com/shorts/0cXAp6WhSj4?si=Eb_mJZBBVlSilmt5' WHERE name = 'Barbell Bench Press' AND isCustom = 0`);
+      const imgUrl = '/exercises/BARBELL%20BENCH%20PRESS/BARBELL%20BENCH%20PRESS.png';
+      const vidUrl = 'https://youtube.com/shorts/0cXAp6WhSj4?si=Eb_mJZBBVlSilmt5';
+      await pgPool.query(`UPDATE exercises SET "imageUrl" = $1, "videoUrl" = $2 WHERE name = 'Barbell Bench Press' AND "isCustom" = 0`, [imgUrl, vidUrl]);
       console.log('✅ Patched Barbell Bench Press image and video (Postgres)');
     } catch (e) { console.error('Failed to patch image:', e); }
 

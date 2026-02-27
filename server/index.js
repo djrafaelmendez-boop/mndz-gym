@@ -102,7 +102,9 @@ app.get('/api/me', authenticateToken, async (req, res) => {
 // TEMPORARY DEBUG ENDPOINT FOR POSTGRES PATCH
 app.get('/api/patch-debug', async (req, res) => {
     try {
-        const result = await dbRun(`UPDATE exercises SET "imageUrl" = '/exercises/BARBELL%20BENCH%20PRESS/BARBELL%20BENCH%20PRESS.png', "videoUrl" = 'https://youtube.com/shorts/0cXAp6WhSj4?si=Eb_mJZBBVlSilmt5' WHERE name = 'Barbell Bench Press' AND isCustom = 0`);
+        const imgUrl = '/exercises/BARBELL%20BENCH%20PRESS/BARBELL%20BENCH%20PRESS.png';
+        const vidUrl = 'https://youtube.com/shorts/0cXAp6WhSj4?si=Eb_mJZBBVlSilmt5';
+        const result = await dbRun(`UPDATE exercises SET "imageUrl" = ?, "videoUrl" = ? WHERE name = 'Barbell Bench Press' AND "isCustom" = 0`, [imgUrl, vidUrl]);
         res.json({ success: true, result });
     } catch (e) {
         res.json({ error: e.message, stack: e.stack });
