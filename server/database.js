@@ -270,7 +270,12 @@ async function initTablesPostgres() {
       const imgUrl = '/exercises/BARBELL%20BENCH%20PRESS/BARBELL%20BENCH%20PRESS.png';
       const vidUrl = 'https://youtube.com/shorts/0cXAp6WhSj4?si=Eb_mJZBBVlSilmt5';
       await pgPool.query(`UPDATE exercises SET "imageUrl" = $1, "videoUrl" = $2 WHERE name = 'Barbell Bench Press' AND "isCustom" = 0`, [imgUrl, vidUrl]);
-      console.log('✅ Patched Barbell Bench Press image and video (Postgres)');
+
+      const cfImgUrl = '/exercises/CABLE%20FLY%20(SEATED)/CABLE%20FLY%20(SEATED).png';
+      const cfVidUrl = 'https://www.youtube.com/shorts/Tymt8yZnJYE';
+      await pgPool.query(`UPDATE exercises SET "imageUrl" = $1, "videoUrl" = $2 WHERE name = 'Cable Fly (Seated)' AND "isCustom" = 0`, [cfImgUrl, cfVidUrl]);
+
+      console.log('✅ Patched Exercise images and videos (Postgres)');
     } catch (e) { console.error('Failed to patch image:', e); }
 
   } catch (e) { }
