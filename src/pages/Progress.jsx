@@ -167,31 +167,47 @@ export default function Progress() {
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
             {/* Header */}
             <div style={{
-                background: `linear-gradient(to bottom, ${colors.bgGradientTop} 0%, ${colors.bgDark} 100px)`,
-                padding: '16px 20px',
+                padding: '0 24px',
                 paddingTop: 'calc(env(safe-area-inset-top) + 24px)',
+                paddingBottom: '8px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-end',
+                position: 'sticky',
+                top: 0,
+                zIndex: 10,
+                background: `linear-gradient(to bottom, ${colors.bgGradientTop} 0%, ${colors.bgDark} 100px)`,
             }}>
-                <h1 style={{
-                    fontSize: '42px',
-                    fontWeight: 900,
-                    fontFamily: 'Inter, sans-serif',
-                    fontStyle: 'italic',
-                    textTransform: 'uppercase',
-                    letterSpacing: '-0.04em',
-                    lineHeight: 1,
-                    margin: 0,
-                    paddingRight: '4px',
-                    background: 'linear-gradient(to right, #ffffff, #888888)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                    color: 'transparent',
-                }}>
-                    PROGRESS
-                </h1>
-                <p style={{ fontSize: '12px', color: '#888', fontWeight: 500, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
-                    TRACK YOUR JOURNEY
-                </p>
+                <div>
+                    <h1 style={{
+                        fontSize: '42px',
+                        fontWeight: 900,
+                        fontFamily: 'Inter, sans-serif',
+                        fontStyle: 'italic',
+                        textTransform: 'uppercase',
+                        letterSpacing: '-0.04em',
+                        lineHeight: 1,
+                        margin: 0,
+                        paddingRight: '4px',
+                        background: 'linear-gradient(to right, #ffffff, #888888)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                        color: 'transparent',
+                    }}>
+                        PROGRESS
+                    </h1>
+                    <p style={{ 
+                        fontSize: '12px', 
+                        color: '#888', 
+                        marginTop: '4px',
+                        fontWeight: 500, 
+                        letterSpacing: '0.05em', 
+                        textTransform: 'uppercase' 
+                    }}>
+                        TRACK YOUR JOURNEY
+                    </p>
+                </div>
             </div>
 
             {/* Content */}
