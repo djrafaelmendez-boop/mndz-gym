@@ -140,6 +140,7 @@ export default function Profile() {
                     <h1 style={{
                         fontSize: '42px',
                         fontWeight: 900,
+                        fontFamily: 'Inter, sans-serif',
                         fontStyle: 'italic',
                         textTransform: 'uppercase',
                         letterSpacing: '-0.04em',
@@ -148,6 +149,7 @@ export default function Profile() {
                         paddingRight: '4px',
                         background: 'linear-gradient(to right, #ffffff, #888888)',
                         WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
                         backgroundClip: 'text',
                         color: 'transparent',
                     }}>
