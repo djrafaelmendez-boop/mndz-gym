@@ -675,18 +675,11 @@ export default function ActiveWorkout({ onBack, sessionId }) {
                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1, padding: '4px 0' }}>
                                             {/* History Row (Read-only) */}
                                             <div style={{ display: 'flex', gap: '24px' }}>
-                                                {/* Target */}
+                                                {/* Previous Weight Only */}
                                                 <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                                    <span style={{ fontSize: '8px', fontWeight: 900, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.05em', fontStyle: 'italic' }}>Target ({set.targetWeight || 0}lb)</span>
+                                                    <span style={{ fontSize: '8px', fontWeight: 900, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.05em', fontStyle: 'italic' }}>PREVIOUS</span>
                                                     <span style={{ fontSize: '12px', fontWeight: 800, color: '#9CA3AF', fontStyle: 'italic' }}>
-                                                        {set.targetWeight || set.targetReps ? `${set.targetWeight || 0} x ${set.targetReps || 0}` : '--'}
-                                                    </span>
-                                                </div>
-                                                {/* Previous */}
-                                                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                                    <span style={{ fontSize: '8px', fontWeight: 900, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.05em', fontStyle: 'italic' }}>Prev ({set.prevWeight || 0}lb)</span>
-                                                    <span style={{ fontSize: '12px', fontWeight: 800, color: '#9CA3AF', fontStyle: 'italic' }}>
-                                                        {set.prevWeight || set.prevReps ? `${set.prevWeight || 0} x ${set.prevReps || 0}` : '--'}
+                                                        {set.prevWeight ? `${set.prevWeight} LBS` : '--'}
                                                     </span>
                                                 </div>
                                             </div>
