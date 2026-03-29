@@ -172,7 +172,7 @@ export default function Progress() {
                 paddingTop: 'calc(env(safe-area-inset-top) + 24px)',
             }}>
                 <h1 style={{
-                    fontSize: '32px',
+                    fontSize: '42px',
                     fontWeight: 900,
                     fontStyle: 'italic',
                     textTransform: 'uppercase',

@@ -138,7 +138,7 @@ export default function Profile() {
             }}>
                 <div>
                     <h1 style={{
-                        fontSize: '30px',
+                        fontSize: '42px',
                         fontWeight: 900,
                         fontStyle: 'italic',
                         textTransform: 'uppercase',
