@@ -28,8 +28,8 @@ async function check() {
         }
 
         const exercises = await exRes.json();
-        const bench = exercises.find(e => e.name === 'Barbell Bench Press');
-        console.log("Barbell Bench Press data:", bench);
+        const cf = exercises.find(e => e.name === 'Cable Fly (Seated)');
+        console.log("Cable Fly (Seated) data:", cf);
     } catch (err) {
         console.log("Error:", err.message);
     }
