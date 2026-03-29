@@ -522,6 +522,19 @@ app.put('/api/workout/:id/log-set', authenticateToken, async (req, res) => {
     }
 });
 
+app.post('/api/workout/:id/add-set', authenticateToken, async (req, res) => {
+    try {
+        const { routineExerciseId, setNumber, weight, reps } = req.body;
+        const result = await dbRun(
+            'INSERT INTO set_logs (workoutSessionId, routineExerciseId, setNumber, weight, reps, completed) VALUES (?, ?, ?, ?, ?, 0)',
+            [parseInt(req.params.id), routineExerciseId, setNumber, weight || 0, reps || 0]
+        );
+        res.json({ success: true, id: result.lastInsertRowid });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 app.put('/api/workout/:id/complete', authenticateToken, async (req, res) => {
     try {
         const session = await dbGet('SELECT * FROM workout_sessions WHERE id = ? AND userId = ?', [req.params.id, req.userId]);

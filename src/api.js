@@ -68,6 +68,7 @@ export const api = {
     startWorkout: (data) => apiFetch('/workout/start', { method: 'POST', body: JSON.stringify(data) }),
     getWorkout: (id) => apiFetch(`/workout/${id}`),
     logSet: (sessionId, data) => apiFetch(`/workout/${sessionId}/log-set`, { method: 'PUT', body: JSON.stringify(data) }),
+    addWorkoutSet: (sessionId, data) => apiFetch(`/workout/${sessionId}/add-set`, { method: 'POST', body: JSON.stringify(data) }),
     completeWorkout: (id) => apiFetch(`/workout/${id}/complete`, { method: 'PUT' }),
 
     // Progress

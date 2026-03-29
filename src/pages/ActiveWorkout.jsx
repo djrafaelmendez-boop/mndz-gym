@@ -265,6 +265,48 @@ export default function ActiveWorkout({ onBack, sessionId }) {
         });
     };
 
+    const handleAddSet = async (exerciseId) => {
+        try {
+            const currentEx = workout.exercises.find(e => e.id === exerciseId);
+            const nextSetNumber = currentEx.sets.length + 1;
+            
+            const lastSet = currentEx.sets[currentEx.sets.length - 1];
+            const weight = lastSet?.weight !== undefined ? lastSet.weight : (lastSet?.plannedWeight || 0);
+            const reps = lastSet?.reps !== undefined ? lastSet.reps : (lastSet?.plannedReps || 0);
+
+            const res = await api.addWorkoutSet(effectiveSessionId, {
+                routineExerciseId: currentEx.id,
+                setNumber: nextSetNumber,
+                weight: Number(weight),
+                reps: Number(reps)
+            });
+
+            if (res.success) {
+                setWorkout(prev => ({
+                    ...prev,
+                    exercises: prev.exercises.map(ex => {
+                        if (ex.id !== exerciseId) return ex;
+                        return { 
+                            ...ex, 
+                            allComplete: false,
+                            sets: [...ex.sets, {
+                                id: res.id,
+                                setNumber: nextSetNumber,
+                                weight: Number(weight),
+                                reps: Number(reps),
+                                plannedWeight: Number(weight),
+                                plannedReps: Number(reps),
+                                completed: 0
+                            }]
+                        };
+                    })
+                }));
+            }
+        } catch (e) {
+            console.error("Failed to add set:", e);
+        }
+    };
+
     const handleCompleteExercise = async (exerciseId) => {
         setWorkout(prev => {
             if (!prev) return prev;
@@ -803,12 +845,15 @@ export default function ActiveWorkout({ onBack, sessionId }) {
                         })}
 
                         <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '16px', paddingBottom: '32px' }}>
-                            <button style={{
-                                display: 'flex', alignItems: 'center', gap: '8px',
-                                color: '#666', background: 'none', border: 'none',
-                                fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em',
-                                cursor: 'pointer'
-                            }}>
+                            <button 
+                                onClick={() => handleAddSet(currentExercise.id)}
+                                style={{
+                                    display: 'flex', alignItems: 'center', gap: '8px',
+                                    color: '#666', background: 'none', border: 'none',
+                                    fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em',
+                                    cursor: 'pointer'
+                                }}
+                            >
                                 <span className="material-icons-outlined" style={{ fontSize: '18px' }}>add</span>
                                 Add Set
                             </button>
