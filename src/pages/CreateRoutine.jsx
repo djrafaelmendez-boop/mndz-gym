@@ -35,6 +35,7 @@ export default function CreateRoutine({ onBack, editRoutine }) {
                 exerciseName: ex.exerciseName,
                 muscleGroup: ex.muscleGroup,
                 equipment: ex.equipment,
+                prevWeight: ex.prevWeight || 0,
                 sets: ex.sets?.map(s => ({
                     setNumber: s.setNumber,
                     plannedWeight: s.plannedWeight,
@@ -88,6 +89,7 @@ export default function CreateRoutine({ onBack, editRoutine }) {
             exerciseName: ex.name,
             muscleGroup: ex.muscleGroup,
             equipment: ex.equipment,
+            prevWeight: ex.prevWeight || 0,
             sets: [
                 { setNumber: 1, plannedWeight: 0, plannedReps: 10 },
                 { setNumber: 2, plannedWeight: 0, plannedReps: 10 },
@@ -855,7 +857,12 @@ function EditExerciseBlock({ exercise, exIndex, onUpdateSet, onAddSet, onRemoveS
                 padding: '0 4px',
             }}>
                 <span style={colHeaderStyle}>Set</span>
-                <span style={colHeaderStyle}>Weight (lbs)</span>
+                <span style={{ ...colHeaderStyle, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <span>Weight (lbs)</span>
+                    <span style={{ fontSize: '8px', color: '#6B7280', marginTop: '2px', fontStyle: 'italic', letterSpacing: '0.05em' }}>
+                        PREV: {exercise.prevWeight || '--'}
+                    </span>
+                </span>
                 <span style={colHeaderStyle}>Reps</span>
                 <span style={colHeaderStyle}></span>
             </div>

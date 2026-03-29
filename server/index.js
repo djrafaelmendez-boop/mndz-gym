@@ -114,8 +114,23 @@ app.get('/api/patch-debug', async (req, res) => {
 app.get('/api/exercises', authenticateToken, async (req, res) => {
     try {
         const { muscleGroup, search } = req.query;
-        let query = 'SELECT * FROM exercises WHERE (isCustom = 0 OR userId = ?)';
-        const params = [req.userId];
+        let query = `
+            SELECT e.*, 
+            (
+                SELECT sl.weight 
+                FROM set_logs sl
+                JOIN workout_sessions ws ON sl.workoutSessionId = ws.id
+                JOIN routine_exercises re ON sl.routineExerciseId = re.id
+                WHERE ws.userId = ? 
+                  AND re.exerciseId = e.id 
+                  AND sl.completed = 1
+                ORDER BY ws.startedAt DESC 
+                LIMIT 1
+            ) as prevWeight
+            FROM exercises e 
+            WHERE (e.isCustom = 0 OR e.userId = ?)
+        `;
+        const params = [req.userId, req.userId];
 
         if (muscleGroup && muscleGroup !== 'all') {
             if (muscleGroup.toLowerCase() === 'arms') {
@@ -189,12 +204,23 @@ app.get('/api/routines', authenticateToken, async (req, res) => {
 
         const result = await Promise.all(routines.map(async (routine) => {
             const exercises = await dbAll(`
-                SELECT re.*, e.name as exerciseName, e.muscleGroup, e.equipment
+                SELECT re.*, e.name as exerciseName, e.muscleGroup, e.equipment,
+                (
+                    SELECT sl.weight 
+                    FROM set_logs sl
+                    JOIN workout_sessions ws ON sl.workoutSessionId = ws.id
+                    JOIN routine_exercises re2 ON sl.routineExerciseId = re2.id
+                    WHERE ws.userId = ? 
+                      AND re2.exerciseId = e.id 
+                      AND sl.completed = 1
+                    ORDER BY ws.startedAt DESC 
+                    LIMIT 1
+                ) as prevWeight
                 FROM routine_exercises re
                 JOIN exercises e ON e.id = re.exerciseId
                 WHERE re.routineId = ?
                 ORDER BY re.sortOrder
-            `, [routine.id]);
+            `, [req.userId, routine.id]);
 
             const exercisesWithSets = await Promise.all(exercises.map(async (ex) => {
                 const sets = await dbAll('SELECT * FROM planned_sets WHERE routineExerciseId = ? ORDER BY setNumber', [ex.id]);
