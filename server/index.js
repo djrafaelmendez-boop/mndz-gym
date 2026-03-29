@@ -442,8 +442,35 @@ app.get('/api/workout/:id', authenticateToken, async (req, res) => {
                 'SELECT * FROM set_logs WHERE workoutSessionId = ? AND routineExerciseId = ? ORDER BY setNumber',
                 [session.id, ex.id]
             );
-            const allComplete = sets.length > 0 && sets.every(s => s.completed);
-            return { ...ex, sets, allComplete };
+            
+            const enrichedSets = await Promise.all(sets.map(async (set) => {
+                const target = await dbGet('SELECT plannedWeight, plannedReps FROM planned_sets WHERE routineExerciseId = ? AND setNumber = ?', [ex.id, set.setNumber]);
+                
+                const prev = await dbGet(`
+                    SELECT sl.weight, sl.reps
+                    FROM set_logs sl
+                    JOIN workout_sessions ws ON sl.workoutSessionId = ws.id
+                    JOIN routine_exercises re ON sl.routineExerciseId = re.id
+                    WHERE ws.userId = ? 
+                      AND re.exerciseId = ?
+                      AND sl.setNumber = ?
+                      AND sl.completed = 1
+                      AND ws.startedAt < ?
+                    ORDER BY ws.startedAt DESC
+                    LIMIT 1
+                `, [session.userId, ex.exerciseId, set.setNumber, session.startedAt]);
+
+                return {
+                    ...set,
+                    targetWeight: target ? target.plannedWeight : 0,
+                    targetReps: target ? target.plannedReps : 0,
+                    prevWeight: prev ? prev.weight : 0,
+                    prevReps: prev ? prev.reps : 0
+                };
+            }));
+
+            const allComplete = enrichedSets.length > 0 && enrichedSets.every(s => s.completed);
+            return { ...ex, sets: enrichedSets, allComplete };
         }));
 
         if (session.startedAt && !session.startedAt.includes('T')) session.startedAt = session.startedAt.replace(' ', 'T') + 'Z';

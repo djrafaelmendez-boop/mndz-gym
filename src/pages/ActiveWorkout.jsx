@@ -669,66 +669,87 @@ export default function ActiveWorkout({ onBack, sessionId }) {
                                         </div>
 
                                         {/* Divider */}
-                                        <div style={{ width: '1px', height: '32px', background: isDone ? 'rgba(255,0,60,0.3)' : '#374151', marginRight: '24px' }}></div>
+                                        <div style={{ width: '1px', alignSelf: 'stretch', margin: '4px 24px 4px 0', background: isDone ? 'rgba(255,0,60,0.3)' : '#374151' }}></div>
 
-                                        {/* Inputs Area - Using gap and alignment */}
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-                                            {/* LBS */}
-                                            <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
-                                                <input
-                                                    type="text"
-                                                    inputMode="decimal"
-                                                    value={weightValue}
-                                                    onChange={(e) => {
-                                                        const val = e.target.value;
-                                                        if (val === '' || /^\d*\.?\d*$/.test(val)) {
-                                                            handleSetLocalUpdate(currentExercise.id, set.id, { weight: val });
-                                                        }
-                                                    }}
-                                                    onBlur={(e) => {
-                                                        const parsed = e.target.value === '' ? 0 : Math.max(0, parseFloat(e.target.value) || 0);
-                                                        handleSetUpdate(currentExercise.id, set.id, { weight: parsed });
-                                                    }}
-                                                    disabled={isDone}
-                                                    style={{
-                                                        background: 'transparent', border: 'none', width: '60px',
-                                                        fontSize: '24px', fontWeight: 900, fontStyle: 'italic',
-                                                        color: styles.inputColor,
-                                                        textAlign: 'right', padding: '8px 0',
-                                                        textShadow: isDone ? `0 0 5px rgba(0,0,0,0.5)` : 'none',
-                                                        outline: 'none', WebkitAppearance: 'none',
-                                                    }}
-                                                />
-                                                <span style={{ fontSize: '10px', fontWeight: 700, color: styles.labelColor, textTransform: 'uppercase' }}>LBS</span>
+                                        {/* Set Data Stack */}
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1, padding: '4px 0' }}>
+                                            {/* History Row (Read-only) */}
+                                            <div style={{ display: 'flex', gap: '24px' }}>
+                                                {/* Target */}
+                                                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                                    <span style={{ fontSize: '8px', fontWeight: 900, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.05em', fontStyle: 'italic' }}>Target ({set.targetWeight || 0}lb)</span>
+                                                    <span style={{ fontSize: '12px', fontWeight: 800, color: '#9CA3AF', fontStyle: 'italic' }}>
+                                                        {set.targetWeight || set.targetReps ? `${set.targetWeight || 0} x ${set.targetReps || 0}` : '--'}
+                                                    </span>
+                                                </div>
+                                                {/* Previous */}
+                                                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                                    <span style={{ fontSize: '8px', fontWeight: 900, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.05em', fontStyle: 'italic' }}>Prev ({set.prevWeight || 0}lb)</span>
+                                                    <span style={{ fontSize: '12px', fontWeight: 800, color: '#9CA3AF', fontStyle: 'italic' }}>
+                                                        {set.prevWeight || set.prevReps ? `${set.prevWeight || 0} x ${set.prevReps || 0}` : '--'}
+                                                    </span>
+                                                </div>
                                             </div>
 
-                                            {/* REPS */}
-                                            <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
-                                                <input
-                                                    type="text"
-                                                    inputMode="numeric"
-                                                    value={repsValue}
-                                                    onChange={(e) => {
-                                                        const val = e.target.value;
-                                                        if (val === '' || /^\d+$/.test(val)) {
-                                                            handleSetLocalUpdate(currentExercise.id, set.id, { reps: val });
-                                                        }
-                                                    }}
-                                                    onBlur={(e) => {
-                                                        const parsed = e.target.value === '' ? 0 : Math.max(0, parseInt(e.target.value) || 0);
-                                                        handleSetUpdate(currentExercise.id, set.id, { reps: parsed });
-                                                    }}
-                                                    disabled={isDone}
-                                                    style={{
-                                                        background: 'transparent', border: 'none', width: '50px',
-                                                        fontSize: '24px', fontWeight: 900, fontStyle: 'italic',
-                                                        color: styles.inputColor,
-                                                        textAlign: 'right', padding: '8px 0',
-                                                        textShadow: isDone ? `0 0 5px rgba(0,0,0,0.5)` : 'none',
-                                                        outline: 'none', WebkitAppearance: 'none',
-                                                    }}
-                                                />
-                                                <span style={{ fontSize: '10px', fontWeight: 700, color: styles.labelColor, textTransform: 'uppercase' }}>REPS</span>
+                                            {/* Inputs Area - Current */}
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+                                                {/* LBS */}
+                                                <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
+                                                    <input
+                                                        type="text"
+                                                        inputMode="decimal"
+                                                        value={weightValue}
+                                                        onChange={(e) => {
+                                                            const val = e.target.value;
+                                                            if (val === '' || /^\d*\.?\d*$/.test(val)) {
+                                                                handleSetLocalUpdate(currentExercise.id, set.id, { weight: val });
+                                                            }
+                                                        }}
+                                                        onBlur={(e) => {
+                                                            const parsed = e.target.value === '' ? 0 : Math.max(0, parseFloat(e.target.value) || 0);
+                                                            handleSetUpdate(currentExercise.id, set.id, { weight: parsed });
+                                                        }}
+                                                        disabled={isDone}
+                                                        style={{
+                                                            background: 'transparent', border: 'none', width: '60px',
+                                                            fontSize: '24px', fontWeight: 900, fontStyle: 'italic',
+                                                            color: styles.inputColor,
+                                                            textAlign: 'right', padding: '0',
+                                                            textShadow: isDone ? `0 0 5px rgba(0,0,0,0.5)` : 'none',
+                                                            outline: 'none', WebkitAppearance: 'none',
+                                                        }}
+                                                    />
+                                                    <span style={{ fontSize: '10px', fontWeight: 700, color: styles.labelColor, textTransform: 'uppercase' }}>LBS</span>
+                                                </div>
+
+                                                {/* REPS */}
+                                                <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
+                                                    <input
+                                                        type="text"
+                                                        inputMode="numeric"
+                                                        value={repsValue}
+                                                        onChange={(e) => {
+                                                            const val = e.target.value;
+                                                            if (val === '' || /^\d+$/.test(val)) {
+                                                                handleSetLocalUpdate(currentExercise.id, set.id, { reps: val });
+                                                            }
+                                                        }}
+                                                        onBlur={(e) => {
+                                                            const parsed = e.target.value === '' ? 0 : Math.max(0, parseInt(e.target.value) || 0);
+                                                            handleSetUpdate(currentExercise.id, set.id, { reps: parsed });
+                                                        }}
+                                                        disabled={isDone}
+                                                        style={{
+                                                            background: 'transparent', border: 'none', width: '50px',
+                                                            fontSize: '24px', fontWeight: 900, fontStyle: 'italic',
+                                                            color: styles.inputColor,
+                                                            textAlign: 'right', padding: '0',
+                                                            textShadow: isDone ? `0 0 5px rgba(0,0,0,0.5)` : 'none',
+                                                            outline: 'none', WebkitAppearance: 'none',
+                                                        }}
+                                                    />
+                                                    <span style={{ fontSize: '10px', fontWeight: 700, color: styles.labelColor, textTransform: 'uppercase' }}>REPS</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
