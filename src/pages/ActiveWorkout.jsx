@@ -354,8 +354,7 @@ export default function ActiveWorkout({ onBack, sessionId }) {
                             </h1>
                             <p style={{
                                 fontSize: '10px', fontWeight: 700, color: COLORS.red,
-                                textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: '4px',
-                                textShadow: `0 0 10px ${COLORS.red}99` // neon-text-red
+                                textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: '4px'
                             }}>SESSION ACTIVE</p>
                         </div>
                     </div>
@@ -375,8 +374,7 @@ export default function ActiveWorkout({ onBack, sessionId }) {
                             fontWeight: 900,
                             color: COLORS.lime,
                             textTransform: 'uppercase',
-                            letterSpacing: '0.05em',
-                            textShadow: `0 0 10px ${COLORS.lime}99`,
+                            letterSpacing: '0.05em'
                         }}>
                             {completedCount}/{totalCount} Completed
                         </span>
@@ -574,8 +572,7 @@ export default function ActiveWorkout({ onBack, sessionId }) {
                         <div>
                             <span style={{
                                 display: 'block', fontSize: '10px', fontWeight: 800, color: COLORS.lime,
-                                letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '4px',
-                                textShadow: `0 0 10px ${COLORS.lime}66`
+                                letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '4px'
                             }}>
                                 Exercise {currentExerciseIndex} of {totalCount}
                             </span>
