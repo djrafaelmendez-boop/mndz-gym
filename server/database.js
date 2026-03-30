@@ -58,6 +58,7 @@ export async function initDatabase() {
     try { sqliteDb.exec('ALTER TABLE exercises ADD COLUMN imageUrl TEXT DEFAULT NULL'); } catch (e) { }
     try { sqliteDb.exec('ALTER TABLE exercises ADD COLUMN videoUrl TEXT DEFAULT NULL'); } catch (e) { }
     try { sqliteDb.exec("ALTER TABLE exercises ADD COLUMN instructions TEXT DEFAULT ''"); } catch (e) { }
+    try { sqliteDb.exec('ALTER TABLE routine_exercises ADD COLUMN supersetGroupId TEXT DEFAULT NULL'); } catch (e) { }
     console.log('✅ Applied table migrations');
 
     // Seed defaults AFTER migrations so the schema matches
@@ -111,7 +112,8 @@ async function initTablesSqlite() {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       routineId INTEGER NOT NULL,
       exerciseId INTEGER NOT NULL,
-      sortOrder INTEGER DEFAULT 0
+      sortOrder INTEGER DEFAULT 0,
+      supersetGroupId TEXT DEFAULT NULL
     );
     CREATE TABLE IF NOT EXISTS planned_sets (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -202,7 +204,8 @@ async function initTablesPostgres() {
       id SERIAL PRIMARY KEY,
       routineId INTEGER NOT NULL,
       exerciseId INTEGER NOT NULL,
-      sortOrder INTEGER DEFAULT 0
+      sortOrder INTEGER DEFAULT 0,
+      "supersetGroupId" TEXT DEFAULT NULL
     );
     CREATE TABLE IF NOT EXISTS planned_sets (
       id SERIAL PRIMARY KEY,
@@ -263,6 +266,7 @@ async function initTablesPostgres() {
     await pgPool.query('ALTER TABLE exercises ADD COLUMN IF NOT EXISTS "imageUrl" TEXT DEFAULT NULL');
     await pgPool.query('ALTER TABLE exercises ADD COLUMN IF NOT EXISTS "videoUrl" TEXT DEFAULT NULL');
     await pgPool.query("ALTER TABLE exercises ADD COLUMN IF NOT EXISTS instructions TEXT DEFAULT ''");
+    await pgPool.query('ALTER TABLE routine_exercises ADD COLUMN IF NOT EXISTS "supersetGroupId" TEXT DEFAULT NULL');
     console.log('✅ Applied table migrations (Postgres)');
 
     // Force patch existing Barbell Bench Press

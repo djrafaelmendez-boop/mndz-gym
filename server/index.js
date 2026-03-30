@@ -250,8 +250,8 @@ app.post('/api/routines', authenticateToken, async (req, res) => {
             for (let i = 0; i < exercises.length; i++) {
                 const ex = exercises[i];
                 const reResult = await dbRun(
-                    'INSERT INTO routine_exercises (routineId, exerciseId, sortOrder) VALUES (?, ?, ?)',
-                    [routineId, ex.exerciseId, i]
+                    'INSERT INTO routine_exercises (routineId, exerciseId, sortOrder, supersetGroupId) VALUES (?, ?, ?, ?)',
+                    [routineId, ex.exerciseId, i, ex.supersetGroupId || null]
                 );
                 const reId = reResult.lastInsertRowid;
                 if (ex.sets && ex.sets.length > 0) {
@@ -293,8 +293,8 @@ app.put('/api/routines/:id', authenticateToken, async (req, res) => {
             for (let i = 0; i < exercises.length; i++) {
                 const ex = exercises[i];
                 const reResult = await dbRun(
-                    'INSERT INTO routine_exercises (routineId, exerciseId, sortOrder) VALUES (?, ?, ?)',
-                    [routineId, ex.exerciseId, i]
+                    'INSERT INTO routine_exercises (routineId, exerciseId, sortOrder, supersetGroupId) VALUES (?, ?, ?, ?)',
+                    [routineId, ex.exerciseId, i, ex.supersetGroupId || null]
                 );
                 const reId = reResult.lastInsertRowid;
                 if (ex.sets && ex.sets.length > 0) {

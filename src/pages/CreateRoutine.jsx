@@ -27,6 +27,8 @@ export default function CreateRoutine({ onBack, editRoutine }) {
     const [editingIndex, setEditingIndex] = useState(null);
     const [pickerSearch, setPickerSearch] = useState('');
     const [pickerFilter, setPickerFilter] = useState('all');
+    const [pendingSelections, setPendingSelections] = useState(new Set());
+    const [supersetPickerForIndex, setSupersetPickerForIndex] = useState(null);
 
     useEffect(() => {
         if (editRoutine?.exercises) {
@@ -36,6 +38,7 @@ export default function CreateRoutine({ onBack, editRoutine }) {
                 muscleGroup: ex.muscleGroup,
                 equipment: ex.equipment,
                 prevWeight: ex.prevWeight || 0,
+                supersetGroupId: ex.supersetGroupId || null,
                 sets: ex.sets?.map(s => ({
                     setNumber: s.setNumber,
                     plannedWeight: s.plannedWeight,
@@ -59,6 +62,7 @@ export default function CreateRoutine({ onBack, editRoutine }) {
             loadExercises();
             setPickerSearch('');
             setPickerFilter('all');
+            setPendingSelections(new Set());
         }
     }, [showPicker]);
 
@@ -82,25 +86,53 @@ export default function CreateRoutine({ onBack, editRoutine }) {
 
     const pickerFilters = ['all', ...muscleGroups];
 
-    const addExercise = (ex) => {
+    const togglePendingSelection = (ex) => {
+        // If already added to the routine, don't allow toggling
         if (exercises.find(e => e.exerciseId === ex.id)) return;
-        setExercises([...exercises, {
-            exerciseId: ex.id,
-            exerciseName: ex.name,
-            muscleGroup: ex.muscleGroup,
-            equipment: ex.equipment,
-            prevWeight: ex.prevWeight || 0,
-            sets: [
-                { setNumber: 1, plannedWeight: 0, plannedReps: 10 },
-                { setNumber: 2, plannedWeight: 0, plannedReps: 10 },
-                { setNumber: 3, plannedWeight: 0, plannedReps: 10 },
-            ],
-        }]);
+        setPendingSelections(prev => {
+            const next = new Set(prev);
+            if (next.has(ex.id)) {
+                next.delete(ex.id);
+            } else {
+                next.add(ex.id);
+            }
+            return next;
+        });
+    };
+
+    const confirmSelections = () => {
+        const newExercises = allExercises
+            .filter(ex => pendingSelections.has(ex.id))
+            .filter(ex => !exercises.find(e => e.exerciseId === ex.id))
+            .map(ex => ({
+                exerciseId: ex.id,
+                exerciseName: ex.name,
+                muscleGroup: ex.muscleGroup,
+                equipment: ex.equipment,
+                prevWeight: ex.prevWeight || 0,
+                sets: [
+                    { setNumber: 1, plannedWeight: 0, plannedReps: 10 },
+                    { setNumber: 2, plannedWeight: 0, plannedReps: 10 },
+                    { setNumber: 3, plannedWeight: 0, plannedReps: 10 },
+                ],
+            }));
+        setExercises([...exercises, ...newExercises]);
+        setPendingSelections(new Set());
         setShowPicker(false);
     };
 
     const removeExercise = (index) => {
-        setExercises(exercises.filter((_, i) => i !== index));
+        const removedEx = exercises[index];
+        let updated = exercises.filter((_, i) => i !== index);
+        // If removed exercise was in a superset, clear partner's supersetGroupId
+        if (removedEx?.supersetGroupId) {
+            updated = updated.map(ex =>
+                ex.supersetGroupId === removedEx.supersetGroupId
+                    ? { ...ex, supersetGroupId: null }
+                    : ex
+            );
+        }
+        setExercises(updated);
     };
 
     const updateSet = (exIndex, setIndex, field, value) => {
@@ -136,6 +168,49 @@ export default function CreateRoutine({ onBack, editRoutine }) {
                 ? prev.filter(m => m !== muscle)
                 : [...prev, muscle]
         );
+    };
+
+    // ── Superset logic ──
+    const generateGroupId = () => 'ss_' + Math.random().toString(36).substr(2, 9);
+
+    const addSupersetExercise = (sourceIndex, selectedEx) => {
+        const groupId = generateGroupId();
+        const updated = [...exercises];
+        // Tag the source exercise
+        updated[sourceIndex] = { ...updated[sourceIndex], supersetGroupId: groupId };
+        // Create the partner exercise and insert right after source
+        const partner = {
+            exerciseId: selectedEx.id,
+            exerciseName: selectedEx.name,
+            muscleGroup: selectedEx.muscleGroup,
+            equipment: selectedEx.equipment,
+            prevWeight: selectedEx.prevWeight || 0,
+            supersetGroupId: groupId,
+            sets: [
+                { setNumber: 1, plannedWeight: 0, plannedReps: 10 },
+                { setNumber: 2, plannedWeight: 0, plannedReps: 10 },
+                { setNumber: 3, plannedWeight: 0, plannedReps: 10 },
+            ],
+        };
+        updated.splice(sourceIndex + 1, 0, partner);
+        setExercises(updated);
+    };
+
+    const removeSupersetPairing = (exIndex) => {
+        const groupId = exercises[exIndex]?.supersetGroupId;
+        if (!groupId) return;
+        setExercises(exercises.map(ex =>
+            ex.supersetGroupId === groupId
+                ? { ...ex, supersetGroupId: null }
+                : ex
+        ));
+    };
+
+    const getSupersetPartnerName = (exIndex) => {
+        const ex = exercises[exIndex];
+        if (!ex?.supersetGroupId) return null;
+        const partner = exercises.find((e, i) => i !== exIndex && e.supersetGroupId === ex.supersetGroupId);
+        return partner?.exerciseName || null;
     };
 
     const handleSave = async () => {
@@ -190,7 +265,7 @@ export default function CreateRoutine({ onBack, editRoutine }) {
                     gap: '16px',
                     background: 'transparent',
                 }}>
-                    <button onClick={() => setShowPicker(false)} style={{
+                    <button onClick={() => { setShowPicker(false); setSupersetPickerForIndex(null); }} style={{
                         background: 'none',
                         border: 'none',
                         cursor: 'pointer',
@@ -208,7 +283,7 @@ export default function CreateRoutine({ onBack, editRoutine }) {
                         letterSpacing: '-0.03em',
                         color: '#fff',
                     }}>
-                        Add Exercise
+                        {supersetPickerForIndex !== null ? 'Select Superset' : 'Add Exercise'}
                     </h2>
                 </div>
 
@@ -316,17 +391,75 @@ export default function CreateRoutine({ onBack, editRoutine }) {
                             }}>Try a different search or filter</p>
                         </div>
                     ) : (
-                        filteredPickerExercises.map(ex => (
-                            <ExerciseRow
-                                key={ex.id}
-                                exercise={ex}
-                                onClick={() => addExercise(ex)}
-                                selected={exercises.some(e => e.exerciseId === ex.id)}
-                                showCheck
-                            />
-                        ))
+                        filteredPickerExercises.map(ex => {
+                            const alreadyAdded = exercises.some(e => e.exerciseId === ex.id);
+                            const isPending = pendingSelections.has(ex.id);
+                            const isSupersetMode = supersetPickerForIndex !== null;
+                            // In superset mode, also disable the source exercise itself
+                            const isSourceExercise = isSupersetMode && exercises[supersetPickerForIndex]?.exerciseId === ex.id;
+                            const isDisabled = alreadyAdded || isSourceExercise;
+                            return (
+                                <ExerciseRow
+                                    key={ex.id}
+                                    exercise={ex}
+                                    onClick={() => {
+                                        if (isDisabled) return;
+                                        if (isSupersetMode) {
+                                            addSupersetExercise(supersetPickerForIndex, ex);
+                                            setSupersetPickerForIndex(null);
+                                            setShowPicker(false);
+                                        } else {
+                                            togglePendingSelection(ex);
+                                        }
+                                    }}
+                                    selected={isDisabled || (!isSupersetMode && isPending)}
+                                    showCheck={!isSupersetMode}
+                                />
+                            );
+                        })
                     )}
                 </div>
+
+                {/* Floating Add Selected button */}
+                {pendingSelections.size > 0 && supersetPickerForIndex === null && (
+                    <div style={{
+                        position: 'fixed',
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        padding: '16px 24px',
+                        paddingBottom: 'max(16px, env(safe-area-inset-bottom))',
+                        background: `linear-gradient(to top, ${COLORS.bgDark} 60%, transparent 100%)`,
+                        zIndex: 50,
+                    }}>
+                        <button
+                            onClick={confirmSelections}
+                            style={{
+                                width: '100%',
+                                padding: '16px',
+                                borderRadius: '9999px',
+                                background: COLORS.primary,
+                                border: 'none',
+                                color: '#000',
+                                fontWeight: 900,
+                                fontStyle: 'italic',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.06em',
+                                fontSize: '16px',
+                                cursor: 'pointer',
+                                boxShadow: '0 -4px 20px rgba(223,255,0,0.2)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '8px',
+                                transition: 'all 0.2s',
+                            }}
+                        >
+                            <span className="material-symbols-outlined">check_circle</span>
+                            Add {pendingSelections.size} Exercise{pendingSelections.size > 1 ? 's' : ''}
+                        </button>
+                    </div>
+                )}
             </div>
         );
     }
@@ -438,6 +571,12 @@ export default function CreateRoutine({ onBack, editRoutine }) {
                                 onAddSet={addSet}
                                 onRemoveSet={removeSet}
                                 onRemoveExercise={removeExercise}
+                                onAddSuperset={() => {
+                                    setSupersetPickerForIndex(exIndex);
+                                    setShowPicker(true);
+                                }}
+                                onRemoveSuperset={removeSupersetPairing}
+                                supersetPartnerName={getSupersetPartnerName(exIndex)}
                             />
                         ))}
                     </div>
@@ -712,6 +851,12 @@ export default function CreateRoutine({ onBack, editRoutine }) {
                                             onAddSet={addSet}
                                             onRemoveSet={removeSet}
                                             onRemoveExercise={removeExercise}
+                                            onAddSuperset={() => {
+                                                setSupersetPickerForIndex(i);
+                                                setShowPicker(true);
+                                            }}
+                                            onRemoveSuperset={removeSupersetPairing}
+                                            supersetPartnerName={getSupersetPartnerName(i)}
                                         />
                                         <button
                                             onClick={() => setEditingIndex(null)}
@@ -793,7 +938,7 @@ export default function CreateRoutine({ onBack, editRoutine }) {
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // EDIT MODE: Exercise Block (variant_1)
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-function EditExerciseBlock({ exercise, exIndex, onUpdateSet, onAddSet, onRemoveSet, onRemoveExercise }) {
+function EditExerciseBlock({ exercise, exIndex, onUpdateSet, onAddSet, onRemoveSet, onRemoveExercise, onAddSuperset, onRemoveSuperset, supersetPartnerName }) {
     return (
         <div style={{
             background: '#161616',
@@ -937,7 +1082,10 @@ function EditExerciseBlock({ exercise, exIndex, onUpdateSet, onAddSet, onRemoveS
                 paddingTop: '16px',
                 borderTop: '1px solid rgba(31,41,55,0.5)',
                 display: 'flex',
+                flexDirection: 'column',
+                gap: '12px',
                 justifyContent: 'center',
+                alignItems: 'center'
             }}>
                 <button
                     onClick={() => onAddSet(exIndex)}
@@ -960,6 +1108,52 @@ function EditExerciseBlock({ exercise, exIndex, onUpdateSet, onAddSet, onRemoveS
                     <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>add</span>
                     Add Set
                 </button>
+
+                {/* Add Superset Button / Indicator */}
+                {!supersetPartnerName ? (
+                    <button
+                        onClick={() => onAddSuperset(exIndex)}
+                        style={{
+                            background: 'none',
+                            border: '1px solid rgba(255, 0, 60, 0.3)',
+                            color: '#FF003C', // Accent color for superset
+                            fontSize: '10px',
+                            fontWeight: 700,
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.1em',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            padding: '6px 12px',
+                            borderRadius: '9999px',
+                        }}
+                    >
+                        <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>link</span>
+                        Add Superset
+                    </button>
+                ) : (
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        padding: '8px 16px',
+                        background: 'rgba(255, 0, 60, 0.1)',
+                        border: '1px solid rgba(255, 0, 60, 0.3)',
+                        borderRadius: '9999px',
+                    }}>
+                        <span className="material-symbols-outlined" style={{ fontSize: '14px', color: '#FF003C' }}>bolt</span>
+                        <span style={{ fontSize: '10px', fontWeight: 700, color: '#FF003C', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                            Superset with {supersetPartnerName}
+                        </span>
+                        <button
+                            onClick={() => onRemoveSuperset(exIndex)}
+                            style={{ background: 'none', border: 'none', color: '#A1A1A1', cursor: 'pointer', padding: '0 4px', display: 'flex' }}
+                        >
+                            <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>close</span>
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );
@@ -968,20 +1162,54 @@ function EditExerciseBlock({ exercise, exIndex, onUpdateSet, onAddSet, onRemoveS
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // CREATE MODE: Preview Card (variant_3)
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-function PreviewCard({ exercise, onRemove, onEdit }) {
+function PreviewCard({ exercise, onRemove, onEdit, isSupersetNext, isSupersetPrev }) {
     const tags = [exercise.muscleGroup, exercise.equipment].filter(Boolean);
     const setCount = exercise.sets?.length || 0;
     const reps = exercise.sets?.[0]?.plannedReps || 0;
     const weight = exercise.sets?.[0]?.plannedWeight;
 
     return (
-        <div style={{
-            background: '#161616',
-            border: '1px solid #1F2937',
-            borderRadius: '12px',
-            padding: '16px',
-        }}>
-            {/* Title + X */}
+        <div style={{ position: 'relative' }}>
+            {/* Visual connector line if part of a superset series */}
+            {isSupersetNext && (
+                <div style={{
+                    position: 'absolute',
+                    left: '24px',
+                    bottom: '-28px',
+                    width: '2px',
+                    height: '28px',
+                    background: '#FF003C',
+                    zIndex: 0
+                }} />
+            )}
+            {/* Superset Link Icon */}
+            {isSupersetPrev && (
+                <div style={{
+                    position: 'absolute',
+                    left: '16px',
+                    top: '-18px',
+                    background: '#0D0D0D',
+                    borderRadius: '50%',
+                    padding: '4px',
+                    zIndex: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: '14px', color: '#FF003C' }}>bolt</span>
+                </div>
+            )}
+
+            <div style={{
+                background: '#161616',
+                border: isSupersetPrev || isSupersetNext ? '1px solid rgba(255, 0, 60, 0.3)' : '1px solid #1F2937',
+                borderLeft: isSupersetPrev || isSupersetNext ? '3px solid #FF003C' : '1px solid #1F2937',
+                borderRadius: '12px',
+                padding: '16px',
+                position: 'relative',
+                zIndex: 2,
+            }}>
+                {/* Title + X */}
             <div style={{
                 display: 'flex',
                 justifyContent: 'space-between',
@@ -1071,6 +1299,7 @@ function PreviewCard({ exercise, onRemove, onEdit }) {
                     <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>edit</span>
                 </button>
             </div>
+        </div>
         </div>
     );
 }

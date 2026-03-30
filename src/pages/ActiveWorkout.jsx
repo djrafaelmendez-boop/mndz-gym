@@ -469,6 +469,20 @@ export default function ActiveWorkout({ onBack, sessionId }) {
                                                     textTransform: 'uppercase', color: '#fff', letterSpacing: '-0.02em', margin: 0
                                                 }}>
                                                     {ex.exerciseName}
+                                                    {ex.supersetGroupId && (
+                                                        <span style={{
+                                                            color: '#FF003C',
+                                                            fontSize: '10px',
+                                                            fontWeight: 900,
+                                                            marginLeft: '8px',
+                                                            padding: '2px 6px',
+                                                            background: 'rgba(255, 0, 60, 0.15)',
+                                                            borderRadius: '4px',
+                                                            verticalAlign: 'middle',
+                                                            textTransform: 'uppercase',
+                                                            fontStyle: 'normal'
+                                                        }}>SUPERSET</span>
+                                                    )}
                                                 </h3>
                                                 {isCompleted && (
                                                     <span className="material-icons-outlined" style={{ color: COLORS.red, fontSize: '16px' }}>check_circle</span>
@@ -617,6 +631,7 @@ export default function ActiveWorkout({ onBack, sessionId }) {
                                 letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '4px'
                             }}>
                                 Exercise {currentExerciseIndex} of {totalCount}
+                                {currentExercise.supersetGroupId && ' • SUPERSET BLOCK'}
                             </span>
                             <h2 style={{
                                 fontSize: '28px', fontWeight: 900, fontStyle: 'italic',

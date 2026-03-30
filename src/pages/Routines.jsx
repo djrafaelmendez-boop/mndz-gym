@@ -17,6 +17,8 @@ export default function Routines({ onNavigate }) {
     const [loading, setLoading] = useState(true);
     const [activeFilter, setActiveFilter] = useState('All');
     const [openMenu, setOpenMenu] = useState(null); // routine id with open menu
+    const [showSearch, setShowSearch] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
 
     const FILTERS = ['All', 'Chest', 'Back', 'Shoulders', 'Legs', 'Abs', 'Arms'];
 
@@ -45,9 +47,9 @@ export default function Routines({ onNavigate }) {
 
     // Filter routines by primary muscle group
     // "Arms" also matches biceps/triceps for backward compat
-    const filteredRoutines = activeFilter === 'All'
-        ? routines
-        : routines.filter(r => {
+    const filteredRoutines = routines.filter(r => {
+        let matchesFilter = true;
+        if (activeFilter !== 'All') {
             const exercises = r.exercises || [];
             const primaryMusclesStr = r.primaryMuscles || (exercises.length > 0
                 ? [...new Set(exercises.map(e => e.muscleGroup))].join(', ')
@@ -55,10 +57,19 @@ export default function Routines({ onNavigate }) {
             const muscles = primaryMusclesStr.toLowerCase();
             const f = activeFilter.toLowerCase();
             if (f === 'arms') {
-                return muscles.includes('arms') || muscles.includes('biceps') || muscles.includes('triceps');
+                matchesFilter = muscles.includes('arms') || muscles.includes('biceps') || muscles.includes('triceps');
+            } else {
+                matchesFilter = muscles.includes(f);
             }
-            return muscles.includes(f);
-        });
+        }
+
+        let matchesSearch = true;
+        if (searchQuery.trim() !== '') {
+            matchesSearch = r.name?.toLowerCase().includes(searchQuery.toLowerCase());
+        }
+
+        return matchesFilter && matchesSearch;
+    });
 
     return (
         <div style={{
@@ -109,15 +120,24 @@ export default function Routines({ onNavigate }) {
                         YOUR BLUEPRINT
                     </p>
                 </div>
-                <button style={{
+                <button 
+                    onClick={() => {
+                        setShowSearch(!showSearch);
+                        if (showSearch) setSearchQuery('');
+                    }}
+                    style={{
                     padding: '8px',
                     borderRadius: '50%',
-                    background: 'transparent',
-                    border: 'none',
+                    background: showSearch ? 'rgba(223,255,0,0.15)' : 'transparent',
+                    border: showSearch ? '1px solid rgba(223,255,0,0.3)' : 'none',
                     cursor: 'pointer',
-                    color: '#9CA3AF',
+                    color: showSearch ? '#DFFF00' : '#9CA3AF',
+                    transition: 'all 0.2s',
+                    outline: 'none',
                 }}>
-                    <span className="material-symbols-outlined">search</span>
+                    <span className="material-symbols-outlined">
+                        {showSearch ? 'close' : 'search'}
+                    </span>
                 </button>
             </header>
 
@@ -129,13 +149,56 @@ export default function Routines({ onNavigate }) {
             }}
                 onClick={() => setOpenMenu(null)} // close menus on outside click
             >
+                {/* Search Bar */}
+                {showSearch && (
+                    <div style={{
+                        paddingBottom: '16px',
+                        position: 'sticky',
+                        top: 0,
+                        zIndex: 10,
+                    }}>
+                        <div style={{ position: 'relative' }}>
+                            <span className="material-symbols-outlined" style={{
+                                position: 'absolute',
+                                left: '16px',
+                                top: '50%',
+                                transform: 'translateY(-50%)',
+                                color: '#9CA3AF',
+                                fontSize: '22px',
+                                pointerEvents: 'none'
+                            }}>search</span>
+                            <input
+                                value={searchQuery}
+                                onChange={e => setSearchQuery(e.target.value)}
+                                placeholder="Search routines..."
+                                autoFocus
+                                style={{
+                                    width: '100%',
+                                    background: '#161616',
+                                    border: '1px solid #1F2937',
+                                    color: '#fff',
+                                    borderRadius: '12px',
+                                    padding: '12px 16px 12px 48px',
+                                    fontSize: '16px',
+                                    fontWeight: 500,
+                                    fontFamily: 'Inter, sans-serif',
+                                    outline: 'none',
+                                    boxShadow: '0 1px 2px rgba(0,0,0,0.2)',
+                                    boxSizing: 'border-box',
+                                }}
+                            />
+                        </div>
+                    </div>
+                )}
+
                 {/* Category Chips */}
                 <div style={{
                     display: 'flex',
                     gap: '12px',
                     overflowX: 'auto',
-                    paddingBottom: '8px',
-                    paddingTop: '8px',
+                    padding: '8px 24px',
+                    marginLeft: '-24px',
+                    marginRight: '-24px',
                     marginBottom: '16px',
                     scrollbarWidth: 'none',
                     msOverflowStyle: 'none',
@@ -448,6 +511,19 @@ function RoutineCard({ routine, isMenuOpen, onMenuToggle, onEdit, onDelete, onCl
                             >
                                 <span style={{ fontWeight: 600, color: '#D1D5DB' }}>
                                     {ex.exerciseName}
+                                    {ex.supersetGroupId && (
+                                        <span style={{
+                                            color: '#FF003C',
+                                            fontSize: '8px',
+                                            fontWeight: 900,
+                                            marginLeft: '6px',
+                                            padding: '2px 4px',
+                                            background: 'rgba(255, 0, 60, 0.1)',
+                                            borderRadius: '4px',
+                                            verticalAlign: 'middle',
+                                            textTransform: 'uppercase',
+                                        }}>SUPERSET</span>
+                                    )}
                                 </span>
                                 <span style={{
                                     fontSize: '10px',
