@@ -720,37 +720,6 @@ function MonthWeightView({ month, year, weightLogs, onBack, onWeightUpdate }) {
                         })}
                     </div>
 
-                    {/* Summary */}
-                    {Object.keys(dailyWeights).length > 0 && (
-                        <div style={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                            gap: '32px',
-                            marginTop: '16px',
-                            paddingTop: '16px',
-                            borderTop: `1px solid ${borderColor}`,
-                        }}>
-                            <div style={{ textAlign: 'center' }}>
-                                <span style={{ fontSize: '20px', fontWeight: 900, color: '#fff', fontStyle: 'italic' }}>
-                                    {Math.min(...Object.values(dailyWeights))}
-                                </span>
-                                <p style={{ fontSize: '9px', color: '#888', fontWeight: 600, letterSpacing: '0.1em', marginTop: '2px' }}>LOWEST</p>
-                            </div>
-                            <div style={{ textAlign: 'center' }}>
-                                <span style={{ fontSize: '20px', fontWeight: 900, color: '#fff', fontStyle: 'italic' }}>
-                                    {Math.max(...Object.values(dailyWeights))}
-                                </span>
-                                <p style={{ fontSize: '9px', color: '#888', fontWeight: 600, letterSpacing: '0.1em', marginTop: '2px' }}>HIGHEST</p>
-                            </div>
-                            <div style={{ textAlign: 'center' }}>
-                                <span style={{ fontSize: '20px', fontWeight: 900, color: '#fff', fontStyle: 'italic' }}>
-                                    {Object.keys(dailyWeights).length}
-                                </span>
-                                <p style={{ fontSize: '9px', color: '#888', fontWeight: 600, letterSpacing: '0.1em', marginTop: '2px' }}>ENTRIES</p>
-                            </div>
-                        </div>
-                    )}
-
                     {Object.keys(dailyWeights).length === 0 && (
                         <p style={{ color: '#555', fontSize: '12px', textAlign: 'center', marginTop: '16px' }}>
                             No weight entries for this month. Tap a day to log.
