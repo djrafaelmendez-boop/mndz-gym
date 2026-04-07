@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { api } from '../api';
 import { colors, equipmentTypes } from '../styles/designTokens';
 import MuscleGroupSelector from '../components/MuscleGroupSelector';
@@ -8,7 +8,20 @@ export default function NewExercise({ onBack }) {
     const [muscleGroup, setMuscleGroup] = useState('');
     const [equipment, setEquipment] = useState('');
     const [notes, setNotes] = useState('');
+    const [imageUrl, setImageUrl] = useState('');
+    const [videoUrl, setVideoUrl] = useState('');
     const [saving, setSaving] = useState(false);
+    const fileInputRef = useRef(null);
+
+    const handlePhotoSelect = (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setImageUrl(reader.result);
+        };
+        reader.readAsDataURL(file);
+    };
 
     const handleCreate = async () => {
         if (!name.trim()) {
@@ -21,7 +34,15 @@ export default function NewExercise({ onBack }) {
         }
         setSaving(true);
         try {
-            await api.createExercise({ name, muscleGroup, equipment: equipment || 'Bodyweight', notes });
+            await api.createExercise({
+                name,
+                muscleGroup,
+                equipment: equipment || 'Bodyweight',
+                notes,
+                instructions: notes,
+                imageUrl: imageUrl || null,
+                videoUrl: videoUrl || null,
+            });
             onBack();
         } catch (err) {
             console.error(err);
@@ -109,18 +130,106 @@ export default function NewExercise({ onBack }) {
 
                 <div>
                     <label style={{ fontSize: '11px', fontWeight: 700, color: '#888', letterSpacing: '0.1em', display: 'block', marginBottom: '8px' }}>
-                        NOTES
+                        HOW TO
                     </label>
                     <textarea
                         value={notes}
                         onChange={e => setNotes(e.target.value)}
-                        placeholder="Add any instructions or cues..."
+                        placeholder="Add instructions for this exercise..."
                         rows={3}
                         style={{
                             ...inputStyle,
                             resize: 'vertical',
                         }}
                     />
+                </div>
+
+                {/* Add Photo */}
+                <div>
+                    <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        style={{ display: 'none' }}
+                        onChange={handlePhotoSelect}
+                    />
+                    <button
+                        onClick={() => fileInputRef.current?.click()}
+                        style={{
+                            width: '100%',
+                            padding: '14px 16px',
+                            background: colors.surfaceDark,
+                            border: `1px solid ${colors.borderDark}`,
+                            borderRadius: '12px',
+                            color: imageUrl ? colors.primary : '#888',
+                            fontSize: '14px',
+                            fontWeight: 600,
+                            fontFamily: 'Inter, sans-serif',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '10px',
+                        }}
+                    >
+                        <span className="material-icons-outlined" style={{ fontSize: '20px' }}>
+                            {imageUrl ? 'check_circle' : 'add_photo_alternate'}
+                        </span>
+                        {imageUrl ? 'Photo Added' : 'Add Photo'}
+                    </button>
+                    {imageUrl && (
+                        <div style={{ marginTop: '8px', position: 'relative' }}>
+                            <img
+                                src={imageUrl}
+                                alt="Preview"
+                                style={{
+                                    width: '100%',
+                                    maxHeight: '160px',
+                                    objectFit: 'cover',
+                                    borderRadius: '12px',
+                                    border: `1px solid ${colors.borderDark}`,
+                                }}
+                            />
+                            <button
+                                onClick={() => setImageUrl('')}
+                                style={{
+                                    position: 'absolute',
+                                    top: '8px',
+                                    right: '8px',
+                                    width: '28px',
+                                    height: '28px',
+                                    borderRadius: '50%',
+                                    background: 'rgba(0,0,0,0.7)',
+                                    border: 'none',
+                                    color: '#fff',
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                <span className="material-icons-outlined" style={{ fontSize: '16px' }}>close</span>
+                            </button>
+                        </div>
+                    )}
+                </div>
+
+                {/* Add Video Link */}
+                <div>
+                    <label style={{ fontSize: '11px', fontWeight: 700, color: '#888', letterSpacing: '0.1em', display: 'block', marginBottom: '8px' }}>
+                        ADD VIDEO LINK
+                    </label>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span className="material-icons-outlined" style={{ fontSize: '20px', color: '#888', flexShrink: 0 }}>link</span>
+                        <input
+                            value={videoUrl}
+                            onChange={e => setVideoUrl(e.target.value)}
+                            placeholder="https://youtube.com/watch?v=..."
+                            style={{
+                                ...inputStyle,
+                                flex: 1,
+                            }}
+                        />
+                    </div>
                 </div>
             </div>
 

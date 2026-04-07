@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { api } from '../api';
 
 const COLORS = {
@@ -15,13 +15,17 @@ export default function ExerciseHistory({ onBack, exercise }) {
     const [history, setHistory] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
+    const fetchHistory = () => {
         if (!exercise?.id) return;
         setLoading(true);
         api.getExerciseHistory(exercise.id)
             .then(data => setHistory(data))
             .catch(err => console.error(err))
             .finally(() => setLoading(false));
+    };
+
+    useEffect(() => {
+        fetchHistory();
     }, [exercise?.id]);
 
     const isBodyweight = (history?.equipment || exercise?.equipment || '').toLowerCase() === 'bodyweight';
@@ -32,6 +36,7 @@ export default function ExerciseHistory({ onBack, exercise }) {
     const videoUrl = history?.videoUrl || exercise?.videoUrl || null;
     const muscleGroup = (history?.muscleGroup || exercise?.muscleGroup || '').toUpperCase();
     const equipment = history?.equipment || exercise?.equipment || '';
+    const exerciseId = history?.exerciseId || exercise?.id;
 
     // ── Compute global max for highlighting ──
     let globalMaxLbs = 0;
@@ -207,6 +212,8 @@ export default function ExerciseHistory({ onBack, exercise }) {
                         exerciseName={exerciseName}
                         muscleGroup={muscleGroup}
                         equipment={equipment}
+                        exerciseId={exerciseId}
+                        onUpdate={fetchHistory}
                     />
                 ) : (
                     <HistoryContent
@@ -228,22 +235,92 @@ export default function ExerciseHistory({ onBack, exercise }) {
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // DETAILS TAB CONTENT
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-function DetailsContent({ imageUrl, videoUrl, instructions, exerciseName, muscleGroup, equipment }) {
+function DetailsContent({ imageUrl, videoUrl, instructions, exerciseName, muscleGroup, equipment, exerciseId, onUpdate }) {
+    const [showVideoModal, setShowVideoModal] = useState(false);
+    const [editingInstructions, setEditingInstructions] = useState(false);
+    const [instructionsDraft, setInstructionsDraft] = useState(instructions);
+    const [editingName, setEditingName] = useState(false);
+    const [nameDraft, setNameDraft] = useState(exerciseName);
+    const fileInputRef = useRef(null);
+
+    useEffect(() => {
+        setInstructionsDraft(instructions);
+    }, [instructions]);
+
+    useEffect(() => {
+        setNameDraft(exerciseName);
+    }, [exerciseName]);
+
+    const handleSaveInstructions = async () => {
+        try {
+            await api.updateExercise(exerciseId, { instructions: instructionsDraft });
+            setEditingInstructions(false);
+            onUpdate();
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const handleSaveName = async () => {
+        try {
+            await api.updateExercise(exerciseId, { name: nameDraft });
+            setEditingName(false);
+            onUpdate();
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const handlePhotoUpload = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+            try {
+                await api.updateExercise(exerciseId, { imageUrl: reader.result });
+                onUpdate();
+            } catch (err) {
+                console.error(err);
+            }
+        };
+        reader.readAsDataURL(file);
+    };
+
+    const handleRemovePhoto = async () => {
+        try {
+            await api.updateExercise(exerciseId, { imageUrl: null });
+            onUpdate();
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             {/* ── Media Section ── */}
             <div style={{ position: 'relative' }}>
-                <div style={{
-                    width: '100%',
-                    aspectRatio: '16 / 10',
-                    borderRadius: '16px',
-                    overflow: 'hidden',
-                    background: '#1A1A1A',
-                    border: '1px solid #1F2937',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                }}>
+                <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    onChange={handlePhotoUpload}
+                />
+                <div
+                    onClick={() => fileInputRef.current?.click()}
+                    style={{
+                        width: '100%',
+                        aspectRatio: '16 / 10',
+                        borderRadius: '16px',
+                        overflow: 'hidden',
+                        background: '#1A1A1A',
+                        border: '1px solid #1F2937',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                    }}
+                >
                     {imageUrl ? (
                         <img
                             src={imageUrl}
@@ -276,60 +353,68 @@ function DetailsContent({ imageUrl, videoUrl, instructions, exerciseName, muscle
                     )}
                 </div>
 
-                {/* Video icon button */}
-                {videoUrl ? (
+                {/* Remove Photo button */}
+                {imageUrl && (
                     <button
-                        onClick={() => window.open(videoUrl, '_blank')}
+                        onClick={(e) => { e.stopPropagation(); handleRemovePhoto(); }}
                         style={{
                             position: 'absolute',
-                            bottom: '12px',
-                            right: '12px',
-                            width: '44px',
-                            height: '44px',
-                            borderRadius: '12px',
-                            background: 'rgba(223,255,0,0.9)',
+                            top: '12px',
+                            left: '12px',
+                            width: '32px',
+                            height: '32px',
+                            borderRadius: '50%',
+                            background: 'rgba(0,0,0,0.7)',
                             border: 'none',
+                            color: '#fff',
                             cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-                            transition: 'all 0.2s',
                         }}
                     >
-                        <span className="material-symbols-outlined" style={{
-                            fontSize: '22px',
-                            color: '#000',
-                        }}>play_arrow</span>
+                        <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>close</span>
                     </button>
-                ) : (
-                    <div style={{
+                )}
+
+                {/* Video icon button */}
+                <button
+                    onClick={(e) => { e.stopPropagation(); setShowVideoModal(true); }}
+                    style={{
                         position: 'absolute',
                         bottom: '12px',
                         right: '12px',
                         width: '44px',
                         height: '44px',
                         borderRadius: '12px',
-                        background: 'rgba(40,40,40,0.7)',
+                        background: videoUrl ? 'rgba(223,255,0,0.9)' : 'rgba(40,40,40,0.7)',
+                        border: 'none',
+                        cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                    }}>
-                        <span className="material-symbols-outlined" style={{
-                            fontSize: '22px',
-                            color: '#555',
-                        }}>play_arrow</span>
-                    </div>
-                )}
+                        boxShadow: videoUrl ? '0 4px 12px rgba(0,0,0,0.3)' : 'none',
+                        transition: 'all 0.2s',
+                    }}
+                >
+                    <span className="material-symbols-outlined" style={{
+                        fontSize: '22px',
+                        color: videoUrl ? '#000' : '#555',
+                    }}>play_arrow</span>
+                </button>
             </div>
 
             {/* ── How To Section ── */}
-            <div style={{
-                background: '#161616',
-                borderRadius: '16px',
-                border: '1px solid #1F2937',
-                padding: '20px',
-            }}>
+            <div
+                onClick={() => { if (!editingInstructions) setEditingInstructions(true); }}
+                style={{
+                    background: '#161616',
+                    borderRadius: '16px',
+                    border: '1px solid #1F2937',
+                    padding: '20px',
+                    cursor: editingInstructions ? 'default' : 'pointer',
+                }}
+            >
                 <div style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -348,10 +433,65 @@ function DetailsContent({ imageUrl, videoUrl, instructions, exerciseName, muscle
                         letterSpacing: '0.06em',
                         color: '#fff',
                         margin: 0,
+                        flex: 1,
                     }}>How To</h2>
+                    {!editingInstructions && (
+                        <span className="material-symbols-outlined" style={{ fontSize: '16px', color: '#555' }}>edit</span>
+                    )}
                 </div>
 
-                {instructions ? (
+                {editingInstructions ? (
+                    <div>
+                        <textarea
+                            value={instructionsDraft}
+                            onChange={e => setInstructionsDraft(e.target.value)}
+                            autoFocus
+                            rows={4}
+                            style={{
+                                width: '100%',
+                                padding: '12px',
+                                background: '#0D0D0D',
+                                border: '1px solid #374151',
+                                borderRadius: '8px',
+                                color: '#D1D5DB',
+                                fontSize: '13px',
+                                fontFamily: 'Inter, sans-serif',
+                                lineHeight: 1.7,
+                                resize: 'vertical',
+                                outline: 'none',
+                                boxSizing: 'border-box',
+                            }}
+                        />
+                        <div style={{ display: 'flex', gap: '8px', marginTop: '12px', justifyContent: 'flex-end' }}>
+                            <button
+                                onClick={(e) => { e.stopPropagation(); setEditingInstructions(false); setInstructionsDraft(instructions); }}
+                                style={{
+                                    padding: '8px 16px',
+                                    borderRadius: '8px',
+                                    border: '1px solid #374151',
+                                    background: 'transparent',
+                                    color: '#9CA3AF',
+                                    fontSize: '12px',
+                                    fontWeight: 700,
+                                    cursor: 'pointer',
+                                }}
+                            >Cancel</button>
+                            <button
+                                onClick={(e) => { e.stopPropagation(); handleSaveInstructions(); }}
+                                style={{
+                                    padding: '8px 16px',
+                                    borderRadius: '8px',
+                                    border: 'none',
+                                    background: COLORS.primary,
+                                    color: '#000',
+                                    fontSize: '12px',
+                                    fontWeight: 700,
+                                    cursor: 'pointer',
+                                }}
+                            >Save</button>
+                        </div>
+                    </div>
+                ) : instructions ? (
                     <div style={{
                         fontSize: '13px',
                         color: '#D1D5DB',
@@ -408,6 +548,155 @@ function DetailsContent({ imageUrl, videoUrl, instructions, exerciseName, muscle
                         }}>{equipment}</span>
                     </div>
                 )}
+            </div>
+
+            {/* ══ Video Link Modal ══ */}
+            {showVideoModal && (
+                <VideoLinkModal
+                    currentUrl={videoUrl}
+                    exerciseId={exerciseId}
+                    onClose={() => setShowVideoModal(false)}
+                    onSave={onUpdate}
+                />
+            )}
+        </div>
+    );
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// VIDEO LINK MODAL
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function VideoLinkModal({ currentUrl, exerciseId, onClose, onSave }) {
+    const [url, setUrl] = useState(currentUrl || '');
+    const [saving, setSaving] = useState(false);
+
+    const handleSave = async () => {
+        setSaving(true);
+        try {
+            await api.updateExercise(exerciseId, { videoUrl: url || null });
+            onSave();
+            onClose();
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleRemove = async () => {
+        setSaving(true);
+        try {
+            await api.updateExercise(exerciseId, { videoUrl: null });
+            onSave();
+            onClose();
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    return (
+        <div
+            onClick={onClose}
+            style={{
+                position: 'fixed',
+                inset: 0,
+                background: 'rgba(0,0,0,0.8)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 100,
+                padding: '24px',
+            }}
+        >
+            <div
+                onClick={e => e.stopPropagation()}
+                style={{
+                    width: '100%',
+                    maxWidth: '400px',
+                    background: '#1A1A1A',
+                    borderRadius: '16px',
+                    border: '1px solid #1F2937',
+                    padding: '24px',
+                }}
+            >
+                <h3 style={{
+                    fontSize: '16px',
+                    fontWeight: 900,
+                    fontStyle: 'italic',
+                    textTransform: 'uppercase',
+                    color: '#fff',
+                    marginTop: 0,
+                    marginBottom: '16px',
+                }}>Add Video Link</h3>
+
+                <input
+                    value={url}
+                    onChange={e => setUrl(e.target.value)}
+                    placeholder="https://youtube.com/watch?v=..."
+                    autoFocus
+                    style={{
+                        width: '100%',
+                        padding: '14px 16px',
+                        background: '#0D0D0D',
+                        border: '1px solid #374151',
+                        borderRadius: '12px',
+                        color: '#fff',
+                        fontSize: '14px',
+                        fontWeight: 600,
+                        fontFamily: 'Inter, sans-serif',
+                        outline: 'none',
+                        boxSizing: 'border-box',
+                    }}
+                />
+
+                <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
+                    {currentUrl && (
+                        <button
+                            onClick={handleRemove}
+                            disabled={saving}
+                            style={{
+                                padding: '10px 16px',
+                                borderRadius: '8px',
+                                border: '1px solid rgba(255,68,68,0.3)',
+                                background: 'transparent',
+                                color: '#FF4444',
+                                fontSize: '12px',
+                                fontWeight: 700,
+                                cursor: 'pointer',
+                            }}
+                        >Remove</button>
+                    )}
+                    <div style={{ flex: 1 }} />
+                    <button
+                        onClick={onClose}
+                        style={{
+                            padding: '10px 16px',
+                            borderRadius: '8px',
+                            border: '1px solid #374151',
+                            background: 'transparent',
+                            color: '#9CA3AF',
+                            fontSize: '12px',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                        }}
+                    >Cancel</button>
+                    <button
+                        onClick={handleSave}
+                        disabled={saving}
+                        style={{
+                            padding: '10px 16px',
+                            borderRadius: '8px',
+                            border: 'none',
+                            background: COLORS.primary,
+                            color: '#000',
+                            fontSize: '12px',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                        }}
+                    >{saving ? 'Saving...' : 'Save'}</button>
+                </div>
             </div>
         </div>
     );

@@ -154,13 +154,40 @@ app.get('/api/exercises', authenticateToken, async (req, res) => {
 
 app.post('/api/exercises', authenticateToken, async (req, res) => {
     try {
-        const { name, muscleGroup, equipment, notes } = req.body;
+        const { name, muscleGroup, equipment, notes, instructions, imageUrl, videoUrl } = req.body;
         const result = await dbRun(
-            'INSERT INTO exercises (name, muscleGroup, equipment, isCustom, userId, notes) VALUES (?, ?, ?, 1, ?, ?)',
-            [name, muscleGroup, equipment || 'Bodyweight', req.userId, notes || '']
+            'INSERT INTO exercises (name, muscleGroup, equipment, isCustom, userId, notes, instructions, imageUrl, videoUrl) VALUES (?, ?, ?, 1, ?, ?, ?, ?, ?)',
+            [name, muscleGroup, equipment || 'Bodyweight', req.userId, notes || '', instructions || notes || '', imageUrl || null, videoUrl || null]
         );
         const exercise = await dbGet('SELECT * FROM exercises WHERE id = ?', [result.lastInsertRowid]);
         res.json(exercise);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.put('/api/exercises/:id', authenticateToken, async (req, res) => {
+    try {
+        const { name, muscleGroup, equipment, instructions, imageUrl, videoUrl } = req.body;
+        const exercise = await dbGet('SELECT * FROM exercises WHERE id = ?', [req.params.id]);
+        if (!exercise) return res.status(404).json({ error: 'Exercise not found' });
+
+        const updates = [];
+        const params = [];
+        if (name !== undefined) { updates.push('name = ?'); params.push(name); }
+        if (muscleGroup !== undefined) { updates.push('muscleGroup = ?'); params.push(muscleGroup); }
+        if (equipment !== undefined) { updates.push('equipment = ?'); params.push(equipment); }
+        if (instructions !== undefined) { updates.push('instructions = ?'); params.push(instructions); updates.push('notes = ?'); params.push(instructions); }
+        if (imageUrl !== undefined) { updates.push('imageUrl = ?'); params.push(imageUrl); }
+        if (videoUrl !== undefined) { updates.push('videoUrl = ?'); params.push(videoUrl); }
+
+        if (updates.length > 0) {
+            params.push(req.params.id);
+            await dbRun(`UPDATE exercises SET ${updates.join(', ')} WHERE id = ?`, params);
+        }
+
+        const updated = await dbGet('SELECT * FROM exercises WHERE id = ?', [req.params.id]);
+        res.json(updated);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

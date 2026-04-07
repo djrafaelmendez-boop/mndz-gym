@@ -48,6 +48,7 @@ export const api = {
         return apiFetch(`/exercises?${q}`);
     },
     createExercise: (data) => apiFetch('/exercises', { method: 'POST', body: JSON.stringify(data) }),
+    updateExercise: (id, data) => apiFetch(`/exercises/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
     deleteExercise: (id) => apiFetch(`/exercises/${id}`, { method: 'DELETE' }),
     bulkDeleteExercises: (ids) => apiFetch('/exercises/bulk-delete', { method: 'POST', body: JSON.stringify({ ids }) }),
     getExerciseHistory: (id) => apiFetch(`/exercises/${id}/history`),
