@@ -21,6 +21,7 @@ export default function Progress() {
     const [calYear, setCalYear] = useState(now.getFullYear());
     const [weightSummaryYear, setWeightSummaryYear] = useState(now.getFullYear());
     const [weightMode, setWeightMode] = useState('lowest'); // 'lowest' | 'highest'
+    const [selectedWeightMonth, setSelectedWeightMonth] = useState(null); // null | 0-11
 
     const loadData = async () => {
         try {
@@ -399,13 +400,18 @@ export default function Progress() {
                             const val = monthlyWeights[i];
                             const hasData = val !== null;
                             return (
-                                <div key={m} style={{
-                                    background: hasData ? 'rgba(223,255,0,0.05)' : 'rgba(255,255,255,0.02)',
-                                    border: `1px solid ${hasData ? 'rgba(223,255,0,0.15)' : borderColor}`,
-                                    borderRadius: '10px',
-                                    padding: '12px 8px',
-                                    textAlign: 'center',
-                                }}>
+                                <div
+                                    key={m}
+                                    onClick={() => setSelectedWeightMonth(i)}
+                                    style={{
+                                        background: hasData ? 'rgba(223,255,0,0.05)' : 'rgba(255,255,255,0.02)',
+                                        border: `1px solid ${hasData ? 'rgba(223,255,0,0.15)' : borderColor}`,
+                                        borderRadius: '10px',
+                                        padding: '12px 8px',
+                                        textAlign: 'center',
+                                        cursor: 'pointer',
+                                    }}
+                                >
                                     <p style={{ fontSize: '10px', fontWeight: 700, color: '#888', letterSpacing: '0.05em', marginBottom: '4px' }}>{m}</p>
                                     <p style={{
                                         fontSize: hasData ? '17px' : '14px',
@@ -527,6 +533,235 @@ export default function Progress() {
 
 
 
+            </div>
+
+            {/* Monthly Weight Detail View */}
+            {selectedWeightMonth !== null && (
+                <MonthWeightView
+                    month={selectedWeightMonth}
+                    year={weightSummaryYear}
+                    weightLogs={weightLogs}
+                    onBack={() => setSelectedWeightMonth(null)}
+                    onWeightUpdate={loadData}
+                />
+            )}
+        </div>
+    );
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// MONTHLY WEIGHT CALENDAR VIEW
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function MonthWeightView({ month, year, weightLogs, onBack, onWeightUpdate }) {
+    const getDaysInMonth = (m, y) => new Date(y, m + 1, 0).getDate();
+    const getFirstDayOfWeek = (m, y) => new Date(y, m, 1).getDay();
+
+    const daysInMonth = getDaysInMonth(month, year);
+    const firstDay = getFirstDayOfWeek(month, year);
+
+    const days = [];
+    for (let i = 0; i < firstDay; i++) days.push(null);
+    for (let d = 1; d <= daysInMonth; d++) days.push(d);
+
+    // Build a map: day -> weight
+    const dailyWeights = {};
+    weightLogs.forEach(log => {
+        if (!log.date) return;
+        const [y, m, d] = log.date.split('-');
+        if (parseInt(y) === year && parseInt(m) - 1 === month) {
+            const dayNum = parseInt(d);
+            dailyWeights[dayNum] = parseFloat(log.weight);
+        }
+    });
+
+    const now = new Date();
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+    const isFutureDay = (day) => {
+        if (!day) return false;
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        return dateStr > todayStr;
+    };
+
+    const isToday = (day) => {
+        if (!day) return false;
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        return dateStr === todayStr;
+    };
+
+    const handleDayTap = async (day) => {
+        if (!day || isFutureDay(day)) return;
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const existing = dailyWeights[day];
+        const input = window.prompt(
+            existing ? `Edit weight for ${MONTH_SHORT[month]} ${day}:` : `Log weight for ${MONTH_SHORT[month]} ${day}:`,
+            existing ? String(existing) : ''
+        );
+        if (input === null) return; // cancelled
+        const w = parseFloat(input);
+        if (isNaN(w) || w <= 0) return;
+        try {
+            await api.addWeightLog({ weight: w, date: dateStr });
+            onWeightUpdate();
+        } catch (err) {
+            console.error('Failed to save weight:', err);
+        }
+    };
+
+    return (
+        <div style={{
+            position: 'fixed',
+            inset: 0,
+            background: '#0D0D0D',
+            zIndex: 50,
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+            fontFamily: 'Inter, sans-serif',
+        }}>
+            {/* Header */}
+            <div style={{
+                padding: 'calc(env(safe-area-inset-top) + 16px) 20px 12px 20px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                background: 'linear-gradient(to bottom, #1C1C1C 0%, #0D0D0D 100px)',
+                flexShrink: 0,
+            }}>
+                <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '8px', marginLeft: '-8px' }}>
+                    <span className="material-icons-outlined" style={{ fontSize: '24px', color: '#9CA3AF' }}>arrow_back</span>
+                </button>
+                <div>
+                    <h2 style={{
+                        fontSize: '22px',
+                        fontWeight: 900,
+                        fontStyle: 'italic',
+                        textTransform: 'uppercase',
+                        letterSpacing: '-0.03em',
+                        margin: 0,
+                        background: 'linear-gradient(to right, #ffffff, #888888)',
+                        WebkitBackgroundClip: 'text',
+                        backgroundClip: 'text',
+                        color: 'transparent',
+                    }}>
+                        {MONTH_NAMES[month]} {year}
+                    </h2>
+                    <p style={{ fontSize: '11px', color: '#888', fontWeight: 500, letterSpacing: '0.05em', marginTop: '2px' }}>WEIGHT LOG</p>
+                </div>
+            </div>
+
+            {/* Calendar */}
+            <div style={{ flex: 1, overflow: 'auto', padding: '20px' }}>
+                <div style={{
+                    background: surfaceDark,
+                    border: `1px solid ${borderColor}`,
+                    borderRadius: '16px',
+                    padding: '20px',
+                }}>
+                    {/* Day headers */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', marginBottom: '8px' }}>
+                        {DAY_HEADERS.map((d, i) => (
+                            <div key={i} style={{ textAlign: 'center', fontSize: '10px', fontWeight: 700, color: '#555', padding: '4px 0' }}>
+                                {d}
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Calendar grid */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px' }}>
+                        {days.map((day, i) => {
+                            const w = day ? dailyWeights[day] : null;
+                            const hasWeight = w !== undefined && w !== null;
+                            const future = isFutureDay(day);
+                            const today = isToday(day);
+
+                            return (
+                                <div
+                                    key={i}
+                                    onClick={() => handleDayTap(day)}
+                                    style={{
+                                        aspectRatio: '1',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        borderRadius: '10px',
+                                        background: hasWeight ? 'rgba(223,255,0,0.08)' : 'transparent',
+                                        border: today ? '1px solid #DFFF00' : '1px solid transparent',
+                                        opacity: future ? 0.3 : 1,
+                                        cursor: (day && !future) ? 'pointer' : 'default',
+                                    }}
+                                >
+                                    {day && (
+                                        <>
+                                            <span style={{
+                                                fontSize: '12px',
+                                                fontWeight: hasWeight ? 800 : 500,
+                                                color: hasWeight ? '#DFFF00' : '#aaa',
+                                                lineHeight: 1,
+                                            }}>
+                                                {day}
+                                            </span>
+                                            {hasWeight && (
+                                                <span style={{
+                                                    fontSize: '9px',
+                                                    fontWeight: 700,
+                                                    color: '#fff',
+                                                    marginTop: '2px',
+                                                    lineHeight: 1,
+                                                }}>
+                                                    {w}
+                                                </span>
+                                            )}
+                                        </>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
+
+                    {/* Summary */}
+                    {Object.keys(dailyWeights).length > 0 && (
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            gap: '32px',
+                            marginTop: '16px',
+                            paddingTop: '16px',
+                            borderTop: `1px solid ${borderColor}`,
+                        }}>
+                            <div style={{ textAlign: 'center' }}>
+                                <span style={{ fontSize: '20px', fontWeight: 900, color: '#fff', fontStyle: 'italic' }}>
+                                    {Math.min(...Object.values(dailyWeights))}
+                                </span>
+                                <p style={{ fontSize: '9px', color: '#888', fontWeight: 600, letterSpacing: '0.1em', marginTop: '2px' }}>LOWEST</p>
+                            </div>
+                            <div style={{ textAlign: 'center' }}>
+                                <span style={{ fontSize: '20px', fontWeight: 900, color: '#fff', fontStyle: 'italic' }}>
+                                    {Math.max(...Object.values(dailyWeights))}
+                                </span>
+                                <p style={{ fontSize: '9px', color: '#888', fontWeight: 600, letterSpacing: '0.1em', marginTop: '2px' }}>HIGHEST</p>
+                            </div>
+                            <div style={{ textAlign: 'center' }}>
+                                <span style={{ fontSize: '20px', fontWeight: 900, color: '#fff', fontStyle: 'italic' }}>
+                                    {Object.keys(dailyWeights).length}
+                                </span>
+                                <p style={{ fontSize: '9px', color: '#888', fontWeight: 600, letterSpacing: '0.1em', marginTop: '2px' }}>ENTRIES</p>
+                            </div>
+                        </div>
+                    )}
+
+                    {Object.keys(dailyWeights).length === 0 && (
+                        <p style={{ color: '#555', fontSize: '12px', textAlign: 'center', marginTop: '16px' }}>
+                            No weight entries for this month. Tap a day to log.
+                        </p>
+                    )}
+                </div>
+
+                {/* Tip */}
+                <p style={{ color: '#555', fontSize: '11px', textAlign: 'center', marginTop: '16px' }}>
+                    Tap any day to log or edit weight
+                </p>
             </div>
         </div>
     );
