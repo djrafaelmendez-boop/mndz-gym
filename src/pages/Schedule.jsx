@@ -339,26 +339,6 @@ export default function Schedule({ onNavigate }) {
                             if (sel.getTime() === tomorrow.getTime()) return "TOMORROW'S WORKOUT";
                             return selectedDate.toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase() + "'S WORKOUT";
                         })()}</h2>
-                        {/* Quick Add Button */}
-                        <button
-                            onClick={() => setShowAssign(true)}
-                            style={{
-                                width: '28px',
-                                height: '28px',
-                                borderRadius: '50%',
-                                background: 'rgba(255, 255, 255, 0.1)',
-                                border: '1px solid rgba(255, 255, 255, 0.2)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                cursor: 'pointer',
-                                color: colors.primary,
-                                transition: 'all 0.2s',
-                                flexShrink: 0,
-                            }}
-                        >
-                            <span className="material-icons-outlined" style={{ fontSize: '18px' }}>add</span>
-                        </button>
                     </div>
                     <span style={{ fontSize: '12px', fontWeight: 600, color: colors.primary, textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>
                         {selectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
@@ -387,28 +367,48 @@ export default function Schedule({ onNavigate }) {
                         )}
                         <button onClick={() => setShowAssign(false)} style={{ width: '100%', marginTop: '12px', padding: '12px', background: 'none', border: '1px solid #333', borderRadius: '8px', color: '#aaa' }}>Cancel</button>
                     </div>
-                ) : daySchedules.length === 0 ? (
-                    // Empty State
-                    <div style={{
-                        textAlign: 'center',
-                        marginTop: '48px',
-                        color: '#555',
-                    }}>
-                        <button onClick={() => setShowAssign(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            <span className="material-icons-outlined" style={{ fontSize: '48px', marginBottom: '16px', color: '#333' }}>
+                ) : (() => {
+                    const renderAddButton = (isGridItem = false) => (
+                        <button
+                            onClick={() => setShowAssign(true)}
+                            style={{
+                                background: isGridItem ? 'rgba(255, 255, 255, 0.02)' : 'none',
+                                border: isGridItem ? '1px dashed rgba(255, 255, 255, 0.1)' : 'none',
+                                borderRadius: isGridItem ? '16px' : '0',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                width: '100%',
+                                minHeight: isGridItem ? '320px' : 'auto',
+                                padding: isGridItem ? '16px' : '0',
+                                transition: 'all 0.2s'
+                            }}
+                        >
+                            <span className="material-icons-outlined" style={{ fontSize: '48px', marginBottom: '16px', color: '#555' }}>
                                 add_circle_outline
                             </span>
-                            <p style={{ fontSize: '10px', fontWeight: 600, color: 'rgba(102,102,102,0.6)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '12px' }}>TAP TO ASSIGN A ROUTINE</p>
+                            <p style={{ fontSize: '10px', fontWeight: 600, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '12px' }}>
+                                TAP TO ASSIGN<br/>A ROUTINE
+                            </p>
                         </button>
-                    </div>
-                ) : (() => {
-                    const isSingle = daySchedules.length === 1;
+                    );
+
+                    if (daySchedules.length === 0) {
+                        return (
+                            <div style={{ textAlign: 'center', marginTop: '48px' }}>
+                                {renderAddButton(false)}
+                            </div>
+                        );
+                    }
+
                     const hasCompleted = daySchedules.some(s => s.status === 'completed');
 
                     const renderCard = (sr, idx) => {
                         const isCompleted = sr.status === 'completed';
                         const exercises = sr.exercises || [];
-                        const maxPreview = isSingle ? 4 : 3;
+                        const maxPreview = 4;
 
                         // Colors from schedule4/code.html
                         const neonLime = '#DFFF00';
@@ -696,12 +696,12 @@ export default function Schedule({ onNavigate }) {
 
                     return (
                         <div style={{
-                            display: isSingle ? 'flex' : 'grid',
-                            gridTemplateColumns: isSingle ? undefined : '1fr 1fr',
-                            flexDirection: isSingle ? 'column' : undefined,
+                            display: 'grid',
+                            gridTemplateColumns: '1fr 1fr',
                             gap: '12px',
                         }}>
                             {daySchedules.map((sr, idx) => renderCard(sr, idx))}
+                            {renderAddButton(true)}
                         </div>
                     );
                 })()}
