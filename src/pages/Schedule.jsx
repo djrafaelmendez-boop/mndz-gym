@@ -369,8 +369,12 @@ export default function Schedule({ onNavigate }) {
                     </div>
                 ) : (() => {
                     const renderAddButton = (isGridItem = false) => (
-                        <button
-                            onClick={() => setShowAssign(true)}
+                        <div
+                            role="button"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setShowAssign(true);
+                            }}
                             style={{
                                 background: isGridItem ? 'rgba(255, 255, 255, 0.02)' : 'none',
                                 border: isGridItem ? '1px dashed rgba(255, 255, 255, 0.1)' : 'none',
@@ -389,10 +393,10 @@ export default function Schedule({ onNavigate }) {
                             <span className="material-icons-outlined" style={{ fontSize: '48px', marginBottom: '16px', color: '#555' }}>
                                 add_circle_outline
                             </span>
-                            <p style={{ fontSize: '10px', fontWeight: 600, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '12px' }}>
+                            <p style={{ fontSize: '10px', fontWeight: 600, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '12px', textAlign: 'center' }}>
                                 TAP TO ASSIGN<br/>A ROUTINE
                             </p>
-                        </button>
+                        </div>
                     );
 
                     if (daySchedules.length === 0) {
