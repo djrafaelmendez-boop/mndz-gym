@@ -437,7 +437,7 @@ export default function ActiveWorkout({ onBack, sessionId }) {
                             // Calculation logic
                             const setLen = ex.sets.length;
                             const maxWeight = ex.sets.reduce((max, s) => Math.max(max, s.weight || 0), 0);
-                            const displayWeight = maxWeight > 0 ? `Max: ${maxWeight} lbs` : 'Bodyweight';
+                            const displayWeight = ex.equipment || 'Bodyweight';
 
                             return (
                                 <div key={ex.id}
