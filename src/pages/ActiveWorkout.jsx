@@ -717,13 +717,13 @@ export default function ActiveWorkout({ onBack, sessionId }) {
 
                                     <div style={{ display: 'flex', alignItems: 'center', flex: 1, paddingRight: '16px' }}>
                                         {/* Set Number */}
-                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '40px', marginRight: '16px' }}>
+                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '32px', marginRight: '8px' }}>
                                             <span style={{ fontSize: '10px', fontWeight: 900, fontStyle: 'italic', letterSpacing: '0.05em', color: styles.labelColor }}>SET</span>
                                             <span style={{ fontSize: '20px', fontWeight: 900, fontStyle: 'italic', color: styles.numColor }}>{set.setNumber}</span>
                                         </div>
 
                                         {/* Divider */}
-                                        <div style={{ width: '1px', alignSelf: 'stretch', margin: '4px 24px 4px 0', background: isDone ? 'rgba(255,0,60,0.3)' : '#374151' }}></div>
+                                        <div style={{ width: '1px', alignSelf: 'stretch', margin: '4px 12px 4px 0', background: isDone ? 'rgba(255,0,60,0.3)' : '#374151' }}></div>
 
                                         {/* Set Data Stack */}
                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1, padding: '4px 0' }}>
@@ -739,7 +739,7 @@ export default function ActiveWorkout({ onBack, sessionId }) {
                                             </div>
 
                                             {/* Inputs Area - Current */}
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                                 {/* LBS */}
                                                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
                                                     <input
@@ -804,7 +804,7 @@ export default function ActiveWorkout({ onBack, sessionId }) {
                                     {/* Action Area */}
                                     <div style={{ zIndex: 10, display: 'flex', alignItems: 'center', flexShrink: 0 }}>
                                         {isDone ? (
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                                                 <button
                                                     onClick={(e) => { e.stopPropagation(); handleSetUpdate(currentExercise.id, set.id, { completed: false }); }}
                                                     style={{ background: 'none', border: 'none', color: '#666', cursor: 'pointer', padding: '4px' }}
@@ -816,10 +816,10 @@ export default function ActiveWorkout({ onBack, sessionId }) {
                                                     border: `1px solid ${CRIMSON}`,
                                                     color: CRIMSON,
                                                     borderRadius: '8px',
-                                                    padding: '6px 12px',
+                                                    padding: '6px 8px',
                                                     display: 'flex', alignItems: 'center', gap: '4px'
                                                 }}>
-                                                    <span className="material-icons-outlined" style={{ fontSize: '18px' }}>check</span>
+                                                    <span className="material-icons-outlined" style={{ fontSize: '16px' }}>check</span>
                                                     <span style={{ fontSize: '10px', fontWeight: 900, fontStyle: 'italic', letterSpacing: '0.05em' }}>DONE</span>
                                                 </div>
                                             </div>
