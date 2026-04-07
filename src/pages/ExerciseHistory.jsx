@@ -14,6 +14,7 @@ export default function ExerciseHistory({ onBack, exercise }) {
     const [historyTab, setHistoryTab] = useState('all'); // 'all' | 'max'
     const [history, setHistory] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [isEditing, setIsEditing] = useState(false);
 
     const fetchHistory = () => {
         if (!exercise?.id) return;
@@ -102,7 +103,20 @@ export default function ExerciseHistory({ onBack, exercise }) {
                     <span className="material-symbols-outlined" style={{ color: '#9CA3AF', fontSize: '24px' }}>arrow_back</span>
                 </button>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                    <h1 style={{
+                    <h1 
+                        onClick={async () => {
+                            if (!isEditing) return;
+                            const newVal = window.prompt("Edit Exercise Name:", exerciseName);
+                            if (newVal && newVal.trim() && newVal.trim().toLowerCase() !== exerciseName.toLowerCase()) {
+                                try {
+                                    await api.updateExercise(exerciseId, { name: newVal.trim() });
+                                    fetchHistory();
+                                } catch (e) {
+                                    console.error(e);
+                                }
+                            }
+                        }}
+                        style={{
                         fontSize: '20px',
                         fontWeight: 900,
                         fontStyle: 'italic',
@@ -118,6 +132,7 @@ export default function ExerciseHistory({ onBack, exercise }) {
                         whiteSpace: 'nowrap',
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
+                        cursor: isEditing ? 'pointer' : 'default',
                     }}>
                         {exerciseName}
                     </h1>
@@ -154,6 +169,25 @@ export default function ExerciseHistory({ onBack, exercise }) {
                         )}
                     </div>
                 </div>
+                
+                {/* ── Edit Button ── */}
+                {mainTab === 'details' && (
+                    <button 
+                        onClick={() => setIsEditing(!isEditing)}
+                        style={{
+                            background: isEditing ? COLORS.primary : 'transparent',
+                            border: isEditing ? 'none' : '1px solid #374151',
+                            color: isEditing ? '#000' : '#D1D5DB',
+                            padding: '6px 16px',
+                            borderRadius: '99px',
+                            fontSize: '12px',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                        }}
+                    >
+                        {isEditing ? 'DONE' : 'EDIT'}
+                    </button>
+                )}
             </header>
 
             {/* ── Main Tab Bar (Details / History) ── */}
@@ -214,6 +248,7 @@ export default function ExerciseHistory({ onBack, exercise }) {
                         equipment={equipment}
                         exerciseId={exerciseId}
                         onUpdate={fetchHistory}
+                        isEditing={isEditing}
                     />
                 ) : (
                     <HistoryContent
@@ -235,12 +270,10 @@ export default function ExerciseHistory({ onBack, exercise }) {
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // DETAILS TAB CONTENT
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-function DetailsContent({ imageUrl, videoUrl, instructions, exerciseName, muscleGroup, equipment, exerciseId, onUpdate }) {
+function DetailsContent({ imageUrl, videoUrl, instructions, exerciseName, muscleGroup, equipment, exerciseId, onUpdate, isEditing }) {
     const [showVideoModal, setShowVideoModal] = useState(false);
     const [editingInstructions, setEditingInstructions] = useState(false);
     const [instructionsDraft, setInstructionsDraft] = useState(instructions);
-    const [editingName, setEditingName] = useState(false);
-    const [nameDraft, setNameDraft] = useState(exerciseName);
     const fileInputRef = useRef(null);
 
     useEffect(() => {
@@ -248,8 +281,10 @@ function DetailsContent({ imageUrl, videoUrl, instructions, exerciseName, muscle
     }, [instructions]);
 
     useEffect(() => {
-        setNameDraft(exerciseName);
-    }, [exerciseName]);
+        if (!isEditing) {
+            setEditingInstructions(false);
+        }
+    }, [isEditing]);
 
     const handleSaveInstructions = async () => {
         try {
@@ -261,15 +296,6 @@ function DetailsContent({ imageUrl, videoUrl, instructions, exerciseName, muscle
         }
     };
 
-    const handleSaveName = async () => {
-        try {
-            await api.updateExercise(exerciseId, { name: nameDraft });
-            setEditingName(false);
-            onUpdate();
-        } catch (err) {
-            console.error(err);
-        }
-    };
 
     const handlePhotoUpload = async (e) => {
         const file = e.target.files?.[0];
@@ -307,7 +333,7 @@ function DetailsContent({ imageUrl, videoUrl, instructions, exerciseName, muscle
                     onChange={handlePhotoUpload}
                 />
                 <div
-                    onClick={() => fileInputRef.current?.click()}
+                    onClick={() => isEditing && fileInputRef.current?.click()}
                     style={{
                         width: '100%',
                         aspectRatio: '16 / 10',
@@ -318,7 +344,7 @@ function DetailsContent({ imageUrl, videoUrl, instructions, exerciseName, muscle
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        cursor: 'pointer',
+                        cursor: isEditing ? 'pointer' : 'default',
                     }}
                 >
                     {imageUrl ? (
@@ -354,7 +380,7 @@ function DetailsContent({ imageUrl, videoUrl, instructions, exerciseName, muscle
                 </div>
 
                 {/* Remove Photo button */}
-                {imageUrl && (
+                {imageUrl && isEditing && (
                     <button
                         onClick={(e) => { e.stopPropagation(); handleRemovePhoto(); }}
                         style={{
@@ -379,7 +405,14 @@ function DetailsContent({ imageUrl, videoUrl, instructions, exerciseName, muscle
 
                 {/* Video icon button */}
                 <button
-                    onClick={(e) => { e.stopPropagation(); setShowVideoModal(true); }}
+                    onClick={(e) => { 
+                        e.stopPropagation(); 
+                        if (isEditing) {
+                            setShowVideoModal(true);
+                        } else if (videoUrl) {
+                            window.open(videoUrl, '_blank');
+                        }
+                    }}
                     style={{
                         position: 'absolute',
                         bottom: '12px',
@@ -389,7 +422,7 @@ function DetailsContent({ imageUrl, videoUrl, instructions, exerciseName, muscle
                         borderRadius: '12px',
                         background: videoUrl ? 'rgba(223,255,0,0.9)' : 'rgba(40,40,40,0.7)',
                         border: 'none',
-                        cursor: 'pointer',
+                        cursor: (isEditing || videoUrl) ? 'pointer' : 'default',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -406,13 +439,13 @@ function DetailsContent({ imageUrl, videoUrl, instructions, exerciseName, muscle
 
             {/* ── How To Section ── */}
             <div
-                onClick={() => { if (!editingInstructions) setEditingInstructions(true); }}
+                onClick={() => { if (isEditing && !editingInstructions) setEditingInstructions(true); }}
                 style={{
                     background: '#161616',
                     borderRadius: '16px',
                     border: '1px solid #1F2937',
                     padding: '20px',
-                    cursor: editingInstructions ? 'default' : 'pointer',
+                    cursor: (isEditing && !editingInstructions) ? 'pointer' : 'default',
                 }}
             >
                 <div style={{
@@ -435,7 +468,7 @@ function DetailsContent({ imageUrl, videoUrl, instructions, exerciseName, muscle
                         margin: 0,
                         flex: 1,
                     }}>How To</h2>
-                    {!editingInstructions && (
+                    {!editingInstructions && isEditing && (
                         <span className="material-symbols-outlined" style={{ fontSize: '16px', color: '#555' }}>edit</span>
                     )}
                 </div>
@@ -519,12 +552,25 @@ function DetailsContent({ imageUrl, videoUrl, instructions, exerciseName, muscle
                 flexWrap: 'wrap',
             }}>
                 {muscleGroup && (
-                    <div style={{
-                        padding: '8px 16px',
-                        borderRadius: '10px',
-                        background: 'rgba(223,255,0,0.08)',
-                        border: '1px solid rgba(223,255,0,0.2)',
-                    }}>
+                    <div 
+                        onClick={async () => {
+                            if (!isEditing) return;
+                            const newVal = window.prompt("Edit Muscle Group:", muscleGroup);
+                            if (newVal && newVal.trim() && newVal.trim().toLowerCase() !== muscleGroup.toLowerCase()) {
+                                try {
+                                    await api.updateExercise(exerciseId, { muscleGroup: newVal.trim() });
+                                    onUpdate();
+                                } catch (e) { console.error(e) }
+                            }
+                        }}
+                        style={{
+                            padding: '8px 16px',
+                            borderRadius: '10px',
+                            background: 'rgba(223,255,0,0.08)',
+                            border: '1px solid rgba(223,255,0,0.2)',
+                            cursor: isEditing ? 'pointer' : 'default',
+                        }}
+                    >
                         <span style={{
                             fontSize: '11px',
                             fontWeight: 700,
@@ -534,12 +580,25 @@ function DetailsContent({ imageUrl, videoUrl, instructions, exerciseName, muscle
                     </div>
                 )}
                 {equipment && (
-                    <div style={{
-                        padding: '8px 16px',
-                        borderRadius: '10px',
-                        background: 'rgba(161,161,161,0.08)',
-                        border: '1px solid rgba(161,161,161,0.15)',
-                    }}>
+                    <div 
+                        onClick={async () => {
+                            if (!isEditing) return;
+                            const newVal = window.prompt("Edit Equipment:", equipment);
+                            if (newVal && newVal.trim() && newVal.trim().toLowerCase() !== equipment.toLowerCase()) {
+                                try {
+                                    await api.updateExercise(exerciseId, { equipment: newVal.trim() });
+                                    onUpdate();
+                                } catch (e) { console.error(e) }
+                            }
+                        }}
+                        style={{
+                            padding: '8px 16px',
+                            borderRadius: '10px',
+                            background: 'rgba(161,161,161,0.08)',
+                            border: '1px solid rgba(161,161,161,0.15)',
+                            cursor: isEditing ? 'pointer' : 'default',
+                        }}
+                    >
                         <span style={{
                             fontSize: '11px',
                             fontWeight: 700,
