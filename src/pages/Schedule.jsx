@@ -408,6 +408,7 @@ export default function Schedule({ onNavigate }) {
                     }
 
                     const hasCompleted = daySchedules.some(s => s.status === 'completed');
+                    const isSingle = daySchedules.length === 1;
 
                     const renderCard = (sr, idx) => {
                         const isCompleted = sr.status === 'completed';
@@ -439,8 +440,8 @@ export default function Schedule({ onNavigate }) {
                                 textTransform: 'uppercase',
                                 letterSpacing: '0.05em',
                             };
-                        } else if (hasCompleted && !isSingle) {
-                            badgeLabel = 'UP NEXT';
+                        } else if (hasCompleted) {
+                            badgeLabel = sr.difficulty || 'UP NEXT';
                             // HTML Line 220: bg-primary/10 text-primary border border-primary/30 ... shadow-[0_0_10px_rgba(223,255,0,0.2)]
                             badgeOuterStyle = { marginBottom: '16px' };
                             badgeStyle = {
@@ -456,7 +457,7 @@ export default function Schedule({ onNavigate }) {
                                 letterSpacing: '0.05em',
                             };
                         } else {
-                            badgeLabel = 'RECOMMENDED';
+                            badgeLabel = sr.difficulty || 'READY';
                             // Default styling or similar to Up Next but maybe dimmed
                             badgeOuterStyle = { marginBottom: '16px' };
                             badgeStyle = {
@@ -536,16 +537,9 @@ export default function Schedule({ onNavigate }) {
                                         <span className="material-icons-outlined" style={{ fontSize: '14px' }}>close</span>
                                     </button>
 
-                                    {/* Badge */}
-                                    <div style={{ ...badgeOuterStyle, position: 'relative', zIndex: 10 }}>
-                                        <div style={badgeStyle}>
-                                            {badgeLabel}
-                                        </div>
-                                    </div>
-
                                     {/* Content */}
                                     <div style={{ flex: 1, position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
-                                        {/* Title */}
+                                        {/* Title (now first) */}
                                         <h3 style={{
                                             fontSize: '24px', // text-2xl
                                             fontWeight: 900, // font-black
@@ -604,6 +598,13 @@ export default function Schedule({ onNavigate }) {
                                                 </span>
                                             )}
                                         </h3>
+
+                                        {/* Motivational phrase badge (below title) */}
+                                        <div style={{ ...badgeOuterStyle, position: 'relative', zIndex: 10 }}>
+                                            <div style={badgeStyle}>
+                                                {badgeLabel}
+                                            </div>
+                                        </div>
 
                                         {/* Exercises */}
                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px', marginTop: 'auto', opacity: isCompleted ? 0.7 : 1 }}>
@@ -700,12 +701,12 @@ export default function Schedule({ onNavigate }) {
 
                     return (
                         <div style={{
-                            display: 'grid',
-                            gridTemplateColumns: '1fr 1fr',
+                            display: 'flex',
+                            flexDirection: 'column',
                             gap: '12px',
                         }}>
                             {daySchedules.map((sr, idx) => renderCard(sr, idx))}
-                            {renderAddButton(true)}
+                            {renderAddButton(false)}
                         </div>
                     );
                 })()}
