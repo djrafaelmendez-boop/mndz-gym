@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url';
 import pg from 'pg';
 import dotenv from 'dotenv';
 import DEFAULT_EXERCISES from './defaultExercises.js';
+import { getRandomPhrase } from './motivationalPhrases.js';
 
 dotenv.config();
 
@@ -104,7 +105,7 @@ async function initTablesSqlite() {
       userId INTEGER NOT NULL,
       name TEXT NOT NULL,
       primaryMuscles TEXT DEFAULT '',
-      difficulty TEXT DEFAULT 'Intermediate',
+      difficulty TEXT DEFAULT NULL,
       estimatedMinutes INTEGER DEFAULT 45,
       createdAt TEXT DEFAULT (datetime('now'))
     );
@@ -196,7 +197,7 @@ async function initTablesPostgres() {
       userId INTEGER NOT NULL,
       name TEXT NOT NULL,
       primaryMuscles TEXT DEFAULT '',
-      difficulty TEXT DEFAULT 'Intermediate',
+      difficulty TEXT DEFAULT NULL,
       estimatedMinutes INTEGER DEFAULT 45,
       createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
@@ -281,6 +282,19 @@ async function initTablesPostgres() {
 
       console.log('✅ Patched Exercise images and videos (Postgres)');
     } catch (e) { console.error('Failed to patch image:', e); }
+
+    // Migrate old difficulty labels to motivational phrases
+    try {
+      const oldRows = await pgPool.query(
+        `SELECT id FROM routines WHERE LOWER(difficulty) IN ('beginner', 'intermediate', 'advanced')`
+      );
+      for (const row of oldRows.rows) {
+        await pgPool.query('UPDATE routines SET difficulty = $1 WHERE id = $2', [getRandomPhrase(), row.id]);
+      }
+      if (oldRows.rows.length > 0) {
+        console.log(`✅ Migrated ${oldRows.rows.length} routines from difficulty labels to motivational phrases`);
+      }
+    } catch (e) { console.error('Failed to migrate difficulty labels:', e); }
 
   } catch (e) { }
 

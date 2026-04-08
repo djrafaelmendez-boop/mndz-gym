@@ -17,7 +17,7 @@ const MUSCLE_GROUPS = ['Chest', 'Back', 'Legs', 'Shoulders', 'Arms', 'Abs'];
 
 export default function CreateRoutine({ onBack, editRoutine }) {
     const [name, setName] = useState(editRoutine?.name || '');
-    const [difficulty, setDifficulty] = useState(editRoutine?.difficulty || 'Intermediate');
+    // difficulty is auto-assigned server-side as a motivational phrase
     const [estimatedMinutes, setEstimatedMinutes] = useState(editRoutine?.estimatedMinutes || 45);
     const [primaryMuscles, setPrimaryMuscles] = useState([]);
     const [exercises, setExercises] = useState([]);
@@ -226,7 +226,7 @@ export default function CreateRoutine({ onBack, editRoutine }) {
         try {
             const data = {
                 name,
-                difficulty,
+
                 estimatedMinutes: parseInt(estimatedMinutes),
                 primaryMuscles: primaryMuscles.length > 0
                     ? primaryMuscles.join(', ')

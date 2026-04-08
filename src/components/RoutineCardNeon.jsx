@@ -87,6 +87,8 @@ export default function RoutineCardNeon({ routine, status = 'ready', onStart, on
                         color: '#aaa',
                         padding: '4px 8px',
                         borderRadius: '4px',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
                     }}>
                         {routine.difficulty}
                     </span>

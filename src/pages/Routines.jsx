@@ -306,7 +306,7 @@ function RoutineCard({ routine, isMenuOpen, onMenuToggle, onEdit, onDelete, onCl
         ? [...new Set(exercises.map(e => e.muscleGroup))].join(', ')
         : '');
     const difficulty = routine.difficulty || '';
-    const isAdvanced = difficulty.toLowerCase() === 'advanced';
+    const phrase = difficulty;
 
     return (
         // Gradient border wrapper
@@ -453,8 +453,8 @@ function RoutineCard({ routine, isMenuOpen, onMenuToggle, onEdit, onDelete, onCl
                     </div>
                 </div>
 
-                {/* Difficulty badge */}
-                {difficulty && (
+                {/* Motivational phrase badge */}
+                {phrase && (
                     <div style={{
                         display: 'flex',
                         alignItems: 'center',
@@ -471,19 +471,11 @@ function RoutineCard({ routine, isMenuOpen, onMenuToggle, onEdit, onDelete, onCl
                             letterSpacing: '0.08em',
                             padding: '4px 12px',
                             borderRadius: '9999px',
-                            ...(isAdvanced
-                                ? {
-                                    background: '#DFFF00',
-                                    color: '#000',
-                                    boxShadow: 'none',
-                                }
-                                : {
-                                    background: '#1F2937',
-                                    color: '#A1A1A1',
-                                    border: '1px solid rgba(107,114,128,0.5)',
-                                }),
+                            background: '#1F2937',
+                            color: '#A1A1A1',
+                            border: '1px solid rgba(107,114,128,0.5)',
                         }}>
-                            {difficulty}
+                            {phrase}
                         </span>
                     </div>
                 )}

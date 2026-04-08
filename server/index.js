@@ -4,6 +4,7 @@ import { initDatabase, dbRun, dbGet, dbAll, saveDatabase } from './database.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import { getRandomPhrase } from './motivationalPhrases.js';
 
 dotenv.config();
 
@@ -265,11 +266,12 @@ app.get('/api/routines', authenticateToken, async (req, res) => {
 
 app.post('/api/routines', authenticateToken, async (req, res) => {
     try {
-        const { name, primaryMuscles, difficulty, estimatedMinutes, exercises } = req.body;
+        const { name, primaryMuscles, estimatedMinutes, exercises } = req.body;
+        const phrase = getRandomPhrase();
 
         const result = await dbRun(
             'INSERT INTO routines (userId, name, primaryMuscles, difficulty, estimatedMinutes) VALUES (?, ?, ?, ?, ?)',
-            [req.userId, name, primaryMuscles || '', difficulty || 'Intermediate', estimatedMinutes || 45]
+            [req.userId, name, primaryMuscles || '', phrase, estimatedMinutes || 45]
         );
         const routineId = result.lastInsertRowid;
 
@@ -301,12 +303,19 @@ app.post('/api/routines', authenticateToken, async (req, res) => {
 
 app.put('/api/routines/:id', authenticateToken, async (req, res) => {
     try {
-        const { name, primaryMuscles, difficulty, estimatedMinutes, exercises } = req.body;
+        const { name, primaryMuscles, estimatedMinutes, exercises } = req.body;
         const routineId = parseInt(req.params.id);
+
+        // Preserve existing motivational phrase, only re-assign if it was an old difficulty label
+        const existing = await dbGet('SELECT difficulty FROM routines WHERE id = ? AND userId = ?', [routineId, req.userId]);
+        const OLD_LABELS = ['beginner', 'intermediate', 'advanced'];
+        const keepPhrase = existing?.difficulty && !OLD_LABELS.includes((existing.difficulty || '').toLowerCase())
+            ? existing.difficulty
+            : getRandomPhrase();
 
         await dbRun(
             'UPDATE routines SET name = ?, primaryMuscles = ?, difficulty = ?, estimatedMinutes = ? WHERE id = ? AND userId = ?',
-            [name, primaryMuscles || '', difficulty || 'Intermediate', estimatedMinutes || 45, routineId, req.userId]
+            [name, primaryMuscles || '', keepPhrase, estimatedMinutes || 45, routineId, req.userId]
         );
 
         // Delete old exercises and sets
